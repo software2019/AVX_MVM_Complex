@@ -9,10 +9,10 @@ INCLUDES = -I "/home/mrahman/Include" # Inclusing suN.h header file from Include
 all: timer.o avx_complex_vec
 
 avx_complex_vec: avx_complex_vec.c timer.o header.h # $@ is the name of the file to be made.$@ represents avx_complex_vec
-	${CC} ${LIBS} ${CFLAGS} timer.o $< -o $@ 
+	${CC} ${CFLAGS} timer.o $< -o $@ 
 
 timer.o: timer.c header.h # $< the name of the related file that caused the action.
-	${CC} ${LIBS} ${CFLAGS} $< -c
+	${CC} ${CFLAGS} $< -c
 
 clean: 
 	rm -f *.o avx_complex_vec

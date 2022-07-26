@@ -31,7 +31,7 @@ int main()
  /* Vector initialized: 6 doubles */
  psi.c[0] = (0.1 + 0.2 * I);
  psi.c[1] = (0.3 + 0.4 * I);
- psi.c[2] = (0.5 + 6.0 * I);
+ psi.c[2] = (0.5 + 0.6 * I);
 
  psi2.c[0] = (0.2 + 0.1 * I);
  psi2.c[1] = (0.8 + 0.7 * I);
