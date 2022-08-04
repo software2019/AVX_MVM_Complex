@@ -1,10 +1,10 @@
-# *****************************************************
+#****************************************************************************************************
 # Variables to control Makefile operation
-CC = gcc # the compiler: gcc for C program
+CC = gcc #the compiler: icc/gcc for C program
 LIBS = -lm
-CFLAGS = -O3 -march=core-avx2 -mtune=core-avx2 # compiler flags Extra flags to give to the C compiler.
+CFLAGS = -O3 -march=core-avx2 -mtune=core-avx2 #compiler flags, Extra flags to give to the C compiler.
 INCLUDES = -I "/home/mrahman/Include" # Inclusing suN.h header file from Include directory
-# ****************************************************
+#*****************************************************************************************************
 
 all: timer.o avx_complex_vec
 

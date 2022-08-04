@@ -1,4 +1,21 @@
+## Double MVM Computation Results   
 
+```c
+chi[0] = -42.0re
+chi[0] = 77.0im
+chi[1] = -21.0re
+chi[1] = 43.0im
+chi[2] = -45.0re
+chi[2] = 107.0im
+
+chi2[0] = -6.0re
+chi2[0] = 45.0im
+chi2[1] = 0.0re
+chi2[1] = 30.0im
+chi2[2] = 0.0re
+chi2[2] = 66.0im
+
+```
 
 vectors/cols = um[0]um[1]um[2]  ||  um[3]um[4]um[5] || um[6]um[7]um[8]     
 
