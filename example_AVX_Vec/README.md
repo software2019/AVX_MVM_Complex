@@ -561,9 +561,9 @@ void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, con
 
 void single_MVM_2x2(suNf_vector *chi, const suNf *up, const suNf_vector *psi)
 {
- __m256d up0, up1, up2, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod2, _reimprod2, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, addsub_res2, _addsub_res2, psi0,   add_res1, add_res2, res1, psi0_shuf, realup0, imagup0, realup1, imagup1, realup2, imagup2;
+ __m256d up0, up1, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod2, _reimprod2, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, addsub_res2, _addsub_res2, psi0,   add_res1, add_res2, res1, psi0_shuf, realup0, imagup0, realup1, imagup1, realup2, imagup2;
 
- __m128d chi_3rd;
+//  __m128d chi_3rd;
 
  /*===>Start of loading variables: up, psi, psi2<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
@@ -577,9 +577,9 @@ void single_MVM_2x2(suNf_vector *chi, const suNf *up, const suNf_vector *psi)
  imagup1 = _mm256_shuffle_pd(up1, up1, 0b1111); /*(imag, imag, imag, imag)*/
 
  /* Loading third set of 3 complexes of 3x3 matrix */
- up2 = _mm256_loadu_pd((double *)up + 12);
- realup2 = _mm256_shuffle_pd(up2, up2, 0b0000); /*(real real real real)*/
- imagup2 = _mm256_shuffle_pd(up2, up2, 0b1111); /*(imag, imag, imag, imag)*/
+//  up2 = _mm256_loadu_pd((double *)up + 12);
+//  realup2 = _mm256_shuffle_pd(up2, up2, 0b0000); /*(real real real real)*/
+//  imagup2 = _mm256_shuffle_pd(up2, up2, 0b1111); /*(imag, imag, imag, imag)*/
 
  /* Loading 3 complexes of psi vector and shuffling */
  psi0 = _mm256_loadu_pd((double *)psi);
@@ -607,13 +607,13 @@ void single_MVM_2x2(suNf_vector *chi, const suNf *up, const suNf_vector *psi)
  add_res1 = _mm256_add_pd(_addsub_res0, _addsub_res1);  //Result of 2x2
 
  /*Third row*col computation:2x2*/
- reimprod2 = _mm256_mul_pd(realup2, psi0); /* (re*re),(re*im),(re*re),(re*im) */
- _reimprod2 = _mm256_mul_pd(imagup2, psi0_shuf); /*(im*im),(im*re),(re*im),(im*re) */
- addsub_res2 = _mm256_addsub_pd(reimprod2, _reimprod2);
+//  reimprod2 = _mm256_mul_pd(realup2, psi0); /* (re*re),(re*im),(re*re),(re*im) */
+//  _reimprod2 = _mm256_mul_pd(imagup2, psi0_shuf); /*(im*im),(im*re),(re*im),(im*re) */
+//  addsub_res2 = _mm256_addsub_pd(reimprod2, _reimprod2);
 
- _addsub_res2 = _mm256_permute2f128_pd(addsub_res2, addsub_res2, 1);
- add_res2 = _mm256_add_pd(_addsub_res2, addsub_res2);
- chi_3rd = _mm256_castpd256_pd128(add_res2);
+//  _addsub_res2 = _mm256_permute2f128_pd(addsub_res2, addsub_res2, 1);
+//  add_res2 = _mm256_add_pd(_addsub_res2, addsub_res2);
+//  chi_3rd = _mm256_castpd256_pd128(add_res2);
 
  // printf("add_res1[0] = %.1fre\n", add_res1[0]);
  // printf("add_res1[1] = %.1fim\n", add_res1[1]);
@@ -624,26 +624,24 @@ void single_MVM_2x2(suNf_vector *chi, const suNf *up, const suNf_vector *psi)
 
  /*Storing Results*/
  _mm256_store_pd((double *)chi, add_res1);
- _mm_storeu_pd((double *)chi + 4, chi_3rd);
+//  _mm_storeu_pd((double *)chi + 4, chi_3rd);
 }
 
 
 void double_MVM_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
 {
- __m256d up0, up1, up2, realup0, realup1, realup2, imagup0, imagup1, imagup2, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod2, _reimprod2, reimprod3, _reimprod3, reimprod4, _reimprod4, reimprod5, _reimprod5, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, addsub_res2, _addsub_res2, addsub_res3, _addsub_res3, addsub_res4, _addsub_res4, addsub_res5, _addsub_res5, psi0, psi0_shuf, psi2_0, psi2_0_shuf, add_res1, add_res2, add_res3, res1, res2, res3;
-
- __m128d chi_3rd, chi2_3rd;
+ __m256d up0, up1, realup0, realup1, imagup0, imagup1, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod3, _reimprod3, reimprod4, _reimprod4, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, _addsub_res2, addsub_res3, _addsub_res3, addsub_res4, psi0, psi0_shuf, psi2_0, psi2_0_shuf, add_res1, add_res2, res1, res2;
 
  /*===>Start of loading variables: up, psi, psi2<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
- up0 = _mm256_loadu_pd((double *)up);
- up1 = _mm256_loadu_pd((double *)up + 6);
- up2 = _mm256_loadu_pd((double *)up + 12);
+ up0 = _mm256_load_pd((double *)up);
+ up1 = _mm256_load_pd((double *)up + 6);
+
  /* Loading 3 complexes of psi vector and shuffling */
- psi0 = _mm256_loadu_pd((double *)psi);
+ psi0 = _mm256_load_pd((double *)psi);
  psi0_shuf = _mm256_shuffle_pd(psi0, psi0, 0b0101);
 
- psi2_0 = _mm256_loadu_pd((double *)psi2);      
+ psi2_0 = _mm256_load_pd((double *)psi2);      
  psi2_0_shuf = _mm256_shuffle_pd(psi2_0, psi2_0, 0b0101);
 
  /*===>End of loading variables: up, psi, psi2<====*/
@@ -691,47 +689,17 @@ void double_MVM_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const s
  _addsub_res3 = _mm256_blend_pd(res2, addsub_res4, 12); // [H1 H2]
  add_res2 = _mm256_add_pd(_addsub_res2, _addsub_res3);  // Result of 2x2 chi2[0] chi2[1]
 
- /* =================================(Pair 3) Start ============================= */
- /*Third set of computation:2x2*/
- realup2 = _mm256_shuffle_pd(up2, up2, 0b0000);/*(real real real real) parts*/
- imagup2 = _mm256_shuffle_pd(up2, up2, 0b1111);/*(imag, imag, imag, imag) parts */
- reimprod2 = _mm256_mul_pd(realup2, psi0);/*(re*re),(re*im),(re*re),(re*im) */
- _reimprod2 = _mm256_mul_pd(imagup2, psi0_shuf);/*(im*im),(im*re),(re*im),(im*re) */
- addsub_res2 = _mm256_addsub_pd(reimprod2, _reimprod2);
-
- /*Sixth set of computation:2x2*/
- reimprod5 = _mm256_mul_pd(realup2, psi2_0);/*(re*re),(re*im),(re*re),(re*im) */
- _reimprod5 = _mm256_mul_pd(imagup2, psi2_0_shuf);/*(im*im),(im*re),(re*im),(im*re) */
- addsub_res5 = _mm256_addsub_pd(reimprod5, _reimprod5);
-
- /* ==========Shuffling and adding 2 AVX registers of row 1 & 2 results Matrix 1 and 2 (2x2)========== */
- /* A vector of lower lane of addsub_res5 [L1] and of addsub_res2 [L2] */
- _addsub_res4 = _mm256_permute2f128_pd(addsub_res5, addsub_res2, 2); // [L1 L2]
- res3 = _mm256_permute2f128_pd(addsub_res2, addsub_res2, 1);         // Placing H2 lane in L2 lane
- /* A vector of high lane of temp3 [H1] and of addsub_res5 [H2] */
- _addsub_res5 = _mm256_blend_pd(res3, addsub_res5, 12); // [H1 H2]
- add_res3 = _mm256_add_pd(_addsub_res4, _addsub_res5);  // Result of ROW 3 of matrix 1 & 2
-
- chi_3rd = _mm256_castpd256_pd128(add_res3);     // First 128-bits chi[2]
- chi2_3rd = _mm256_extractf128_pd(add_res3, 1);  // Second 128-bits chi2[2]
-
  /*Storing Results*/
- _mm256_storeu_pd((double *)chi, add_res1);
- //_mm_storeu_pd((__m128d *)chi + 2, vec0_3rd);
- _mm_storeu_pd((double *)chi + 4, chi_3rd);
-
- _mm256_storeu_pd((double *)chi2, add_res2);
- _mm_storeu_pd((double *)chi2 + 4, chi2_3rd);
+ _mm256_store_pd((double *)chi, add_res1);
+ _mm256_store_pd((double *)chi2, add_res2);
+ 
 }
-
 
 
 
 void single_MVM_inverse_2x2(suNf_vector *chi, const suNf *um, const suNf_vector *psi)
 {
- __m256d up0, up0_3rd, up1, up1_3rd, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod2, _reimprod2, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, addsub_res2, _addsub_res2, psi0, psi0_real, psi0_imag, add_res1, add_res2, up0up1_3rd, res1, res2, um0um3, um1um4, um0um3_shuf, um1um4_shuf, up0up1_3rd_perm, up0up1_3rd_shuf;
-
- __m128d chi_3rd;
+ __m256d up0, up1, reimprod0, _reimprod0, reimprod1, _reimprod1, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, psi0, psi0_real, psi0_imag, add_res1, res1, res2, um0um3, um1um4, um0um3_shuf, um1um4_shuf;
 
  /*===>Start of loading variables: um, psi<===*/
  up0 = _mm256_load_pd((double *)um);     /* um[0]um[1] */
@@ -780,34 +748,13 @@ void single_MVM_inverse_2x2(suNf_vector *chi, const suNf *um, const suNf_vector 
  _addsub_res1 = _mm256_blend_pd(res2, addsub_res1, 12); /*[H1 H2]*/ 
  add_res1 = _mm256_add_pd(_addsub_res0, _addsub_res1); /*Result of 2x2 chi[0] chi[1]*/
 
- /*Third row*col computation:2x2*/
- /* Row reused from above  */
- /* Loading and shuffling 3rd element of col 1 and 2  */
- up0_3rd = _mm256_loadu_pd((double *)um + 2); /*um[1]um[2]*/
- up1_3rd = _mm256_loadu_pd((double *)um + 8); /*um[4]um[5]*/
- up0up1_3rd_perm = _mm256_permute2f128_pd(up0_3rd, up0_3rd, 1);
- up0up1_3rd = _mm256_blend_pd(up0up1_3rd_perm, up1_3rd, 12); /*[H1 H2] um[2] um[5]*/
- up0up1_3rd_shuf = _mm256_shuffle_pd(up0up1_3rd, up0up1_3rd, 0b0101); /* im re im re */
-
- reimprod2 = _mm256_mul_pd(psi0_real, up0up1_3rd);       /*(re*re) (re*im) (re*re) (re*im)*/
- _reimprod2 = _mm256_mul_pd(psi0_imag, up0up1_3rd_shuf); /*(im*im)(im*re)(im*im)(im*re)*/
- addsub_res2 = _mm256_addsub_pd(reimprod2, _reimprod2);  
-
- _addsub_res2 = _mm256_permute2f128_pd(addsub_res2, addsub_res2, 1); 
- add_res2 = _mm256_add_pd(_addsub_res2, addsub_res2); 
-
- chi_3rd = _mm256_castpd256_pd128(add_res2); //3rd row-col result: chi[2]
-
  /* Storing Results */
  _mm256_store_pd((double *)chi, add_res1);
- _mm_store_pd((double *)chi + 4, chi_3rd);
 }
 
 void double_MVM_inverse_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *um, const suNf_vector *psi, const suNf_vector *psi2)
 {
- __m256d up0, up0_3rd, up1, up1_3rd, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod3, _reimprod3, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, _addsub_res2, addsub_res3, _addsub_res3, psi0, psi0_real, psi0_imag, add_res1, add_res2, add_res3, up0up1_3rd, res1, res2, res3, res4, um0um3, um1um4, um0um3_shuf, um1um4_shuf, up0up1_3rd_perm, up0up1_3rd_shuf,psi2_0,psi20_real, psi20_imag, reimprod4, _reimprod4, addsub_res4, reimprod5, _reimprod5, addsub_res5, reimprod6, _reimprod6, addsub_res6, _addsub_res4, _addsub_res5;
-
- __m128d  chi_3rd, chi2_3rd;
+ __m256d up0, up1, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod3, _reimprod3, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, _addsub_res2, addsub_res3, _addsub_res3, psi0, psi0_real, psi0_imag, add_res1, add_res2, res1, res2, res3, um0um3, um1um4, um0um3_shuf, um1um4_shuf, psi2_0, psi20_real, psi20_imag, reimprod4, _reimprod4, addsub_res4;
 
  /*===>Start of loading variables: um, psi<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
@@ -836,7 +783,7 @@ void double_MVM_inverse_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *um,
  psi0_imag = _mm256_shuffle_pd(psi0, psi0, 0b1111); /* Row 2:(imag, imag, imag, imag)*/
 
  /* Row: Loading 3 complexes of psi2 vector and shuffling */
- psi2_0 = _mm256_loadu_pd((double *)psi2);
+ psi2_0 = _mm256_load_pd((double *)psi2);
  /* Need to shuffle like up0 and up1 as before */
  psi20_real = _mm256_shuffle_pd(psi2_0, psi2_0, 0b0000); /* Row 1:(real real real real)*/
  psi20_imag = _mm256_shuffle_pd(psi2_0, psi2_0, 0b1111); /* Row 2:(imag, imag, imag, imag)*/
@@ -882,78 +829,33 @@ void double_MVM_inverse_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *um,
  _addsub_res3 = _mm256_blend_pd(res3, addsub_res4, 12); /*[H1 H2]*/
  add_res2 = _mm256_add_pd(_addsub_res2, _addsub_res3);  /*Result of 2x2 chi2[0] chi2[1]*/
 
- /* =================================(Pair 3) Start ============================= */
- /* ********************************************************
-  * Matrix 1: Third set of computation: 3rd row and col: 2x2
-  * ********************************************************/
- /* ===> shuffled Row (psi0_real,psi0_imag) reused from above is to be reused:   */
- /* Loading and shuffling 3rd element of col 1 and 2  */
- up0_3rd = _mm256_loadu_pd((double *)um + 2); /*um[1]um[2]*/
- up1_3rd = _mm256_loadu_pd((double *)um + 8); /*um[4]um[5]*/
- up0up1_3rd_perm = _mm256_permute2f128_pd(up0_3rd, up0_3rd, 1);
- /* Working register for col */
- up0up1_3rd = _mm256_blend_pd(up0up1_3rd_perm, up1_3rd, 12);/*[H1 H2] um[2] um[5]*/
- up0up1_3rd_shuf = _mm256_shuffle_pd(up0up1_3rd, up0up1_3rd, 0b0101); /*im re im re*/
-
- reimprod5 = _mm256_mul_pd(psi0_real, up0up1_3rd);       // psi0_real reused
- _reimprod5 = _mm256_mul_pd(psi0_imag, up0up1_3rd_shuf); // psi0_imag reused
- addsub_res5 = _mm256_addsub_pd(reimprod5, _reimprod5);  // 3rd element
-
- /* ********************************************************
-  * Matrix 2: Sixth set of computation: 3rd row and col: 2x2
-  * ********************************************************/
- reimprod6 = _mm256_mul_pd(psi20_real, up0up1_3rd);       // psi20_real, up0up1_3rd reused
- _reimprod6 = _mm256_mul_pd(psi20_imag, up0up1_3rd_shuf); // psi20_imag, up0up1_3rd_shuf reused
- addsub_res6 = _mm256_addsub_pd(reimprod6, _reimprod6);   // 3rd element
-
- /* ==========Shuffling and adding 2 AVX registers of row 1 & 2 results Matrix 1 and 2 (2x2)========== */
- /* A vector of lower lane of addsub_res5 [L1] and of addsub_res2 [L2] */
- _addsub_res4 = _mm256_permute2f128_pd(addsub_res6, addsub_res5, 2); /*[L1 L2]*/
- res4 = _mm256_permute2f128_pd(addsub_res5, addsub_res5, 1);         /*Placing H2 lane in L2 lane*/
- /* A vector of high lane of temp3 [H1] and of addsub_res5 [H2] */
- _addsub_res5 = _mm256_blend_pd(res4, addsub_res6, 12); /*[H1 H2]*/
- add_res3 = _mm256_add_pd(_addsub_res4, _addsub_res5);  // Result of ROW 3 of matrix 1 & 2
-
- chi_3rd = _mm256_castpd256_pd128(add_res3);     /*First 128-bit = chi[2]*/
- chi2_3rd = _mm256_extractf128_pd(add_res3, 1);  /*Second 128-bit = chi2[2]*/
-
  /*Storing Results*/
  _mm256_store_pd((double *)chi, add_res1);
- _mm_store_pd((double *)chi + 4, chi_3rd);
-
  _mm256_store_pd((double *)chi2, add_res2);
- _mm_store_pd((double *)chi2 + 4, chi2_3rd);
 }
 
-//Double MVM 2x2 Computation
+
+//Double MVM 2x2 Computation output
 chi[0] = -21.0re
 chi[0] = 29.0im
 chi[1] = -6.0re
 chi[1] = 28.0im
-chi[2] = -24.0re
-chi[2] = 59.0im
 
 chi2[0] = -10.0re
 chi2[0] = 28.0im
 chi2[1] = 1.0re
 chi2[1] = 23.0im
-chi2[2] = -4.0re
-chi2[2] = 49.0im
 
-//Double MVM-inverse 2x2 Computation
+//Double MVM-inverse 2x2 Computation output
 chi[0] = -8.0re
 chi[0] = 18.0im
 chi[1] = -17.0re
 chi[1] = 35.0im
-chi[2] = -32.0re
-chi[2] = 37.0im
 
 chi2[0] = -1.0re
 chi2[0] = 15.0im
 chi2[1] = -4.0re
 chi2[1] = 28.0im
-chi2[2] = -16.0re
-chi2[2] = 29.0im
 
 ```
 
