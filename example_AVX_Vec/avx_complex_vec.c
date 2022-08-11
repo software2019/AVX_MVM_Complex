@@ -21,96 +21,100 @@ int main()
  int i;
  double res1, res2, res3, res4, res5, res6, res7, res8;
  float elapsed, gflops;
- int n_times = 1;
- int n_warmup = 0;
+ int n_times = 1000000000;
+ int n_warmup = 1000;
  struct timeval start, end, etime;
 
  suNf_vector chi, chi2, chi3, chi4, psi, psi2; //__attribute__((aligned(64)));
  suNf up;
  /******Initialising the variables*****/
  /* Vector initialized: 6 doubles */
- // psi.c[0] = (0.1 + 0.2 * I);
- // psi.c[1] = (0.3 + 0.4 * I);
- // psi.c[2] = (0.5 + 0.6 * I);
+ psi.c[0] = (0.1 + 0.2 * I);
+ psi.c[1] = (0.2 + 0.3 * I);
+ psi.c[2] = (0.1 + 0.2 * I);
 
- // psi2.c[0] = (0.2 + 0.1 * I);
- // psi2.c[1] = (0.8 + 0.7 * I);
- // psi2.c[2] = (0.4 + 0.5 * I);
+ psi2.c[0] = (0.2 + 0.1 * I);
+ psi2.c[1] = (0.2 + 0.3 * I);
+ psi2.c[2] = (0.1 + 0.4 * I);
 
 
  /* Matrix (3x3) initialized: 18 doubles */
- // up.c[0] = (0.1 + 0.2 * I);
- // up.c[1] = (0.3 + 0.4 * I);
- // up.c[2] = (0.5 + 0.6 * I);
+ up.c[0] = (0.1 + 0.2 * I);
+ up.c[1] = (0.3 + 0.4 * I);
+ up.c[2] = (0.5 + 0.6 * I);
 
- // up.c[3] = (0.2 + 0.1 * I);
- // up.c[4] = (0.3 + 0.2 * I);
- // up.c[5] = (0.1 + 0.3 * I);
+ up.c[3] = (0.2 + 0.1 * I);
+ up.c[4] = (0.3 + 0.2 * I);
+ up.c[5] = (0.1 + 0.3 * I);
 
- // up.c[6] = (0.4 + 0.5 * I);
- // up.c[7] = (0.6 + 0.4 * I);
- // up.c[8] = (0.5 + 0.6 * I);
+ up.c[6] = (0.4 + 0.5 * I);
+ up.c[7] = (0.6 + 0.4 * I);
+ up.c[8] = (0.5 + 0.6 * I);
 
  /* Vector initialized: 6 doubles */
- psi.c[0] = (1.0 + 4.0 * I);
- psi.c[1] = (2.0 + 5.0 * I);
- psi.c[2] = (3.0 + 6.0 * I);
+ // psi.c[0] = (1.0 + 4.0 * I);
+ // psi.c[1] = (2.0 + 5.0 * I);
+ // psi.c[2] = (3.0 + 6.0 * I);
 
- psi2.c[0] = (1.0 + 2.0 * I);
- psi2.c[1] = (3.0 + 4.0 * I);
- psi2.c[2] = (2.0 + 1.0 * I);
+ // psi2.c[0] = (1.0 + 2.0 * I);
+ // psi2.c[1] = (3.0 + 4.0 * I);
+ // psi2.c[2] = (2.0 + 1.0 * I);
 
  /* Matrix (3x3) initialized: 18 doubles */
- up.c[0] = (1.0 + 2.0 * I);
- up.c[1] = (3.0 + 4.0 * I);
- up.c[2] = (5.0 + 6.0 * I);
+ // up.c[0] = (1.0 + 2.0 * I);
+ // up.c[1] = (3.0 + 4.0 * I);
+ // up.c[2] = (5.0 + 6.0 * I);
 
- up.c[3] = (2.0 + 1.0 * I);
- up.c[4] = (3.0 + 2.0 * I);
- up.c[5] = (1.0 + 3.0 * I);
+ // up.c[3] = (2.0 + 1.0 * I);
+ // up.c[4] = (3.0 + 2.0 * I);
+ // up.c[5] = (1.0 + 3.0 * I);
 
- up.c[6] = (4.0 + 5.0 * I);
- up.c[7] = (6.0 + 4.0 * I);
- up.c[8] = (5.0 + 6.0 * I);
+ // up.c[6] = (4.0 + 5.0 * I);
+ // up.c[7] = (6.0 + 4.0 * I);
+ // up.c[8] = (5.0 + 6.0 * I);
 
  /* ****************************************************************************
   * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   ******************************************************************************/
 
  // double_MVM(&chi, &chi2, &up, &psi, &psi2);
-
- // _suNf_theta_T_multiply(chi3, (up), psi);
- // _suNf_theta_T_multiply(chi4, (up), psi2);
+ 
+ // _suNf_theata_T_multiply(chi3, (up), psi);
+ // _suNf_theata_T_multiply(chi4, (up), psi2);
 
  // for (i = 0; i < 3; i++)
  // {
+ 
  //  res1 = creal(chi.c[i]);
  //  res2 = cimag(chi.c[i]);
+
  //  res3 = creal(chi3.c[i]);
  //  res4 = cimag(chi3.c[i]);
 
  //  res5 = creal(chi2.c[i]);
  //  res6 = cimag(chi2.c[i]);
+
  //  res7 = creal(chi4.c[i]);
  //  res8 = cimag(chi4.c[i]);
 
- //  if (((res1 - res3 / res1) > 1.e-15) || ((res2 - res4 / res2) > 1.e-15))
+ //  if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
  //  {
  //    printf("Error! First AVX_MVM and T_multiply are not equal\n");
  //  }
  //  else
  //  {
- //    printf("First chi passed at element \n", i);
+ //    printf("First chi passed at element %d\n", i);
  //  }
 
- //  if (((res5 - res6 / res5) > 1.e-15) || ((res7 - res8 / res7) > 1.e-15))
+ //  if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
  //  {
  //    printf("Error! Second AVX_MVM and T_multiply are not equal\n");
  //  }
  //  else
  //  {
- //    printf("Second chi passed at element \n", i);
+ //    printf("Second chi passed at element %d\n", i);
  //  }
+ //  printf("\n");
 
  //  res1 = .0;
  //  res2 = .0;
@@ -125,146 +129,109 @@ int main()
 
  /* *********************************Test Code End****************************** */
 
- /* AVX Implementation */
- // single_MVM(&chi, &up, &psi);
- // printf("Single MVM Computation\n");
- // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
- // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
- // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
- // printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
- // printf("chi[2] = %.1fre\n", creal(chi.c[2]));
- // printf("chi[2] = %.1fim\n\n", cimag(chi.c[2]));
-
  /* ***************************************************************
   * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
   *****************************************************************/
- //for (i = 0; i < n_warmup; ++i)
- //{
- // double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  //double_MVM(&psi, &psi2, &up, &chi, &chi2);
-  // psi.c[0] /= 100;
-  // psi.c[1] /= 100;
-  // psi.c[2] /= 100;
+ for (i = 0; i < n_warmup; ++i)
+ {
+ double_MVM(&chi, &chi2, &up, &psi, &psi2);
+ double_MVM(&psi, &psi2, &up, &chi, &chi2);
+  psi.c[0] /= 100;
+  psi.c[1] /= 100;
+  psi.c[2] /= 100;
 
-  // psi2.c[0] /= 100;
-  // psi2.c[1] /= 100;
-  // psi2.c[2] /= 100;
- //}
+  psi2.c[0] /= 100;
+  psi2.c[1] /= 100;
+  psi2.c[2] /= 100;
+ }
 
- // gettimeofday(&start, 0);
- // for (i = 0; i < n_times; ++i)
- // {
- //  double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  // double_MVM(&psi, &psi2, &up, &chi, &chi2);
+ gettimeofday(&start, 0);
+ for (i = 0; i < n_times; ++i)
+ {
+  double_MVM(&chi, &chi2, &up, &psi, &psi2);
+  double_MVM(&psi, &psi2, &up, &chi, &chi2);
 
-  // psi.c[0]/=100;
-  // psi.c[1]/=100;
-  // psi.c[2]/=100;
+  psi.c[0]/=100;
+  psi.c[1]/=100;
+  psi.c[2]/=100;
 
-  // psi2.c[0]/=100;
-  // psi2.c[1]/=100;
-  // psi2.c[2]/=100;
- //}
- // gettimeofday(&end, 0);
- // timeval_subtract(&etime, &end, &start);
- // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- // printf("Double_MVM_AVX Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  psi2.c[0]/=100;
+  psi2.c[1]/=100;
+  psi2.c[2]/=100;
+ }
+ gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ printf("Double_MVM_AVX Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
- // for (i = 0; i < n_warmup; ++i)
- // {
- //  _suNf_theta_T_multiply(chi, (up), psi);
- //  _suNf_theta_T_multiply(chi2, (up), psi2);
+ for (i = 0; i < n_warmup; ++i)
+ {
+  _suNf_theata_T_multiply(chi, (up), psi);
+  _suNf_theata_T_multiply(chi2, (up), psi2);
 
- //  _suNf_theta_T_multiply(psi, (up), chi);
- //  _suNf_theta_T_multiply(psi2, (up), chi2);
- //  psi.c[0]/=100;
- //  psi.c[1]/=100;
- //  psi.c[2]/=100;
+  _suNf_theata_T_multiply(psi, (up), chi);
+  _suNf_theata_T_multiply(psi2, (up), chi2);
+  psi.c[0]/=100;
+  psi.c[1]/=100;
+  psi.c[2]/=100;
 
- //  psi2.c[0]/=100;
- //  psi2.c[1]/=100;
- //  psi2.c[2]/=100;
- // }
+  psi2.c[0]/=100;
+  psi2.c[1]/=100;
+  psi2.c[2]/=100;
+ }
 
- // gettimeofday(&start, 0);
- // for (i = 0; i < n_times; ++i)
- // {
- //  _suNf_theta_T_multiply(chi, (up), psi);
- //  _suNf_theta_T_multiply(chi2, (up), psi2);
+ gettimeofday(&start, 0);
+ for (i = 0; i < n_times; ++i)
+ {
+  _suNf_theata_T_multiply(chi, (up), psi);
+  _suNf_theata_T_multiply(chi2, (up), psi2);
 
- //  _suNf_theta_T_multiply(psi, (up), chi);
- //  _suNf_theta_T_multiply(psi2, (up), chi2);
- //  psi.c[0]/=100;
- //  psi.c[1]/=100;
- //  psi.c[2]/=100;
+  _suNf_theata_T_multiply(psi, (up), chi);
+  _suNf_theata_T_multiply(psi2, (up), chi2);
+  psi.c[0]/=100;
+  psi.c[1]/=100;
+  psi.c[2]/=100;
 
- //  psi2.c[0]/=100;
- //  psi2.c[1]/=100;
- //  psi2.c[2]/=100;
- // }
- // gettimeofday(&end, 0);
- // timeval_subtract(&etime, &end, &start);
- // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- // printf("theta_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  psi2.c[0]/=100;
+  psi2.c[1]/=100;
+  psi2.c[2]/=100;
+ }
+ gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ printf("theata_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 /***********************************
  *    MVM Inverse Multiply Testing 
  ***********************************/
 
+
+/*********************************
+ *      All Routines Printing
+ *********************************/
  //single_MVM(&chi, &up, &psi);
  //double_MVM(&chi, &chi2, &up, &psi, &psi2);
-
- // printf("Double MVM Computation\n");
- // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
- // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
- // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
- // printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
- // printf("chi[2] = %.1fre\n", creal(chi.c[2]));
- // printf("chi[2] = %.1fim\n\n", cimag(chi.c[2]));
-
- // printf("chi2[0] = %.1fre\n", creal(chi2.c[0]));
- // printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
- // printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
- // printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
- // printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
- // printf("chi2[2] = %.1fim\n\n", cimag(chi2.c[2]));
-
  //single_MVM_inverse(&chi, &up, &psi);
- // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
-
- // printf("Double MVM Inverse Computation\n");
- // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
- // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
- // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
- // printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
- // printf("chi[2] = %.1fre\n", creal(chi.c[2]));
- // printf("chi[2] = %.1fim\n\n", cimag(chi.c[2]));
-
- // printf("chi2[0] = %.1fre\n", creal(chi2.c[0]));
- // printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
- // printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
- // printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
- // printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
- // printf("chi2[2] = %.1fim\n\n", cimag(chi2.c[2]));
+ //double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
 
  //single_MVM_2x2(&chi, &up, &psi);
  //double_MVM_2x2(&chi, &chi2, &up, &psi, &psi2);
-
  //single_MVM_inverse_2x2(&chi, &up, &psi);
- double_MVM_inverse_2x2(&chi, &chi2, &up, &psi, &psi2);
- printf("Double MVM 2x2 Computation\n");
- printf("chi[0] = %.1fre\n", creal(chi.c[0]));
- printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
- printf("chi[1] = %.1fre\n", creal(chi.c[1]));
- printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
+ //double_MVM_inverse_2x2(&chi, &chi2, &up, &psi, &psi2);
+
+ // printf("Double MVM 2x2 Computation\n");
+ // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
+ // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
+ // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
+ // printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
  // printf("chi[2] = %.1fre\n", creal(chi.c[2]));
  // printf("chi[2] = %.1fim\n\n", cimag(chi.c[2]));
 
- printf("chi2[0] = %.1fre\n", creal(chi2.c[0]));
- printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
- printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
- printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
+ // printf("chi2[0] = %.1fre\n", creal(chi2.c[0]));
+ // printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
+ // printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
+ // printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
  //printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
  // printf("chi2[2] = %.1fim\n\n", cimag(chi2.c[2]));
 
