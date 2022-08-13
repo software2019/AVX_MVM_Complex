@@ -19,18 +19,24 @@ export MPI_DSM_VERBOSE=1
 export MPI_SHARED_VERBOSE=1 
 export MPI_MEMMAP_VERBOSE=1 
 
-
+module load valgrind
 # Launch MPI-based executable
 
- export OMP_NUM_THREADS=16
+ export OMP_NUM_THREADS=1
  #echo "Number of Threads = " $OMP_NUM_THREADS
 
  #icc xandar_openmp.c -o test1 -qopenmp
  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars 
- mpirun -n 1 ./avx_complex_vec
-
+ mpirun -n 1 valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
+ # ./avx_complex_vec
+ #vtune -collect hotspots -result-dir r001hs ./avx_complex_vec
 
 #Without the flag: -no-multibyte-chars, the following error occurs: "Catastrophic error: could not set locale "" to allow processing of multibyte characters"
 
 #Command to run jobs on reserved nodes
 #sbatch --reservation=mrahman_13 -q test submit_measure_Dphi.mpi
+
+#valgrind --tool=cachegrind ./p --LL=size,assoc,64 (cache size, associativity and line size)where size and line_size are measured in bytes. --LL=41943040,20,64
+#LLC Size: 40960 KB
+# Print associativity: cat /sys/devices/system/cpu/cpu0/cache/index3/ways_of_associativity 
+#cg_annotate --auto=yes cachegrind.out.46849

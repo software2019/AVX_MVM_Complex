@@ -77,129 +77,154 @@ int main()
   * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   ******************************************************************************/
 
- // double_MVM(&chi, &chi2, &up, &psi, &psi2);
- 
- // _suNf_theata_T_multiply(chi3, (up), psi);
- // _suNf_theata_T_multiply(chi4, (up), psi2);
+ double_MVM(&chi, &chi2, &up, &psi, &psi2);
+ _suNf_theta_T_multiply(chi3, (up), psi);
+ _suNf_theta_T_multiply(chi4, (up), psi2);
 
- // for (i = 0; i < 3; i++)
- // {
- 
- //  res1 = creal(chi.c[i]);
- //  res2 = cimag(chi.c[i]);
+ // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+ // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
+ // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
 
- //  res3 = creal(chi3.c[i]);
- //  res4 = cimag(chi3.c[i]);
+ for (i = 0; i < 3; i++)
+ {
+  res1 = creal(chi.c[i]);
+  res2 = cimag(chi.c[i]);
 
- //  res5 = creal(chi2.c[i]);
- //  res6 = cimag(chi2.c[i]);
+  res3 = creal(chi3.c[i]);
+  res4 = cimag(chi3.c[i]);
 
- //  res7 = creal(chi4.c[i]);
- //  res8 = cimag(chi4.c[i]);
+  res5 = creal(chi2.c[i]);
+  res6 = cimag(chi2.c[i]);
 
- //  if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
- //  {
- //    printf("Error! First AVX_MVM and T_multiply are not equal\n");
- //  }
- //  else
- //  {
- //    printf("First chi passed at element %d\n", i);
- //  }
+  res7 = creal(chi4.c[i]);
+  res8 = cimag(chi4.c[i]);
 
- //  if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
- //  {
- //    printf("Error! Second AVX_MVM and T_multiply are not equal\n");
- //  }
- //  else
- //  {
- //    printf("Second chi passed at element %d\n", i);
- //  }
- //  printf("\n");
+  if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
+  {
+    printf("Error! First AVX_MVM and T_multiply are not equal\n");
+  }
+  else
+  {
+    printf("First chi passed at element %d\n", i);
+  }
 
- //  res1 = .0;
- //  res2 = .0;
- //  res3 = .0;
- //  res4 = .0;
+  if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
+  {
+    printf("Error! Second AVX_MVM and T_multiply are not equal\n");
+  }
+  else
+  {
+    printf("Second chi passed at element %d\n", i);
+  }
+  printf("\n");
 
- //  res5 = .0;
- //  res6 = .0;
- //  res7 = .0;
- //  res8 = .0;
- // }
+  res1 = .0;
+  res2 = .0;
+  res3 = .0;
+  res4 = .0;
+
+  res5 = .0;
+  res6 = .0;
+  res7 = .0;
+  res8 = .0;
+ }
 
  /* *********************************Test Code End****************************** */
 
  /* ***************************************************************
   * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
   *****************************************************************/
- for (i = 0; i < n_warmup; ++i)
- {
- double_MVM(&chi, &chi2, &up, &psi, &psi2);
- double_MVM(&psi, &psi2, &up, &chi, &chi2);
-  psi.c[0] /= 100;
-  psi.c[1] /= 100;
-  psi.c[2] /= 100;
+ // for (i = 0; i < n_warmup; ++i)
+ // {
+ // double_MVM(&chi, &chi2, &up, &psi, &psi2);
+ // double_MVM(&psi, &psi2, &up, &chi, &chi2);
 
-  psi2.c[0] /= 100;
-  psi2.c[1] /= 100;
-  psi2.c[2] /= 100;
- }
+ // // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+ // // double_MVM_inverse(&psi, &psi2, &up, &chi, &chi2);
+ // psi.c[0] *= 0.01;
+ // psi.c[1] *= 0.01;
+ // psi.c[2] *= 0.01;
 
- gettimeofday(&start, 0);
- for (i = 0; i < n_times; ++i)
- {
-  double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  double_MVM(&psi, &psi2, &up, &chi, &chi2);
+ // psi2.c[0] *= 0.01;
+ // psi2.c[1] *= 0.01;
+ // psi2.c[2] *= 0.01;
+ // }
 
-  psi.c[0]/=100;
-  psi.c[1]/=100;
-  psi.c[2]/=100;
+ // gettimeofday(&start, 0);
 
-  psi2.c[0]/=100;
-  psi2.c[1]/=100;
-  psi2.c[2]/=100;
- }
- gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("Double_MVM_AVX Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ // for (i = 0; i < n_times; ++i)
+ // {
+ //  double_MVM(&chi, &chi2, &up, &psi, &psi2);
+ //  double_MVM(&psi, &psi2, &up, &chi, &chi2);
 
- for (i = 0; i < n_warmup; ++i)
- {
-  _suNf_theata_T_multiply(chi, (up), psi);
-  _suNf_theata_T_multiply(chi2, (up), psi2);
+ //  // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+ //  // double_MVM_inverse(&psi, &psi2, &up, &chi, &chi2);
 
-  _suNf_theata_T_multiply(psi, (up), chi);
-  _suNf_theata_T_multiply(psi2, (up), chi2);
-  psi.c[0]/=100;
-  psi.c[1]/=100;
-  psi.c[2]/=100;
+ //  psi.c[0] *= 0.01;
+ //  psi.c[1] *= 0.01;
+ //  psi.c[2] *= 0.01;
 
-  psi2.c[0]/=100;
-  psi2.c[1]/=100;
-  psi2.c[2]/=100;
- }
+ //  psi2.c[0] *= 0.01;
+ //  psi2.c[1] *= 0.01;
+ //  psi2.c[2] *= 0.01;
+ // }
 
- gettimeofday(&start, 0);
- for (i = 0; i < n_times; ++i)
- {
-  _suNf_theata_T_multiply(chi, (up), psi);
-  _suNf_theata_T_multiply(chi2, (up), psi2);
+ // gettimeofday(&end, 0);
+ // timeval_subtract(&etime, &end, &start);
+ // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ // printf("Double_MVM_AVX Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
-  _suNf_theata_T_multiply(psi, (up), chi);
-  _suNf_theata_T_multiply(psi2, (up), chi2);
-  psi.c[0]/=100;
-  psi.c[1]/=100;
-  psi.c[2]/=100;
+ // for (i = 0; i < n_warmup; ++i)
+ // {
+ //  _suNf_theta_T_multiply(chi, (up), psi);
+ //  _suNf_theta_T_multiply(chi2, (up), psi2);
 
-  psi2.c[0]/=100;
-  psi2.c[1]/=100;
-  psi2.c[2]/=100;
- }
- gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("theata_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ //  _suNf_theta_T_multiply(psi, (up), chi);
+ //  _suNf_theta_T_multiply(psi2, (up), chi2);
+
+ //  // _suNf_theta_T_inverse_multiply(chi, (up), psi);
+ //  // _suNf_theta_T_inverse_multiply(chi2, (up), psi2);
+
+ //  // _suNf_theta_T_inverse_multiply(psi, (up), chi);
+ //  // _suNf_theta_T_inverse_multiply(psi2, (up), chi2);
+
+ //  psi.c[0] *= 0.01;
+ //  psi.c[1] *= 0.01;
+ //  psi.c[2] *= 0.01;
+
+ //  psi2.c[0] *= 0.01;
+ //  psi2.c[1] *= 0.01;
+ //  psi2.c[2] *= 0.01;
+ // }
+
+ // gettimeofday(&start, 0);
+
+ // for (i = 0; i < n_times; ++i)
+ // {
+ //  _suNf_theta_T_multiply(chi, (up), psi);
+ //  _suNf_theta_T_multiply(chi2, (up), psi2);
+
+ //  _suNf_theta_T_multiply(psi, (up), chi);
+ //  _suNf_theta_T_multiply(psi2, (up), chi2);
+
+ //  // _suNf_theta_T_inverse_multiply(chi, (up), psi);
+ //  // _suNf_theta_T_inverse_multiply(chi2, (up), psi2);
+
+ //  // _suNf_theta_T_inverse_multiply(psi, (up), chi);
+ //  // _suNf_theta_T_inverse_multiply(psi2, (up), chi2);
+
+ //  psi.c[0] *= 0.01;
+ //  psi.c[1] *= 0.01;
+ //  psi.c[2] *= 0.01;
+
+ //  psi2.c[0] *= 0.01;
+ //  psi2.c[1] *= 0.01;
+ //  psi2.c[2] *= 0.01;
+ // }
+ // gettimeofday(&end, 0);
+ // timeval_subtract(&etime, &end, &start);
+ // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ // printf("theta_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 /***********************************
@@ -220,7 +245,17 @@ int main()
  //single_MVM_inverse_2x2(&chi, &up, &psi);
  //double_MVM_inverse_2x2(&chi, &chi2, &up, &psi, &psi2);
 
- // printf("Double MVM 2x2 Computation\n");
+ // double_MVM(&chi, &chi2, &up, &psi, &psi2);
+ // _suNf_theta_T_multiply(chi3, (up), psi);
+ // _suNf_theta_T_multiply(chi4, (up), psi2);
+
+
+ // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+ // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
+ // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
+
+
+ // printf("Double MVM Inverse Computation\n");
  // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
  // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
  // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
@@ -232,8 +267,23 @@ int main()
  // printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
  // printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
  // printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
- //printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
+ // printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
  // printf("chi2[2] = %.1fim\n\n", cimag(chi2.c[2]));
+
+ // printf("Double _suNf_theta_T_inverse_multiply\n");
+ // printf("chi3[0] = %.1fre\n", creal(chi3.c[0]));
+ // printf("chi3[0] = %.1fim\n", cimag(chi3.c[0]));
+ // printf("chi3[1] = %.1fre\n", creal(chi3.c[1]));
+ // printf("chi3[1] = %.1fim\n", cimag(chi3.c[1]));
+ // printf("chi3[2] = %.1fre\n", creal(chi3.c[2]));
+ // printf("chi3[2] = %.1fim\n\n", cimag(chi3.c[2]));
+
+ // printf("chi4[0] = %.1fre\n", creal(chi4.c[0]));
+ // printf("chi4[0] = %.1fim\n", cimag(chi4.c[0]));
+ // printf("chi4[1] = %.1fre\n", creal(chi4.c[1]));
+ // printf("chi4[1] = %.1fim\n", cimag(chi4.c[1]));
+ // printf("chi4[2] = %.1fre\n", creal(chi4.c[2]));
+ // printf("chi4[2] = %.1fim\n\n", cimag(chi4.c[2]));
 
  return 0;
  }
@@ -491,119 +541,129 @@ void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_
 void single_MVM_inverse(suNf_vector *chi, const suNf *um, const suNf_vector *psi)
 {
  __m256d temp1, temp2, temp3, temp4, temp5, temp6,temp7;
+ const __m256d mask = _mm256_set_pd(-1.0, 1.0, -1.0, 1.0);
  __m128d chi_3rd;
-
+ 
  /*===>Start of loading variables: um, psi<===*/
- temp1 = _mm256_load_pd((double *)um);/* loading um[0]um[1]*/
- temp2 = _mm256_load_pd((double *)um + 6); /*loading um[3]um[4]*/
+temp1 = _mm256_load_pd((double *)um);/* loading um[0]um[1]*/
+temp1 = _mm256_mul_pd(temp1, mask);
 
- /****************************************************************
-  * col1: working vector temp3 - lower lane of temp2 [L1] and temp1 [L2]
-  ****************************************************************/
- temp3 = _mm256_permute2f128_pd(temp2, temp1, 2); /*[L1 L2] um[0] um[3]*/
- temp1 = _mm256_permute2f128_pd(temp1, temp1, 1); /*swapping L2 and H2 of temp1*/
+temp2 = _mm256_load_pd((double *)um + 6); /*loading um[3]um[4]*/
+temp2 = _mm256_mul_pd(temp2, mask);
+/****************************************************************
+ * col1: working vector temp3 - lower lane of temp2 [L1] and temp1 [L2]
+ ****************************************************************/
+temp3 = _mm256_permute2f128_pd(temp2, temp1, 2); /*[L1 L2] um[0] um[3]*/ // NEED TO CONJUGATE...
+temp1 = _mm256_permute2f128_pd(temp1, temp1, 1);                         /*swapping L2 and H2 of temp1*/
 
- /*******************************************************************************
-  * col2: working temp1 vector - high lane of temp1 [H1] and temp2 [H2]
-  ******************************************************************************/
- temp1 = _mm256_blend_pd(temp1, temp2, 12); /*[H1 H2] um[1] um[4]*/
+/*******************************************************************************
+ * col2: working temp1 vector - high lane of temp1 [H1] and temp2 [H2]
+ ******************************************************************************/
+temp1 = _mm256_blend_pd(temp1, temp2, 12); /*[H1 H2] um[1] um[4]*/ // NEED TO CONJUGATE...
 
- /* now cols temp3 and temp1 need to be reshuffled*/
- temp2 = _mm256_shuffle_pd(temp3, temp3, 0b0101);/* im re im re */
- temp4 = _mm256_shuffle_pd(temp1, temp1, 0b0101); /* im re im re */
+/* now cols temp3 and temp1 need to be reshuffled*/
+temp2 = _mm256_shuffle_pd(temp3, temp3, 0b0101); /* im re im re */
+temp4 = _mm256_shuffle_pd(temp1, temp1, 0b0101); /* im re im re */
 
- /* Row: Loading 1st 2 complexes of psi vector and shuffling */
- temp5 = _mm256_load_pd((double *)psi);
- /* Need to shuffle as before */
- temp6 = _mm256_shuffle_pd(temp5, temp5, 0b0000); /* Row 1: real real real real*/  
- temp5 = _mm256_shuffle_pd(temp5, temp5, 0b1111); /* Row 2: imag imag imag imag*/   
- /*===>End of loading variables: up, psi<====*/
+/* Row: Loading 1st 2 complexes of psi vector and shuffling */
+temp5 = _mm256_load_pd((double *)psi);
+/* Need to shuffle as before */
+temp6 = _mm256_shuffle_pd(temp5, temp5, 0b0000); /* Row 1: real real real real*/
+temp5 = _mm256_shuffle_pd(temp5, temp5, 0b1111); /* Row 2: imag imag imag imag*/
+/*===>End of loading variables: up, psi<====*/
 
- /***************************************
-  *    Start of MVM Computations: 2x2
-  ***************************************/
+/***************************************
+ *    Start of MVM Computations: 2x2
+ ***************************************/
 
- /*First row*col computation:2x2*/
- temp3 = _mm256_mul_pd(temp6, temp3); /*(re*re) (re*im) (re*re) (re*im)*/    
- temp2 = _mm256_mul_pd(temp5, temp2); /*(im*im) (im*re) (im*im) (im*re)*/     
- temp2 = _mm256_addsub_pd(temp3, temp2);  
+/*First row*col computation:2x2*/
+temp3 = _mm256_mul_pd(temp6, temp3); /*(re*re) (re*im) (re*re) (re*im)*/
+temp2 = _mm256_mul_pd(temp5, temp2); /*(im*im) (im*re) (im*im) (im*re)*/
+temp2 = _mm256_addsub_pd(temp3, temp2);
 
- /*Second row*col computation:2x2*/
- temp1 = _mm256_mul_pd(temp6, temp1); /*(re*re)(re*im)(re*re)(re*im)*/ 
- temp3 = _mm256_mul_pd(temp5, temp4); /*(im*im)(im*re)(im*im)(im*re)*/
- temp1 = _mm256_addsub_pd(temp1, temp3); 
+/*Second row*col computation:2x2*/
+temp1 = _mm256_mul_pd(temp6, temp1); /*(re*re)(re*im)(re*re)(re*im)*/
+temp3 = _mm256_mul_pd(temp5, temp4); /*(im*im)(im*re)(im*im)(im*re)*/
+temp1 = _mm256_addsub_pd(temp1, temp3);
 
- /* ==========Shuffling and adding 2 AVX registers of row 1 & 2 results(2x2)========== */
- /* A vector of lower lane of temp1 [L1] and temp2 [L2]*/
- temp3 = _mm256_permute2f128_pd(temp1, temp2, 2);/*[L1 L2]*/
- temp2 = _mm256_permute2f128_pd(temp2, temp2, 1); /*swapping L2 and H2 of temp1*/
- /* A vector of high lane of temp [H1] and of addsub_res1 [H2] */
- temp1 = _mm256_blend_pd(temp2, temp1, 12);/*[H1 H2]*/
- temp1 = _mm256_add_pd(temp3, temp1);/* L1+H1, L2+H2 */
+/* ==========Shuffling and adding 2 AVX registers of row 1 & 2 results(2x2)========== */
+/* A vector of lower lane of temp1 [L1] and temp2 [L2]*/
+temp3 = _mm256_permute2f128_pd(temp1, temp2, 2); /*[L1 L2]*/
+temp2 = _mm256_permute2f128_pd(temp2, temp2, 1); /*swapping L2 and H2 of temp1*/
+/* A vector of high lane of temp [H1] and of addsub_res1 [H2] */
+temp1 = _mm256_blend_pd(temp2, temp1, 12); /*[H1 H2]*/
+temp1 = _mm256_add_pd(temp3, temp1);       /* L1+H1, L2+H2 */
 
- /* =======Leftover element(3rd) row 1 & 2 and col ======= */
- /* 3rd element of row 1 and 2  */
- temp3 = _mm256_loadu_pd((double *)psi + 2);                     
- temp2 = _mm256_permute2f128_pd(temp3, temp3, 1);                
- temp2 = _mm256_blend_pd(temp2, temp3, 12); /*[H1 H2]*/ 
+/* =======Leftover element(3rd) row 1 & 2 and col ======= */
+/* 3rd element of row 1 and 2  */
+temp3 = _mm256_loadu_pd((double *)psi + 2);
+temp2 = _mm256_permute2f128_pd(temp3, temp3, 1);
+temp2 = _mm256_blend_pd(temp2, temp3, 12); /*[H1 H2]*/
 
- temp3 = _mm256_shuffle_pd(temp2, temp2, 0b0000); /* Row 1:(re re re re)*/      
- temp2 = _mm256_shuffle_pd(temp2, temp2, 0b1111); /* Row 2:(im,im,im,im)*/   
+temp3 = _mm256_shuffle_pd(temp2, temp2, 0b0000); /* Row 1:(re re re re)*/
+temp2 = _mm256_shuffle_pd(temp2, temp2, 0b1111); /* Row 2:(im,im,im,im)*/
 
- /* 3rd element of col 1 and 2 */
- temp4 = _mm256_load_pd((double *)um + 12);      
- temp7 = _mm256_shuffle_pd(temp4, temp4, 0b0101);/* Col: im re im re*/ 
+/* 3rd element of col 1 and 2 */
+temp4 = _mm256_load_pd((double *)um + 12);
+temp4 = _mm256_mul_pd(temp4, mask);
+temp7 = _mm256_shuffle_pd(temp4, temp4, 0b0101); /* Col: im re im re*/
 
- temp4 = _mm256_mul_pd(temp3, temp4);                               
- temp7 = _mm256_mul_pd(temp2, temp7);                               
- temp4 = _mm256_addsub_pd(temp4, temp7);
+temp4 = _mm256_mul_pd(temp3, temp4);
+temp7 = _mm256_mul_pd(temp2, temp7);
+temp4 = _mm256_addsub_pd(temp4, temp7);
 
- /* Adding 2x2 results to leftover results */
- temp1 = _mm256_add_pd(temp1, temp4);
+/* Adding 2x2 results to leftover results */
+temp1 = _mm256_add_pd(temp1, temp4);
 
- /* 3rd row*col computations: Row reused from above*/
+/* 3rd row*col computations: Row reused from above*/
 
- /* Loading and shuffling 3rd element of col 1 and 2*/
- temp4 = _mm256_loadu_pd((double *)um + 2);/*um[1]um[2]*/
- temp7 = _mm256_loadu_pd((double *)um + 8);/*um[4]um[5]*/
- temp4 = _mm256_permute2f128_pd(temp4, temp4, 1); 
- temp4 = _mm256_blend_pd(temp4, temp7, 12); /*[H1 H2] um[2] um[5]*/    
- temp7 = _mm256_shuffle_pd(temp4, temp4, 0b0101);/* im re im re */
+/* Loading and shuffling 3rd element of col 1 and 2*/
+temp4 = _mm256_loadu_pd((double *)um + 2); /*um[1]um[2]*/
+temp4 = _mm256_mul_pd(temp4, mask);
+temp7 = _mm256_loadu_pd((double *)um + 8); /*um[4]um[5]*/
+temp7 = _mm256_mul_pd(temp7, mask);
+temp4 = _mm256_permute2f128_pd(temp4, temp4, 1);
+temp4 = _mm256_blend_pd(temp4, temp7, 12);       /*[H1 H2] um[2] um[5]*/
+temp7 = _mm256_shuffle_pd(temp4, temp4, 0b0101); /* im re im re */
 
- temp4 = _mm256_mul_pd(temp6, temp4); /*(re*re) (re*im) (re*re) (re*im)*/
- temp5 = _mm256_mul_pd(temp5, temp7); /*(im*im)(im*re)(im*im)(im*re)*/
- temp4 = _mm256_addsub_pd(temp4, temp5);
+temp4 = _mm256_mul_pd(temp6, temp4); /*(re*re) (re*im) (re*re) (re*im)*/
+temp5 = _mm256_mul_pd(temp5, temp7); /*(im*im)(im*re)(im*im)(im*re)*/
+temp4 = _mm256_addsub_pd(temp4, temp5);
 
- temp5 = _mm256_permute2f128_pd(temp4, temp4, 1);        
- temp5 = _mm256_add_pd(temp5, temp4);
+temp5 = _mm256_permute2f128_pd(temp4, temp4, 1);
+temp5 = _mm256_add_pd(temp5, temp4);
 
- /* =======Leftover element(3rd) row 3 and col ======= */
- /* Loading third set of 3 complexes of 3x3 matrix */
- temp4 = _mm256_loadu_pd((double *)um + 14);/*um[7]um[8]*/
- temp6 = _mm256_permute2f128_pd(temp4, temp4, 1);                
- temp4 = _mm256_blend_pd(temp6, temp4, 12);                      
- temp6 = _mm256_shuffle_pd(temp4, temp4, 0b0101);                
+/* =======Leftover element(3rd) row 3 and col ======= */
+/* Loading third set of 3 complexes of 3x3 matrix */
+temp4 = _mm256_loadu_pd((double *)um + 14); /*um[7]um[8]*/
+temp4 = _mm256_mul_pd(temp4, mask);
+temp6 = _mm256_permute2f128_pd(temp4, temp4, 1);
+temp4 = _mm256_blend_pd(temp6, temp4, 12);
+temp6 = _mm256_shuffle_pd(temp4, temp4, 0b0101);
 
- temp3 = _mm256_mul_pd(temp3, temp4);        
- temp2 = _mm256_mul_pd(temp2, temp6);        
- temp2 = _mm256_addsub_pd(temp3, temp2);
+temp3 = _mm256_mul_pd(temp3, temp4);
+temp2 = _mm256_mul_pd(temp2, temp6);
+temp2 = _mm256_addsub_pd(temp3, temp2);
 
- temp2 = _mm256_add_pd(temp5, temp2);    /*chi[2] chi[2]*/
- chi_3rd = _mm256_castpd256_pd128(temp2);/*chi[2]*/
+temp2 = _mm256_add_pd(temp5, temp2);     /*chi[2] chi[2]*/
+chi_3rd = _mm256_castpd256_pd128(temp2); /*chi[2]*/
 
- /* Storing Results */
- _mm256_store_pd((double *)chi, temp1); 
- _mm_store_pd((double *)chi + 4, chi_3rd);
+/* Storing Results */
+_mm256_store_pd((double *)chi, temp1);
+_mm_store_pd((double *)chi + 4, chi_3rd);
 }
 
 void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, const suNf_vector *psi, const suNf_vector *psi2)
 {
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15;
+ const __m256d mask = _mm256_set_pd(-1.0, 1.0, -1.0, 1.0);
  __m128d chi_3rd, chi2_3rd;
 
  /*===>Start loading variables: um, psi, psi2<===*/
  temp1 = _mm256_load_pd((double *)um); /* loading um[0]um[1]*/
- temp2 = _mm256_load_pd((double *)um + 6); /*loading um[3]um[4]*/ 
+ temp1 = _mm256_mul_pd(temp1, mask);
+ temp2 = _mm256_load_pd((double *)um + 6); /*loading um[3]um[4]*/
+ temp2 = _mm256_mul_pd(temp2, mask);
 
  /********************************************************************
   * Col1: working vector temp3 - lower lane of temp2 [L1] and temp1 [L2]
@@ -666,7 +726,8 @@ void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, con
  temp10 = _mm256_shuffle_pd(temp10, temp10, 0b1111); /* Row 2:(imag, imag, imag, imag)*/
 
  /* 3rd element of col 1 and 2 */
- temp13 = _mm256_load_pd((double *)um + 12); /*um[6]um[7]*/
+ temp13 = _mm256_load_pd((double *)um + 12);  /*um[6]um[7]*/
+ temp13 = _mm256_mul_pd(temp13, mask);
  temp15 = _mm256_shuffle_pd(temp13, temp13, 0b0101);/*im re im re*/
 
  temp12 = _mm256_mul_pd(temp12, temp13); 
@@ -721,8 +782,10 @@ void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, con
   * ********************************************************/
  /* ===> Row: shuffled (temp6,temp4) from above is to be reused*/
  /* Loading and shuffling 3rd element of col 1 and 2  */
- temp3 = _mm256_loadu_pd((double *)um + 2);/*um[1]um[2]*/ 
- temp4 = _mm256_loadu_pd((double *)um + 8);/*um[4]um[5]*/
+ temp3 = _mm256_loadu_pd((double *)um + 2); /*um[1]um[2]*/
+ temp3 = _mm256_mul_pd(temp3, mask);
+ temp4 = _mm256_loadu_pd((double *)um + 8); /*um[4]um[5]*/
+ temp4 = _mm256_mul_pd(temp4, mask);
  temp3 = _mm256_permute2f128_pd(temp3, temp3, 1);
  /* Working register for col */
  temp3 = _mm256_blend_pd(temp3, temp4, 12); /*[H1 H2] um[2] um[5]*/ 
@@ -754,6 +817,7 @@ void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, con
  
  /* Loading 3rd element of col 3*/
  temp5 = _mm256_loadu_pd((double *)um + 14); /*um[7]um[8]*/
+ temp5 = _mm256_mul_pd(temp5, mask);
  temp6 = _mm256_permute2f128_pd(temp5, temp5, 1);  
  temp5 = _mm256_blend_pd(temp6, temp5, 12);       
  temp6 = _mm256_shuffle_pd(temp5, temp5, 0b0101);/* im re im re */
@@ -892,10 +956,13 @@ void double_MVM_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const s
 void single_MVM_inverse_2x2(suNf_vector *chi, const suNf *um, const suNf_vector *psi)
 {
  __m256d temp1, temp2, temp3, temp4, temp5, temp6;
-
+ const __m256d mask = _mm256_set_pd(-1.0, 1.0, -1.0, 1.0);
  /*===>Start of loading variables: um, psi<===*/
- temp1 = _mm256_load_pd((double *)um); /* um[0]um[1] */ 
- temp2 = _mm256_load_pd((double *)um + 6); /*um[3]um[4]*/ 
+ temp1 = _mm256_load_pd((double *)um); /* um[0]um[1] */
+ temp1 = _mm256_mul_pd(temp1, mask);
+
+ temp2 = _mm256_load_pd((double *)um + 6); /*um[3]um[4]*/
+ temp2 = _mm256_mul_pd(temp2, mask);
 
  /****************************************************************
   * col1: working vector temp4 of lower lane of temp1 [L1] and temp2 [L2]
@@ -946,11 +1013,14 @@ void single_MVM_inverse_2x2(suNf_vector *chi, const suNf *um, const suNf_vector 
 void double_MVM_inverse_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *um, const suNf_vector *psi, const suNf_vector *psi2)
 {
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11;
+ const __m256d mask = _mm256_set_pd(-1.0, 1.0, -1.0, 1.0);
 
  /*===>Start of loading variables: um, psi<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
- temp1 = _mm256_load_pd((double *)um); /* um[0]um[1] */ 
+ temp1 = _mm256_load_pd((double *)um); /* um[0]um[1] */
+ temp1 = _mm256_mul_pd(temp1, mask);
  temp2 = _mm256_load_pd((double *)um + 6); /*um[3]um[4]*/
+ temp2 = _mm256_mul_pd(temp2, mask);
 
  /****************************************************************
   * col1: working vector temp4 of lower lane of temp2 [L1] and temp2 [L2]
