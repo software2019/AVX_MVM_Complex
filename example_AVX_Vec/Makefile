@@ -14,6 +14,9 @@ avx_complex_vec: avx_complex_vec.c timer.o header.h # $@ is the name of the file
 timer.o: timer.c header.h # $< the name of the related file that caused the action.
 	${CC} ${CFLAGS} ${INCLUDES} $< -c
 
+pre:
+	${CC} ${CFLAGS} ${INCLUDES} -E avx_complex_vec.c > pre.txt
+
 clean: 
 	rm -f *.o avx_complex_vec
 

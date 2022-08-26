@@ -186,6 +186,17 @@ addsub  = (17 + 4i) + (15 - 5i) + (16 -7i)
 addsub2 = (32 -1i) + (16 - 7i)
         = (48 - 8i)
 
+
+/* Operations Counting */
+= (real*real + imag*imag) + (real*imag + imag*real) //4 mul, 3 adds
+or
+= (a + bi) * (c + di)/* Interleaved data layout */ 
+= (ac - bd) + (ad + bc) //4 mul, 2 add, 1 sub
+
+chi[0] = (1 + 4i)*(1 + 2i)                          + (2 + 5i)*(2 + 1i) + (3 + 6i)*(4 + 5i) 
+       = (1*1)+(4i*2i) + (1*2i) + (4i*1)
+       = 1 - 8 + 2i + 4i
+       = -7 + 6i
  
 /*Results:Double inverse MVM Computation*/
 chi[0] = 60.0re
@@ -862,6 +873,204 @@ chi2[0] = -1.0re
 chi2[0] = 15.0im
 chi2[1] = -4.0re
 chi2[1] = 28.0im
+
+
+
+  /*Initialising the variables*/
+  my_init(&psi, &psi2, &up, n);
+  printf("psi[0] = %.1fre\n", creal(psi.c[0]));
+  printf("psi[0] = %.1fim\n", cimag(psi.c[0]));
+  printf("psi[1] = %.1fre\n", creal(psi.c[1]));
+  printf("psi[1] = %.1fim\n", cimag(psi.c[1]));
+  printf("psi[2] = %.1fre\n", creal(psi.c[2]));
+  printf("psi[2] = %.1fim\n\n", cimag(psi.c[2]));
+
+  printf("psi2[0] = %.1fre\n", creal(psi2.c[0]));
+  printf("psi2[0] = %.1fim\n", cimag(psi2.c[0]));
+  printf("psi2[1] = %.1fre\n", creal(psi2.c[1]));
+  printf("psi2[1] = %.1fim\n", cimag(psi2.c[1]));
+  printf("psi2[2] = %.1fre\n", creal(psi2.c[2]));
+  printf("psi2[2] = %.1fim\n\n", cimag(psi2.c[2]));
+
+  printf("up[0] = %.1fre\n", creal(up.c[0]));
+  printf("up[0] = %.1fim\n", cimag(up.c[0]));
+  printf("up[1] = %.1fre\n", creal(up.c[1]));
+  printf("up[1] = %.1fim\n", cimag(up.c[1]));
+  printf("up[2] = %.1fre\n", creal(up.c[2]));
+  printf("up[2] = %.1fim\n", cimag(up.c[2]));
+  printf("up[3] = %.1fre\n", creal(up.c[3]));
+  printf("up[3] = %.1fim\n", cimag(up.c[3]));
+  printf("up[4] = %.1fre\n", creal(up.c[4]));
+  printf("up[4] = %.1fim\n", cimag(up.c[4]));
+  printf("up[5] = %.1fre\n", creal(up.c[5]));
+  printf("up[5] = %.1fim\n", cimag(up.c[5]));
+  printf("up[6] = %.1fre\n", creal(up.c[6]));
+  printf("up[6] = %.1fim\n", cimag(up.c[6]));
+  printf("up[7] = %.1fre\n", creal(up.c[7]));
+  printf("up[7] = %.1fim\n", cimag(up.c[7]));
+  printf("up[8] = %.1fre\n", creal(up.c[8]));
+  printf("up[8] = %.1fim\n\n", cimag(up.c[8]));
+
+// suNf_vector psi_copy, psi2_copy;
+// psi_copy = psi;
+// psi2_copy = psi2;
+
+/******************************************************************************
+ * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+ ******************************************************************************/
+
+    //double_MVM(&chi, &chi2, &up, &psi, &psi2);
+    // _DOUBLE_MMV(chi, chi2, up, psi, psi2);
+    // _suNf_theta_T_multiply(chi3, up, psi);
+    // _suNf_theta_T_multiply(chi4, up, psi2);
+
+      // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+      // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
+      // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
+
+  // for (i = 0; i < 3; i++)
+  // {
+  //   res1 = creal(chi.c[i]);
+  //   res2 = cimag(chi.c[i]);
+
+  //   res3 = creal(chi3.c[i]);
+  //   res4 = cimag(chi3.c[i]);
+
+  //   res5 = creal(chi2.c[i]);
+  //   res6 = cimag(chi2.c[i]);
+
+  //   res7 = creal(chi4.c[i]);
+  //   res8 = cimag(chi4.c[i]);
+
+  //   if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
+  //   {
+  //     printf("Error! First AVX_MVM and T_multiply are not equal\n");
+  //   }
+  //   else
+  //   {
+  //     printf("First chi passed at element %d\n", i);
+  //   }
+
+  //   if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
+  //   {
+  //     printf("Error! Second AVX_MVM and T_multiply are not equal\n");
+  //   }
+  //   else
+  //   {
+  //     printf("Second chi passed at element %d\n", i);
+  //   }
+  //   printf("\n");
+
+  //   res1 = .0;
+  //   res2 = .0;
+  //   res3 = .0;
+  //   res4 = .0;
+
+  //   res5 = .0;
+  //   res6 = .0;
+  //   res7 = .0;
+  //   res8 = .0;
+  // }
+
+  /* *********************************Test Code End****************************** */
+
+
+/*********************************
+   *      All Routines Printing
+   *********************************/
+  // single_MVM(&chi, &up, &psi);
+  // double_MVM(&chi, &chi2, &up, &psi, &psi2);
+
+  //_DOUBLE_MMV(chi, chi2, up, psi, psi2);
+  // _suNf_theta_T_multiply(chi, up, psi);
+  // _suNf_theta_T_multiply(chi2, up, psi2);
+
+  // single_MVM_inverse(&chi, &up, &psi);
+  // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+
+  // single_MVM_2x2(&chi, &up, &psi);
+  // double_MVM_2x2(&chi, &chi2, &up, &psi, &psi2);
+  // single_MVM_inverse_2x2(&chi, &up, &psi);
+  // double_MVM_inverse_2x2(&chi, &chi2, &up, &psi, &psi2);
+
+  // double_MVM(&chi, &chi2, &up, &psi, &psi2);
+  // _suNf_theta_T_multiply(chi3, (up), psi);
+  // _suNf_theta_T_multiply(chi4, (up), psi2);
+
+  // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+  // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
+  // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
+
+  // printf("Double MVM Inverse Computation\n");
+  // printf("chi[0] = %.1fre\n", creal(chi.c[0]));
+  // printf("chi[0] = %.1fim\n", cimag(chi.c[0]));
+  // printf("chi[1] = %.1fre\n", creal(chi.c[1]));
+  // printf("chi[1] = %.1fim\n", cimag(chi.c[1]));
+  // printf("chi[2] = %.1fre\n", creal(chi.c[2]));
+  // printf("chi[2] = %.1fim\n\n", cimag(chi.c[2]));
+
+  // printf("chi2[0] = %.1fre\n", creal(chi2.c[0]));
+  // printf("chi2[0] = %.1fim\n", cimag(chi2.c[0]));
+  // printf("chi2[1] = %.1fre\n", creal(chi2.c[1]));
+  // printf("chi2[1] = %.1fim\n", cimag(chi2.c[1]));
+  // printf("chi2[2] = %.1fre\n", creal(chi2.c[2]));
+  // printf("chi2[2] = %.1fim\n\n", cimag(chi2.c[2]));
+
+  // printf("Double _suNf_theta_T_inverse_multiply\n");
+  // printf("chi3[0] = %.1fre\n", creal(chi3.c[0]));
+  // printf("chi3[0] = %.1fim\n", cimag(chi3.c[0]));
+  // printf("chi3[1] = %.1fre\n", creal(chi3.c[1]));
+  // printf("chi3[1] = %.1fim\n", cimag(chi3.c[1]));
+  // printf("chi3[2] = %.1fre\n", creal(chi3.c[2]));
+  // printf("chi3[2] = %.1fim\n\n", cimag(chi3.c[2]));
+
+  // printf("chi4[0] = %.1fre\n", creal(chi4.c[0]));
+  // printf("chi4[0] = %.1fim\n", cimag(chi4.c[0]));
+  // printf("chi4[1] = %.1fre\n", creal(chi4.c[1]));
+  // printf("chi4[1] = %.1fim\n", cimag(chi4.c[1]));
+  // printf("chi4[2] = %.1fre\n", creal(chi4.c[2]));
+  // printf("chi4[2] = %.1fim\n\n", cimag(chi4.c[2]));
+
+  /***********************************
+   *    MVM Inverse Multiply Testing
+   ***********************************/
+    // _DOUBLE_MMV(chi, chi2, up, psi, psi2);
+    // _DOUBLE_MMV(psi, psi2, up, chi, chi2);
+
+    // single_MVM(&chi, &up, &psi);
+    // single_MVM(&psi, &up, &chi);
+
+    // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+    // double_MVM_inverse(&psi, &psi2, &up, &chi, &chi2);
+
+
+
+
+      // _DOUBLE_MMV(chi, chi2, up, psi, psi2);
+    // _DOUBLE_MMV(psi, psi2, up, chi, chi2);
+
+    // single_MVM(&chi, &up, &psi);
+    // single_MVM(&psi, &up, &chi);
+
+    // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+    // double_MVM_inverse(&psi, &psi2, &up, &chi, &chi2);
+
+
+
+
+
+      // _suNf_theta_T_inverse_multiply(chi, up, psi);
+    // _suNf_theta_T_inverse_multiply(chi2, up, psi2);
+
+    // _suNf_theta_T_inverse_multiply(psi, up, chi);
+    // _suNf_theta_T_inverse_multiply(psi2, up, chi2);
+
+      // _suNf_theta_T_inverse_multiply(chi, (up), psi);
+    // _suNf_theta_T_inverse_multiply(chi2, (up), psi2);
+
+    // _suNf_theta_T_inverse_multiply(psi, (up), chi);
+    // _suNf_theta_T_inverse_multiply(psi2, (up), chi2);
+
 
 ```
 

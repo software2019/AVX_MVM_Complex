@@ -22,14 +22,18 @@ export MPI_MEMMAP_VERBOSE=1
 module load valgrind
 # Launch MPI-based executable
 
- export OMP_NUM_THREADS=1
- #echo "Number of Threads = " $OMP_NUM_THREADS
-
- #icc xandar_openmp.c -o test1 -qopenmp
+  export OMP_NUM_THREADS=1
+  #echo "Number of Threads = " $OMP_NUM_THREADS
+  
+  #icc xandar_openmp.c -o test1 -qopenmp
+  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars 
- mpirun -n 1 valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
- # ./avx_complex_vec
- #vtune -collect hotspots -result-dir r001hs ./avx_complex_vec
+  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
+
+valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
+
+#./avx_complex_vec
+
 
 #Without the flag: -no-multibyte-chars, the following error occurs: "Catastrophic error: could not set locale "" to allow processing of multibyte characters"
 
