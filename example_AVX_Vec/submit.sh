@@ -30,9 +30,10 @@ module load valgrind
  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars 
   #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
 
-valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
+#valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
 
-#./avx_complex_vec
+./avx_complex_vec
+#./avx_complex_vec_macro
 
 
 #Without the flag: -no-multibyte-chars, the following error occurs: "Catastrophic error: could not set locale "" to allow processing of multibyte characters"

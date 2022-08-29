@@ -1,14 +1,12 @@
 
 #include "header.h"
 
-#define _DOUBLE_MMV(out1, out2, u, vec1, vec2) double_MVM(&chi, &chi2, &up, &psi, &psi2);
-
 // double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
 // double_MVM(&chi, &chi2, &up, &psi, &psi2);
 /**************************************************************************************************
  *   Commands for compiling:
  *   icc avx_complex_vec.c  -o test -O3 -march=core-avx2 -mtune=core-avx2
- *   gcc avx_complex_vec.c timer.c -o test -lm -O3 -g -march=core-avx2 -mtune=core-avx2
+ *   gcc avx_complex_vec.c timer.c -I /home/mrahman/HiRep/Include -o test -lm -O3 -g -march=core-avx2 -mtune=core-avx2
  *
  *   There is no -march=generic option because -march indicates the instruction set the compiler can use,
  *   and there is no generic instruction set applicable to all processors. In contrast, -mtune indicates
@@ -25,8 +23,8 @@ int main()
   int n = 5;
   double res1, res2, res3, res4, res5, res6, res7, res8;
   float elapsed, gflops;
-  int n_times = 1;
-  int n_warmup = 0;
+  int n_times = 1000000000;
+  int n_warmup = 1000;
   struct timeval start, end, etime;
 
   suNf_vector chi, chi2, chi3, chi4, psi, psi2; 
@@ -35,6 +33,62 @@ int main()
   /*Initialising the variables*/
   my_init(&psi, &psi2, &up, n);
 
+  /******************************************************************************
+   * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+   ******************************************************************************/
+
+  double_MVM(&chi, &chi2, &up, &psi, &psi2);
+  _suNf_theta_T_multiply(chi3, up, psi);
+  _suNf_theta_T_multiply(chi4, up, psi2);
+
+  // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
+  // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
+  // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
+
+  for (i = 0; i < 3; i++)
+  {
+    res1 = creal(chi.c[i]);
+    res2 = cimag(chi.c[i]);
+
+    res3 = creal(chi3.c[i]);
+    res4 = cimag(chi3.c[i]);
+
+    res5 = creal(chi2.c[i]);
+    res6 = cimag(chi2.c[i]);
+
+    res7 = creal(chi4.c[i]);
+    res8 = cimag(chi4.c[i]);
+
+    if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
+    {
+      printf("Error! First AVX_MVM and T_multiply are not equal\n");
+    }
+    else
+    {
+      printf("First chi passed at element %d\n", i);
+    }
+
+    if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
+    {
+      printf("Error! Second AVX_MVM and T_multiply are not equal\n");
+    }
+    else
+    {
+      printf("Second chi passed at element %d\n", i);
+    }
+    printf("\n");
+
+    res1 = .0;
+    res2 = .0;
+    res3 = .0;
+    res4 = .0;
+
+    res5 = .0;
+    res6 = .0;
+    res7 = .0;
+    res8 = .0;
+  }
+
   /*****************************************************************
    * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
    *****************************************************************/
@@ -42,9 +96,6 @@ int main()
   {
     double_MVM(&chi, &chi2, &up, &psi, &psi2);
     double_MVM(&psi, &psi2, &up, &chi, &chi2);
-
-    // _DOUBLE_MMV(chi, chi2, up, psi, psi2);
-    // _DOUBLE_MMV(psi, psi2, up, chi, chi2);
 
     psi.c[0] *= 0.01;
     psi.c[1] *= 0.01;
@@ -61,9 +112,6 @@ int main()
     double_MVM(&chi, &chi2, &up, &psi, &psi2);
     double_MVM(&psi, &psi2, &up, &chi, &chi2);
 
-  // _DOUBLE_MMV(chi, chi2, up, psi, psi2);
-  // _DOUBLE_MMV(psi, psi2, up, chi, chi2);
-
     psi.c[0] *= 0.01;
     psi.c[1] *= 0.01;
     psi.c[2] *= 0.01;
@@ -75,7 +123,7 @@ int main()
   gettimeofday(&end, 0);
   timeval_subtract(&etime, &end, &start);
   elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
-  printf("Double_MVM_AVX MACRO Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  printf("Double_MVM_AVX NON-MACRO Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
   for (i = 0; i < n_warmup; ++i)
@@ -219,26 +267,26 @@ void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_
 
   /*===>Start of loading variables: up, psi, psi2<===*/
   /* Loading first row (2 complexes) of 3x3 matrix */
-  temp1 = _mm256_load_pd((double *)up); /* [0][1][2][3]*/
+  temp1 = _mm256_loadu_pd((double *)up); /* [0][1][2][3]*/
   temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000); /*(real real real real)*/
   temp1 = _mm256_shuffle_pd(temp1, temp1, 0b1111); /*(imag, imag, imag, imag)*/ 
 
   /* Loading second row (2 complexes) of 3x3 matrix */
-  temp2 = _mm256_load_pd((double *)up + 6); /* [6][7][8][9]*/                                
+  temp2 = _mm256_loadu_pd((double *)up + 6); /* [6][7][8][9]*/                                
   temp7 = _mm256_shuffle_pd(temp2, temp2, 0b0000); /*(real real real real) */  
   temp2 = _mm256_shuffle_pd(temp2, temp2, 0b1111); /*(imag imag imag imag)*/
 
   /* Loading third row (2 complexes) of 3x3 matrix */
-  temp3 = _mm256_load_pd((double *)up + 12); /*[12][13][14][15] */                            
+  temp3 = _mm256_loadu_pd((double *)up + 12); /*[12][13][14][15] */                            
   temp8 = _mm256_shuffle_pd(temp3, temp3, 0b0000); /*(real real real real) */
   temp3 = _mm256_shuffle_pd(temp3, temp3, 0b1111); /*(imag imag imag imag)*/
 
   /* Loading first column (2 complexes of psi vector) and shuffling */
-  temp4 = _mm256_load_pd((double *)psi);      
+  temp4 = _mm256_loadu_pd((double *)psi);      
   temp9 = _mm256_shuffle_pd(temp4, temp4, 0b0101);/*im re im re */
   
   /* Loading second column (2 complexes of psi2 vector) and shuffling */
-  temp5 = _mm256_load_pd((double *)psi2);
+  temp5 = _mm256_loadu_pd((double *)psi2);
   temp10 = _mm256_shuffle_pd(temp5, temp5, 0b0101);/*im re im re */
 
   /*===>End of loading variables: up, psi, psi2<====*/
@@ -364,11 +412,11 @@ void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_
   /* ===========(Pair 3) End: Matrix 1&2 ============*/
 
   /*Storing Results*/
- _mm256_store_pd((double *)chi, temp11); 
- _mm_store_pd((double *)chi + 4, chi_3rd);
+ _mm256_storeu_pd((double *)chi, temp11); 
+ _mm_storeu_pd((double *)chi + 4, chi_3rd);
 
- _mm256_store_pd((double *)chi2, temp1);
- _mm_store_pd((double *)chi2 + 4, chi2_3rd);
+ _mm256_storeu_pd((double *)chi2, temp1);
+ _mm_storeu_pd((double *)chi2 + 4, chi2_3rd);
 }
 
 void single_MVM_inverse(suNf_vector *chi, const suNf *um, const suNf_vector *psi)
