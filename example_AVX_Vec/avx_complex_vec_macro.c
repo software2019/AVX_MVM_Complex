@@ -18,21 +18,22 @@
  ***************************************************************************************************/
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
+#define ALIGN 7
 
 #define double_MVM(mc, mc2, mu, mp, mp2)            \
  {                                                  \
-temp1 = _mm256_loadu_pd((double *)(mu));          \
+temp1 = _mm256_load_pd((double *)(mu));          \
 temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);  \
 temp1 = _mm256_shuffle_pd(temp1, temp1, 0b1111);  \
 temp2 = _mm256_loadu_pd((double *)(mu) + 6);      \
 temp7 = _mm256_shuffle_pd(temp2, temp2, 0b0000);  \
 temp2 = _mm256_shuffle_pd(temp2, temp2, 0b1111);  \
-temp3 = _mm256_loadu_pd((double *)(mu) + 12);     \
+temp3 = _mm256_load_pd((double *)(mu) + 12);     \
 temp8 = _mm256_shuffle_pd(temp3, temp3, 0b0000);  \
 temp3 = _mm256_shuffle_pd(temp3, temp3, 0b1111);  \
-temp4 = _mm256_loadu_pd((double *)(mp));          \
+temp4 = _mm256_load_pd((double *)(mp));          \
 temp9 = _mm256_shuffle_pd(temp4, temp4, 0b0101);  \
-temp5 = _mm256_loadu_pd((double *)(mp2));         \
+temp5 = _mm256_load_pd((double *)(mp2));         \
 temp10 = _mm256_shuffle_pd(temp5, temp5, 0b0101); \
 temp12 = _mm256_mul_pd(temp1, temp9);             \
 temp11 = _mm256_fmaddsub_pd(temp6, temp4, temp12);\
@@ -90,11 +91,12 @@ temp7 = _mm256_fmaddsub_pd(temp10, temp9, temp2);\
 temp2 = _mm256_add_pd(temp3, temp7);\
 chi_3rd = _mm256_castpd256_pd128(temp2);\
 chi2_3rd = _mm256_extractf128_pd(temp2, 1);\
-_mm256_storeu_pd((double *)(mc), temp11);\
-_mm_storeu_pd((double *)(mc) + 4, chi_3rd);\
-_mm256_storeu_pd((double *)(mc2), temp1);\
-_mm_storeu_pd((double *)(mc2) + 4, chi2_3rd);\
+_mm256_store_pd((double *)(mc), temp11);\
+_mm_store_pd((double *)(mc) + 4, chi_3rd);\
+_mm256_store_pd((double *)(mc2), temp1);\
+_mm_store_pd((double *)(mc2) + 4, chi2_3rd);\
 }
+
 
 int main()
 {
@@ -106,37 +108,43 @@ int main()
  int n_warmup = 0;
  struct timeval start, end, etime;
 
- suNf_vector chi, chi2, chi3, chi4, psi, psi2, psi_copy, psi2_copy;
- suNf up;
+ //suNf_vector chi, chi2, chi3, chi4, psi, psi2, psi_copy, psi2_copy;
+ //suNf up;
+
+ suNf_vector *chi, *chi2, chi3, chi4, *psi, *psi2, psi_copy, psi2_copy;
+ suNf *up;
+
+ up = amalloc(sizeof(suNf), ALIGN);
+ psi = amalloc(sizeof(suNf_vector), ALIGN);
+ psi2 = amalloc(sizeof(suNf_vector), ALIGN);
+ chi = amalloc(sizeof(suNf_vector), ALIGN);
+ chi2 = amalloc(sizeof(suNf_vector), ALIGN);
 
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
  __m128d chi_3rd, chi2_3rd;
 
 
  /*Initialising the variables*/
- my_init(&psi, &psi2, &up, n);
+ my_init(psi, psi2, up, n);
+
  /******************************************************************************
   * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   ******************************************************************************/
 
- double_MVM(&chi, &chi2, &up, &psi, &psi2);
- _suNf_theta_T_multiply(chi3, up, psi);
- _suNf_theta_T_multiply(chi4, up, psi2);
-
- // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
- // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
- // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
+ double_MVM(chi, chi2, up, psi, psi2);
+ _suNf_theta_T_multiply(chi3, (*up), (*psi));
+ _suNf_theta_T_multiply(chi4, (*up), (*psi2));
 
  for (i = 0; i < 3; i++)
  {
-  res1 = creal(chi.c[i]);
-  res2 = cimag(chi.c[i]);
+  res1 = creal(chi->c[i]);
+  res2 = cimag(chi->c[i]);
 
   res3 = creal(chi3.c[i]);
   res4 = cimag(chi3.c[i]);
 
-  res5 = creal(chi2.c[i]);
-  res6 = cimag(chi2.c[i]);
+  res5 = creal(chi2->c[i]);
+  res6 = cimag(chi2->c[i]);
 
   res7 = creal(chi4.c[i]);
   res8 = cimag(chi4.c[i]);
@@ -180,82 +188,162 @@ int main()
 
  for (i = 0; i < n_warmup; ++i)
  {
-  double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  double_MVM(&psi, &psi2, &up, &chi, &chi2);
+  double_MVM(chi, chi2, up, psi, psi2);
+  double_MVM(psi, psi2, up, chi, chi2);
 
-  psi.c[0] *= 0.001;
-  psi.c[1] *= 0.001;
-  psi.c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
-  psi2.c[0] *= 0.001;
-  psi2.c[1] *= 0.001;
-  psi2.c[2] *= 0.001;
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
  }
 
- // psi_copy = psi;
- // psi2_copy = psi2;
+ psi_copy = psi;
+ psi2_copy = psi2;
 
- // gettimeofday(&start, 0);
- // for (i = 0; i < n_times; ++i)
- // {
- //  double_MVM(&chi, &chi2, &up, &psi, &psi2);
- //  double_MVM(&psi, &psi2, &up, &chi, &chi2);
+ gettimeofday(&start, 0);
+ for (i = 0; i < n_times; ++i)
+ {
+  double_MVM(chi, chi2, up, psi, psi2);
+  double_MVM(psi, psi2, up, chi, chi2);
 
- //  // psi.c[0] *= 0.001;
- //  // psi.c[1] *= 0.001;
- //  // psi.c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
- //  // psi2.c[0] *= 0.001;
- //  // psi2.c[1] *= 0.001;
- //  // psi2.c[2] *= 0.001;
- // }
- // gettimeofday(&end, 0);
- // timeval_subtract(&etime, &end, &start);
- // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- // printf("Double_MVM_AVX MACRO Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
+ }
+ gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ printf("Double_MVM_AVX MACRO Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
- // psi_copy = psi;
- // psi2_copy = psi2;
+ psi_copy = psi;
+ psi2_copy = psi2;
  for (i = 0; i < n_warmup; ++i)
  {
-  _suNf_theta_T_multiply(chi, up, psi);
-  _suNf_theta_T_multiply(chi2, up, psi2);
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
 
-  _suNf_theta_T_multiply(psi, up, chi);
-  _suNf_theta_T_multiply(psi2, up, chi2);
+  _suNf_theta_T_multiply((*psi), (*up), (*chi));
+  _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
 
-  psi.c[0] *= 0.001;
-  psi.c[1] *= 0.001;
-  psi.c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
-  psi2.c[0] *= 0.001;
-  psi2.c[1] *= 0.001;
-  psi2.c[2] *= 0.001;
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
  }
 
- // psi_copy = psi;
- // psi2_copy = psi2;
- // gettimeofday(&start, 0);
- // for (i = 0; i < n_times; ++i)
- // {
- //  _suNf_theta_T_multiply(chi, up, psi);
- //  _suNf_theta_T_multiply(chi2, up, psi2);
+ psi_copy = psi;
+ psi2_copy = psi2;
+ gettimeofday(&start, 0);
+ for (i = 0; i < n_times; ++i)
+ {
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
 
- //  _suNf_theta_T_multiply(psi, up, chi);
- //  _suNf_theta_T_multiply(psi2, up, chi2);
+  _suNf_theta_T_multiply((*psi), (*up), (*chi));
+  _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
 
- //  // psi.c[0] *= 0.001;
- //  // psi.c[1] *= 0.001;
- //  // psi.c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
- //  // psi2.c[0] *= 0.001;
- //  // psi2.c[1] *= 0.001;
- //  // psi2.c[2] *= 0.001;
- // }
- // gettimeofday(&end, 0);
- // timeval_subtract(&etime, &end, &start);
- // elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- // printf("theta_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
+ }
+ gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ printf("theta_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+ afree(up);
+ afree(psi);
+ afree(psi2);
+ afree(chi);
+ afree(chi2);
 
  return 0;
+}
+
+/* Memory allocation and aligned */
+struct addr_t
+{
+ char *addr;
+ char *true_addr;
+ struct addr_t *next;
+};
+
+static struct addr_t *first = NULL;
+
+void *amalloc(size_t size, int p)
+{
+ int shift;
+ char *true_addr, *addr;
+ unsigned long mask;
+ struct addr_t *new;
+
+ if ((size <= 0) || (p < 0))
+  return (NULL);
+
+ shift = 1 << p;
+ mask = (unsigned long)(shift - 1);
+
+ true_addr = (char *)malloc(size + shift);
+ new = (struct addr_t *)malloc(sizeof(*first));
+
+ if ((true_addr == NULL) || (new == NULL))
+ {
+  free(true_addr);
+  free(new);
+  return (NULL);
+ }
+
+ addr = (char *)(((unsigned long)(true_addr + shift)) & (~mask));
+ (*new).addr = addr;
+ (*new).true_addr = true_addr;
+ (*new).next = first;
+ first = new;
+
+#ifdef AMALLOC_MEASURE
+ insert((void *)addr, size);
+#endif
+
+ return ((void *)(addr));
+}
+
+void afree(void *addr)
+{
+ struct addr_t *p, *q;
+
+#ifdef AMALLOC_MEASURE
+ remove(addr);
+#endif
+
+ q = NULL;
+
+ for (p = first; p != NULL; p = (*p).next)
+ {
+  if ((*p).addr == addr)
+  {
+   if (q != NULL)
+    (*q).next = (*p).next;
+   else
+    first = (*p).next;
+
+   free((*p).true_addr);
+   free(p);
+   return;
+  }
+
+  q = p;
+ }
 }
