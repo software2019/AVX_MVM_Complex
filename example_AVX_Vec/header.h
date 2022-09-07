@@ -9,6 +9,7 @@
 #include <immintrin.h>
 #include <limits.h>
 #include "suN.h" /* suNf_vector and suNf imported*/
+#include "memory.h"
 #define _suNf_theta_T_multiply(r, u, s) _suNf_multiply((r), (u), (s))
 #define _suNf_theta_T_inverse_multiply(r, u, s) _suNf_inverse_multiply((r), (u), (s))
 
