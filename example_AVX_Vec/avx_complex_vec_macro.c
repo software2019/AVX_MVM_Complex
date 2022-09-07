@@ -111,7 +111,7 @@ int main()
  //suNf_vector chi, chi2, chi3, chi4, psi, psi2, psi_copy, psi2_copy;
  //suNf up;
 
- suNf_vector *chi, *chi2, chi3, chi4, *psi, *psi2, psi_copy, psi2_copy;
+ suNf_vector *chi, *chi2, chi3, chi4, *psi, *psi2, *psi_copy, *psi2_copy;
  suNf *up;
 
  up = amalloc(sizeof(suNf), ALIGN);
@@ -183,8 +183,8 @@ int main()
   * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
   *****************************************************************/
 
- // psi_copy = psi;
- // psi2_copy = psi2;
+ psi_copy = psi;
+ psi2_copy = psi2;
 
  for (i = 0; i < n_warmup; ++i)
  {
