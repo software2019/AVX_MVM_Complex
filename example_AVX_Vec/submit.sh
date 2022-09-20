@@ -27,14 +27,18 @@ module load valgrind
   
   #icc xandar_openmp.c -o test1 -qopenmp
   #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
- #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars 
+  #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars 
   #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
 
-#valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec
+#valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec_macro
+valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_align_load  
+#valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_align_loadu  
+#valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_unalign_loadu    
 
-./avx_complex_vec
-#./avx_complex_vec_macro
-
+#./avx_complex_vec
+#./avx_complex_vec_align_load 
+#./avx_complex_vec_align_loadu
+#./avx_complex_vec_unalign_loadu
 
 #Without the flag: -no-multibyte-chars, the following error occurs: "Catastrophic error: could not set locale "" to allow processing of multibyte characters"
 
@@ -45,3 +49,4 @@ module load valgrind
 #LLC Size: 40960 KB
 # Print associativity: cat /sys/devices/system/cpu/cpu0/cache/index3/ways_of_associativity 
 #cg_annotate --auto=yes cachegrind.out.46849
+#callgrind_annotate --auto=yes callgrind.out.46849
