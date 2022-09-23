@@ -1,0 +1,7 @@
+{
+ "files.associations": {
+    "memory.h": "c",
+    "sun.h": "c",
+    "callgrind.h": "c"
+}
+}

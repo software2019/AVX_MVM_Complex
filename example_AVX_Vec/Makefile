@@ -2,8 +2,8 @@
 # Variables to control Makefile operation
 CC = icc #the compiler: icc/gcc for C program
 LIBS = -lm #-lefence
-CFLAGS = -O2 -g -march=core-avx2 -mtune=core-avx2 # -g -xcore-avx2 compiler flags, Extra flags to give to the C compiler.
-INCLUDES = -I /home/mrahman/HiRep/Include # Inclusing suN.h header file from Include directory
+CFLAGS = -O2 -g -march=core-avx2 -mtune=core-avx2  # -g -march=haswell -mtune=haswell -xcore-avx2 -mtune=native compiler flags, Extra flags to give to the C compiler.
+INCLUDES = -I . # Inclusing suN.h header file from Include directory
 #*****************************************************************************************************
 
 all: timer.o avx_complex_vec avx_complex_vec_align_load avx_complex_vec_macro_before avx_complex_vec_unalign_load avx_complex_vec_align_loadu avx_complex_vec_unalign_loadu

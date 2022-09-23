@@ -1,4 +1,27 @@
-## Double MVM Computation Results   
+## Double MVM Computation Results  
+
+  /* Vector initialized: 6 doubles */
+  psi.c[0] = (1.0 + 4.0 * I);
+  psi.c[1] = (2.0 + 5.0 * I);
+  psi.c[2] = (3.0 + 6.0 * I);
+
+  psi2.c[0] = (1.0 + 2.0 * I);
+  psi2.c[1] = (3.0 + 4.0 * I);
+  psi2.c[2] = (2.0 + 1.0 * I);
+
+  /* Matrix (3x3) initialized: 18 doubles */
+  up.c[0] = (1.0 + 2.0 * I);
+  up.c[1] = (3.0 + 4.0 * I);
+  up.c[2] = (5.0 + 6.0 * I);
+
+  up.c[3] = (2.0 + 1.0 * I);
+  up.c[4] = (3.0 + 2.0 * I);
+  up.c[5] = (1.0 + 3.0 * I);
+
+  up.c[6] = (4.0 + 5.0 * I);
+  up.c[7] = (6.0 + 4.0 * I);
+  up.c[8] = (5.0 + 6.0 * I);
+
 
 ```c
 chi[0] = -42.0re
@@ -144,8 +167,9 @@ chi2[2]  = psi2[0]  *  um[2]
 ```c
 chi[0] = (1 + 4i)*(1 + 2i) + (2 + 5i)*(2 + 1i) + (3 + 6i)*(4 + 5i)  
        //= (1 + 4i)*(1 - 2i) + (2 + 5i)*(2 - 1i) + (3 + 6i)*(4 - 5i)        conj() applied
+       = (1*1 + 1*2i )
        = (1+8) + (-2+4)i + (4+5) + (-2+10)i + (12+30) + (-15+24)i    
-addsub = 9 + 2i +9 + 8i + 42 + 9i
+addsub = 9 + 2i +9 + 8i + (42 + 9i)
 addsub2= (18+10i) + (42+9i)
        = (60 + 19i)
 
@@ -197,6 +221,14 @@ chi[0] = (1 + 4i)*(1 + 2i)                          + (2 + 5i)*(2 + 1i) + (3 + 6
        = (1*1)+(4i*2i) + (1*2i) + (4i*1)
        = 1 - 8 + 2i + 4i
        = -7 + 6i
+
+
+or in our program
+        (1 + 4i)*(1 + 2i)   + (2 + 5i)*(2 + 1i)
+shuffle = (r, r, r,r) = (1, 1, 2, 2)
+shuffle = (i,i,i,i) = (4, 2, 5, 1)*I
+
+      
  
 /*Results:Double inverse MVM Computation*/
 chi[0] = 60.0re
@@ -226,10 +258,10 @@ void single_MVM_inverse(suNf_vector *chi, const suNf *um, const suNf_vector *psi
 
  /*===>Start of loading variables: um, psi<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
- up0 = _mm256_load_pd((double *)um); // um[0]um[1]
+ up0 = _mm256_load_pd((double *)um); // um[0]um[1]  4-way 8 bytes
  
  /* Loading second set of 3 complexes of 3x3 matrix */
- up1 = _mm256_load_pd((double *)um + 6); // um[3]um[4]
+ up1 = _mm256_load_pd((double *)um + 6); // um[3]um[4] 4-way 8 bytes
 
  /****************************************************************
   * col1: working vector um0um3 of lower lane of up0 [L1] and of up1 [L2]
@@ -351,9 +383,20 @@ void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, con
 
  __m128d sse_add0, vec0_3rd, vec1_3rd;
 
+
+  printf("um[0] = %.1fre\n", creal(um->c[0]));
+  printf("um[1] = %.1fim\n", cimag(um->c[1]));
+  printf("um[2] = %.1fre\n", creal(um->c[2]));
+  printf("um[3] = %.1fim\n\n", cimag(um->c[3]));
+
  /*===>Start of loading variables: um, psi<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
  up0 = _mm256_load_pd((double *)um); // um[0]um[1]
+
+  printf("temp1[0] = %.1fre\n", temp1[0]);
+  printf("temp1[1] = %.1fim\n", temp1[1]);
+  printf("temp1[2] = %.1fre\n", temp1[2]);
+  printf("temp1[3] = %.1fim\n\n", temp1[3]);
 
  /* Loading second set of 3 complexes of 3x3 matrix */
  up1 = _mm256_load_pd((double *)um + 6); // um[3]um[4]
@@ -1072,8 +1115,345 @@ chi2[1] = 28.0im
     // _suNf_theta_T_inverse_multiply(psi2, (up), chi2);
 
 
+    /* Organised Variables */
+void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
+{
+   __m256d up0, up0_3rd, up1, up1_3rd, up2, up2_3rd, realup0, realup1, realup2, realup0up1, realup2_3rd, imagup0, imagup1, imagup2, imagup0up1, imagup2_3rd, reimprod0, _reimprod0, reimprod1, _reimprod1, reimprod2, _reimprod2, reimprod3, _reimprod3, reimprod4, _reimprod4, reimprod5, _reimprod5, reimprod3rd_1, _reimprod3rd_1, reimprod3rd_2, _reimprod3rd_2, addsub_res0, _addsub_res0, addsub_res1, _addsub_res1, addsub_res2, _addsub_res2, addsub_res3, _addsub_res3, addsub_res4, _addsub_res4, addsub_res5, _addsub_res5, addsub_res3rd_1, addsub_res3rd_2, psi0, psi0_shuf, psi2_0, psi2_0_shuf, psi3, psi4, psi_3rd, psi2_3rd, add_res1, add_res2, add_res3, up0up1_3rd, up0_3rd_perm, up2_3rd_perm, psi_3rd_perm, psi2_3rd_256, psi_psi2_3rd, psi_psi2_3rd_shuf, up2_3rd_duplicate, psi_3rd_duplicate, psi2_3rd_duplicate, temp1, temp2, temp3, add_all_0, add_all_1, add_all_2;
+
+   __m128d vec0_3rd, vec1_3rd;
+
+   /*===>Start of loading variables: up, psi, psi2<===*/
+   /* Loading first set of 3 complexes of 3x3 matrix */
+   up0 = _mm256_loadu_pd((double *)up);
+   realup0 = _mm256_shuffle_pd(up0, up0, 0b0000); /* Shuffle up0: (real real real real) parts */
+   imagup0 = _mm256_shuffle_pd(up0, up0, 0b1111); /* Shuffle up0: (imag, imag, imag, imag) parts */
+
+   /* Loading second set of 3 complexes of 3x3 matrix */
+   up1 = _mm256_loadu_pd((double *)up + 6);
+   realup1 = _mm256_shuffle_pd(up1, up1, 0b0000); /* Shuffle up1: (real real real real) parts */
+   imagup1 = _mm256_shuffle_pd(up1, up1, 0b1111); /* Shuffle up1: (imag, imag, imag, imag) parts */
+
+   /* Loading third set of 3 complexes of 3x3 matrix */
+   up2 = _mm256_loadu_pd((double *)up + 12);
+   realup2 = _mm256_shuffle_pd(up2, up2, 0b0000); /* Shuffle up2: (real real real real) parts */
+   imagup2 = _mm256_shuffle_pd(up2, up2, 0b1111); /* Shuffle up2: (imag, imag, imag, imag) parts */
+
+   /* Loading 3 complexes of psi vector and suffling */
+   psi0 = _mm256_loadu_pd((double *)psi);
+   psi0_shuf = _mm256_shuffle_pd(psi0, psi0, 0b0101);
+
+   psi2_0 = _mm256_loadu_pd((double *)psi2);       // from 0-31 bytes
+   psi2_0_shuf = _mm256_shuffle_pd(psi2_0, psi2_0, 0b0101);
+
+   /*===>End of loading variables: up, psi, psi2<====*/
+
+   /*========>Start of MVM Computations: 2x2<========*/
+   /* =================================(Pair 1) start ============================= */
+   /*First set of computation:2x2*/
+   reimprod0 = _mm256_mul_pd(realup0, psi0);              /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod0 = _mm256_mul_pd(imagup0, psi0_shuf);        /* (im*im),(im*re),(im*im),(im*re) */
+   addsub_res0 = _mm256_addsub_pd(reimprod0, _reimprod0); /*addsub*/
+
+   /*Second set of computation:2x2*/
+   reimprod1 = _mm256_mul_pd(realup1, psi0);              /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod1 = _mm256_mul_pd(imagup1, psi0_shuf);        /* (im*im),(im*re),(re*im),(im*re) */
+   addsub_res1 = _mm256_addsub_pd(reimprod1, _reimprod1); /*addsub*/
+
+   /* ==========SHUFFLING AND ADDING TWO AVX REGISTERS OF ROW 1 and 2 RESULT Matrix 1 (2x2)========== */
+   /* A vector of lower lane of addsub_res1 [L1] and of addsub_res0 [L2] */
+   _addsub_res0 = _mm256_permute2f128_pd(addsub_res1, addsub_res0, 2); //[L1 L2]
+   temp1 = _mm256_permute2f128_pd(addsub_res0, addsub_res0, 1);        // Placing H2 lane in L2 lane
+   /* A vector of high lane of temp [H1] and of addsub_res1 [H2] */
+   _addsub_res1 = _mm256_blend_pd(temp1, addsub_res1, 12); //[H1 H2]
+   add_res1 = _mm256_add_pd(_addsub_res0, _addsub_res1);   // Result of 2x2
+
+   /* =======Dealing with 3rd element of row 1 & 2 and col ======= */
+   up0_3rd = _mm256_loadu_pd((double *)up + 2);
+   up0_3rd_perm = _mm256_permute2f128_pd(up0_3rd, up0_3rd, 1);
+   up1_3rd = _mm256_loadu_pd((double *)up + 8);
+   up0up1_3rd = _mm256_blend_pd(up0_3rd_perm, up1_3rd, 12); /* [H1 H2] of upo_3rd and up1_3rd */
+
+   psi_3rd = _mm256_loadu_pd((double *)psi + 2);
+   psi_3rd_perm = _mm256_permute2f128_pd(psi_3rd, psi_3rd, 1);
+   psi_3rd_duplicate = _mm256_blend_pd(psi_3rd_perm, psi_3rd, 12); /*[H1 H2] of psi_3rd, 3rd element of col */
+
+   realup0up1 = _mm256_shuffle_pd(up0up1_3rd, up0up1_3rd, 0b0000);
+   imagup0up1 = _mm256_shuffle_pd(up0up1_3rd, up0up1_3rd, 0b1111);
+   psi3 = _mm256_shuffle_pd(psi_3rd_duplicate, psi_3rd_duplicate, 0b0101);
+   reimprod3rd_1 = _mm256_mul_pd(realup0up1, psi_3rd_duplicate);
+   _reimprod3rd_1 = _mm256_mul_pd(imagup0up1, psi3);
+   addsub_res3rd_1 = _mm256_addsub_pd(reimprod3rd_1, _reimprod3rd_1); // Result of 3rd elements of row 1&2 and col
+
+   /* Additions */
+   add_all_0 = _mm256_add_pd(add_res1, addsub_res3rd_1); // first 2 rows-col result of matrix-1: chi[0] chi[1]
+   /* =================================(Pair 1) end  ============================= */
+
+   /* =================================(Pair 2) start ============================= */
+   /*Fourth set of computation:2x2*/
+   reimprod3 = _mm256_mul_pd(realup0, psi2_0);            /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod3 = _mm256_mul_pd(imagup0, psi2_0_shuf);      /* (im*im),(im*re),(re*im),(im*re) */
+   addsub_res3 = _mm256_addsub_pd(reimprod3, _reimprod3); /*addsub*/
+
+   /*Fifth set of computation:2x2*/
+   reimprod4 = _mm256_mul_pd(realup1, psi2_0);            /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod4 = _mm256_mul_pd(imagup1, psi2_0_shuf);      /* (im*im),(im*re),(re*im),(im*re) */
+   addsub_res4 = _mm256_addsub_pd(reimprod4, _reimprod4); /*addsub*/
+
+   /* ==========SHUFFLING AND ADDING TWO AVX REGISTERS OF ROW 1 and 2 RESULT Matrix 2 (2x2)========== */
+   /* A vector of lower lane of addsub_res4 [L1] and of addsub_res3 [L2] */
+   _addsub_res2 = _mm256_permute2f128_pd(addsub_res4, addsub_res3, 2); // [L1 L2]
+   temp2 = _mm256_permute2f128_pd(addsub_res3, addsub_res3, 1);        // Placing H2 lane in L2 lane
+   /* A vector of high lane of temp2 [H1] and of addsub_res4 [H2] */
+   _addsub_res3 = _mm256_blend_pd(temp2, addsub_res4, 12); // [H1 H2]
+   add_res2 = _mm256_add_pd(_addsub_res2, _addsub_res3);   // Result of 2x2
+
+   /* =======Dealing with 3rd element of row 1 & 2 and col ======= */
+   psi2_3rd = _mm256_loadu_pd((double *)psi2 + 2); // from 32-47 bytes
+   psi2_3rd_256 = _mm256_permute2f128_pd(psi2_3rd, psi2_3rd, 1);
+   psi2_3rd_duplicate = _mm256_blend_pd(psi2_3rd_256, psi2_3rd, 12); /*[H1 H2] of psi_3rd, 3rd element of col */
+
+   psi4 = _mm256_shuffle_pd(psi2_3rd_duplicate, psi2_3rd_duplicate, 0b0101);
+   reimprod3rd_2 = _mm256_mul_pd(realup0up1, psi2_3rd_duplicate);
+   _reimprod3rd_2 = _mm256_mul_pd(imagup0up1, psi4);
+   addsub_res3rd_2 = _mm256_addsub_pd(reimprod3rd_2, _reimprod3rd_2); // Result of 3rd elements of row 1&2 and col
+
+   add_all_1 = _mm256_add_pd(add_res2, addsub_res3rd_2); // first 2 rows-col result of matrix 2: chi2[0] chi2[1]
+   /* =================================(Pair 2) End ============================= */
+
+   /* =================================(Pair 3) Start ============================= */
+   /*Third set of computation:2x2*/
+   reimprod2 = _mm256_mul_pd(realup2, psi0);              /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod2 = _mm256_mul_pd(imagup2, psi0_shuf);        /* (im*im),(im*re),(re*im),(im*re) */
+   addsub_res2 = _mm256_addsub_pd(reimprod2, _reimprod2); /*addsub*/
+
+   /*Sixth set of computation:2x2*/
+   reimprod5 = _mm256_mul_pd(realup2, psi2_0);            /* (re*re),(re*im),(re*re),(re*im) */
+   _reimprod5 = _mm256_mul_pd(imagup2, psi2_0_shuf);      /* (im*im),(im*re),(re*im),(im*re) */
+   addsub_res5 = _mm256_addsub_pd(reimprod5, _reimprod5); /*addsub*/
+
+   /* ==========SHUFFLING AND ADDING TWO AVX REGISTERS OF ROW 3 Matrix 1 and 2 RESULT========== */
+   /* A vector of lower lane of addsub_res5 [L1] and of addsub_res2 [L2] */
+   _addsub_res4 = _mm256_permute2f128_pd(addsub_res5, addsub_res2, 2); // [L1 L2]
+   temp3 = _mm256_permute2f128_pd(addsub_res2, addsub_res2, 1);        // Placing H2 lane in L2 lane
+   /* A vector of high lane of temp3 [H1] and of addsub_res5 [H2] */
+   _addsub_res5 = _mm256_blend_pd(temp3, addsub_res5, 12); // [H1 H2]
+   add_res3 = _mm256_add_pd(_addsub_res4, _addsub_res5);   // Result of ROW 3 of matrix 1 & 2
+
+   /* =======Dealing with 3rd element of 3rd row and col of both matrix ======= */
+   up2_3rd = _mm256_loadu_pd((double *)up + 14);
+   up2_3rd_perm = _mm256_permute2f128_pd(up2_3rd, up2_3rd, 1);
+   up2_3rd_duplicate = _mm256_blend_pd(up2_3rd_perm, up2_3rd, 12);
+   realup2_3rd = _mm256_shuffle_pd(up2_3rd_duplicate, up2_3rd_duplicate, 0b0000);
+   imagup2_3rd = _mm256_shuffle_pd(up2_3rd_duplicate, up2_3rd_duplicate, 0b1111);
+
+   psi_psi2_3rd = _mm256_blend_pd(psi_3rd_perm, psi2_3rd, 12); /*[H1 H2] of psi_3rd, 3rd element of col */
+   psi_psi2_3rd_shuf = _mm256_shuffle_pd(psi_psi2_3rd, psi_psi2_3rd, 0b0101);
+
+   reimprod4 = _mm256_mul_pd(realup2_3rd, psi_psi2_3rd);
+   _reimprod4 = _mm256_mul_pd(imagup2_3rd, psi_psi2_3rd_shuf);
+   addsub_res4 = _mm256_addsub_pd(reimprod4, _reimprod4); // 3rd element of 3rd row and col: result: lanes are identical
+
+   add_all_2 = _mm256_add_pd(add_res3, addsub_res4); // chi[2] chi2[2]
+
+   vec0_3rd = _mm256_castpd256_pd128(add_all_2);   // First 128-bits chi[2]
+   vec1_3rd = _mm256_extractf128_pd(add_all_2, 1); // Second 128-bits chi2[2]
+
+   /* =================================(Pair 3) End ============================= */
+
+   // printf("add_all_0[0] = %.1fre\n", creal(add_all_0[0]));
+   // printf("add_all_0[1] = %.1fim\n", creal(add_all_0[1]));
+   // printf("add_all_0[2] = %.1fre\n", creal(add_all_0[2]));
+   // printf("add_all_0[3] = %.1fim\n", creal(add_all_0[3]));
+   // printf("vec0_3rd[0] = %.1fre\n", creal(vec0_3rd[0]));
+   // printf("vec0_3rd[1] = %.1fre\n\n", creal(vec0_3rd[1]));
+
+   // printf("add_all_1[0] = %.1fre\n", creal(add_all_1[0]));
+   // printf("add_all_1[1] = %.1fim\n", creal(add_all_1[1]));
+   // printf("add_all_1[2] = %.1fre\n", creal(add_all_1[2]));
+   // printf("add_all_1[3] = %.1fim\n", creal(add_all_1[3]));
+   // printf("vec1_3rd[0] = %.1fre\n", creal(vec1_3rd[0]));
+   // printf("vec1_3rd[1] = %.1fim\n\n", creal(vec1_3rd[1]));
+
+   /*Storing Results*/
+   _mm256_storeu_pd((double *)chi, add_all_0);
+   //_mm_storeu_pd((__m128d *)chi + 2, vec0_3rd);
+   _mm_storeu_pd((double *)chi + 4, vec0_3rd);
+
+   _mm256_storeu_pd((double *)chi2, add_all_1);
+   _mm_storeu_pd((double *)chi2 + 4, vec1_3rd);
+}
+
+
+
 ```
 
+COMMAND:
+valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no ./avx_complex_vec_align_load
+
+non-macro double_MVM:
+Double_MVM_AVX Macro Aligned_load Time: [0 sec 41802 usec]
+==31455== 
+==31455== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==31455== Collected : 770 190 60 64 63 36 64 63 36
+==31455== 
+==31455== I   refs:      770
+==31455== I1  misses:     64
+==31455== LLi misses:     64
+==31455== I1  miss rate: 8.31%
+==31455== LLi miss rate: 8.31%
+==31455== 
+==31455== D   refs:      250  (190 rd + 60 wr)
+==31455== D1  misses:     99  ( 63 rd + 36 wr)
+==31455== LLd misses:     99  ( 63 rd + 36 wr)
+==31455== D1  miss rate: 39.6% (33.2%   + 60.0%  )
+==31455== LLd miss rate: 39.6% (33.2%   + 60.0%  )
+==31455== 
+==31455== LL refs:       163  (127 rd + 36 wr)
+==31455== LL misses:     163  (127 rd + 36 wr)
+==31455== LL miss rate:  16.0% (13.2%   + 60.0%  )
+
+theta_T_multiply Aligned_load Time: [0 sec 46058 usec]
+==31973== 
+==31973== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==31973== Collected : 900 300 50 70 54 27 70 54 27
+==31973== 
+==31973== I   refs:      900
+==31973== I1  misses:     70
+==31973== LLi misses:     70
+==31973== I1  miss rate: 7.78%
+==31973== LLi miss rate: 7.78%
+==31973== 
+==31973== D   refs:      350  (300 rd + 50 wr)
+==31973== D1  misses:     81  ( 54 rd + 27 wr)
+==31973== LLd misses:     81  ( 54 rd + 27 wr)
+==31973== D1  miss rate: 23.1% (18.0%   + 54.0%  )
+==31973== LLd miss rate: 23.1% (18.0%   + 54.0%  )
+==31973== 
+==31973== LL refs:       151  (124 rd + 27 wr)
+==31973== LL misses:     151  (124 rd + 27 wr)
+==31973== LL miss rate:  12.1% (10.3%   + 54.0%  )
+
+
+Macro version:
+Double_MVM_AVX Macro Aligned_load Time: [0 sec 41049 usec]
+==33113== 
+==33113== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==33113== Collected : 600 160 0 50 54 0 50 54
+==33113== 
+==33113== I   refs:      600
+==33113== I1  misses:     50
+==33113== LLi misses:     50
+==33113== I1  miss rate: 8.33%
+==33113== LLi miss rate: 8.33%
+==33113== 
+==33113== D   refs:      160  (160 rd + 0 wr)
+==33113== D1  misses:     54  ( 54 rd + 0 wr)
+==33113== LLd misses:     54  ( 54 rd + 0 wr)
+==33113== D1  miss rate: 33.7% (33.7%   + 0.0%  )
+==33113== LLd miss rate: 33.7% (33.7%   + 0.0%  )
+==33113== 
+==33113== LL refs:       104  (104 rd + 0 wr)
+==33113== LL misses:     104  (104 rd + 0 wr)
+==33113== LL miss rate:  13.7% (13.7%   + 0.0%  )
+
+macro version:
+theta_T_multiply Aligned_load Time: [0 sec 45147 usec]
+==34540== 
+==34540== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==34540== Collected : 1200 310 120 90 54 27 90 54 27
+==34540== 
+==34540== I   refs:      1,200
+==34540== I1  misses:       90
+==34540== LLi misses:       90
+==34540== I1  miss rate:  7.50%
+==34540== LLi miss rate:  7.50%
+==34540== 
+==34540== D   refs:        430  (310 rd + 120 wr)
+==34540== D1  misses:       81  ( 54 rd +  27 wr)
+==34540== LLd misses:       81  ( 54 rd +  27 wr)
+==34540== D1  miss rate:  18.8% (17.4%   + 22.5%  )
+==34540== LLd miss rate:  18.8% (17.4%   + 22.5%  )
+==34540== 
+==34540== LL refs:         171  (144 rd +  27 wr)
+==34540== LL misses:       171  (144 rd +  27 wr)
+==34540== LL miss rate:   10.5% (9.5%   + 22.5%  )
+
+
+non_macro: loadu
+Double_MVM_AVX Aligned_loadu Time: [0 sec 93567 usec]
+==36278== 
+==36278== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==36278== Collected : 770 190 60 63 45 36 63 45 36
+==36278== 
+==36278== I   refs:      770
+==36278== I1  misses:     63
+==36278== LLi misses:     63
+==36278== I1  miss rate: 8.18%
+==36278== LLi miss rate: 8.18%
+==36278== 
+==36278== D   refs:      250  (190 rd + 60 wr)
+==36278== D1  misses:     81  ( 45 rd + 36 wr)
+==36278== LLd misses:     81  ( 45 rd + 36 wr)
+==36278== D1  miss rate: 32.4% (23.7%   + 60.0%  )
+==36278== LLd miss rate: 32.4% (23.7%   + 60.0%  )
+==36278== 
+==36278== LL refs:       144  (108 rd + 36 wr)
+==36278== LL misses:     144  (108 rd + 36 wr)
+==36278== LL miss rate:  14.1% (11.2%   + 60.0%  )
+
+theta_T_multiply Aligned_loadu Time: [0 sec 101585 usec]
+==36961== 
+==36961== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==36961== Collected : 1200 310 130 90 45 27 90 45 27
+==36961== 
+==36961== I   refs:      1,200
+==36961== I1  misses:       90
+==36961== LLi misses:       90
+==36961== I1  miss rate:  7.50%
+==36961== LLi miss rate:  7.50%
+==36961== 
+==36961== D   refs:        440  (310 rd + 130 wr)
+==36961== D1  misses:       72  ( 45 rd +  27 wr)
+==36961== LLd misses:       72  ( 45 rd +  27 wr)
+==36961== D1  miss rate:  16.4% (14.5%   + 20.8%  )
+==36961== LLd miss rate:  16.4% (14.5%   + 20.8%  )
+==36961== 
+==36961== LL refs:         162  (135 rd +  27 wr)
+==36961== LL misses:       162  (135 rd +  27 wr)
+==36961== LL miss rate:    9.9% (8.9%   + 20.8%  )
+
+macro-version: loadu
+Double_MVM_AVX Aligned_loadu Time: [0 sec 90802 usec]
+==37631== 
+==37631== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
+==37631== Collected : 600 160 0 50 45 0 50 45
+==37631== 
+==37631== I   refs:      600
+==37631== I1  misses:     50
+==37631== LLi misses:     50
+==37631== I1  miss rate: 8.33%
+==37631== LLi miss rate: 8.33%
+==37631== 
+==37631== D   refs:      160  (160 rd + 0 wr)
+==37631== D1  misses:     45  ( 45 rd + 0 wr)
+==37631== LLd misses:     45  ( 45 rd + 0 wr)
+==37631== D1  miss rate: 28.1% (28.1%   + 0.0%  )
+==37631== LLd miss rate: 28.1% (28.1%   + 0.0%  )
+==37631== 
+==37631== LL refs:        95  ( 95 rd + 0 wr)
+==37631== LL misses:      95  ( 95 rd + 0 wr)
+==37631== LL miss rate:  12.5% (12.5%   + 0.0%  )
+
+icc  -O2 -g -march=core-avx2 -mtune=core-avx2 -qopt-report=5 -qopt-report-phase=vec -inline-level=0 -I /home/mrahman/HiRep/Include  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load 
 
 
 
+icc  -O2 -g -march=core-avx2 -mtune=core-avx2 -qopt-report-routine=double_MVM -I /home/mrahman/HiRep/Include  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load 
+
+
+gcc  -O3 -g -march=core-avx2 -mtune=core-avx2  -I /Users/msrahman/Documents/HiRep_Repo/HiRep/Include  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load
+
+
+  cpp-12  -O2 -g -march=core-avx2 -mtune=core-avx2  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load
+
+  /opt/intel/oneapi/compiler/2022.1.0

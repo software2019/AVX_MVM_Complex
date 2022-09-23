@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/mrahman/HiRep/Include"
+            ],
+            "defines": [],
+            "compilerPath": "/opt/ohpc/pub/intel/compilers_and_libraries_2019.5.281/linux/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

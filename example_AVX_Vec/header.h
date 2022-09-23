@@ -15,9 +15,11 @@
 #define _suNf_theta_T_multiply(r, u, s) _suNf_multiply((r), (u), (s))
 #define _suNf_theta_T_inverse_multiply(r, u, s) _suNf_inverse_multiply((r), (u), (s))
 #define MEM_ALIGN (256/8)
+#define ALIGN 8
 
 void single_MVM(suNf_vector *chi, const suNf *up, const suNf_vector *psi);
-void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
+void double_MVM_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
+void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
 void single_MVM_inverse(suNf_vector *chi, const suNf *um, const suNf_vector *psi);
 void double_MVM_inverse(suNf_vector *chi, suNf_vector *chi2, const suNf *um, const suNf_vector *psi, const suNf_vector *psi2);
 void single_MVM_2x2(suNf_vector *chi, const suNf *up, const suNf_vector *psi);

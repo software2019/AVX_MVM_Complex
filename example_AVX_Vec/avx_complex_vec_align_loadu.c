@@ -19,7 +19,7 @@
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 
-#define double_MVM(mc, mc2, mu, mp, mp2)                    \
+#define double_MVM_macro(mc, mc2, mu, mp, mp2)              \
  {                                                          \
   temp1 = _mm256_loadu_pd((double *)(mu));                   \
   temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);          \
@@ -136,7 +136,7 @@ int main()
   * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   ******************************************************************************/
 
-//  double_MVM(chi, chi2, up, psi, psi2);
+//  double_MVM_macro(chi, chi2, up, psi, psi2);
 //  _suNf_theta_T_multiply(chi3, (*up), (*psi));
 //  _suNf_theta_T_multiply(chi4, (*up), (*psi2));
 
@@ -193,8 +193,12 @@ int main()
 
  for (i = 0; i < n_warmup; ++i)
  {
-  double_MVM(chi, chi2, up, psi, psi2);
-  double_MVM(psi, psi2, up, chi, chi2);
+
+  double_MVM_macro(chi, chi2, up, psi, psi2);
+  double_MVM_macro(psi, psi2, up, chi, chi2);
+
+  // double_MVM_non_macro(chi, chi2, up, psi, psi2);
+  // double_MVM_non_macro(psi, psi2, up, chi, chi2);
 
   psi->c[0] *= 0.001;
   psi->c[1] *= 0.001;
@@ -212,13 +216,19 @@ int main()
  for (i = 0; i < n_times; ++i)
  {
 
-  CALLGRIND_START_INSTRUMENTATION;
-  CALLGRIND_TOGGLE_COLLECT;
-  double_MVM(chi, chi2, up, psi, psi2);
-  CALLGRIND_TOGGLE_COLLECT;
-  CALLGRIND_STOP_INSTRUMENTATION;
+  // CALLGRIND_START_INSTRUMENTATION;
+  // CALLGRIND_TOGGLE_COLLECT;
+  double_MVM_macro(chi, chi2, up, psi, psi2);
+  // CALLGRIND_TOGGLE_COLLECT;
+  // CALLGRIND_STOP_INSTRUMENTATION;
+  double_MVM_macro(psi, psi2, up, chi, chi2);
 
-  double_MVM(psi, psi2, up, chi, chi2);
+  // // CALLGRIND_START_INSTRUMENTATION;
+  // // CALLGRIND_TOGGLE_COLLECT;
+  // double_MVM_non_macro(chi, chi2, up, psi, psi2);
+  // // CALLGRIND_TOGGLE_COLLECT;
+  // // CALLGRIND_STOP_INSTRUMENTATION;
+  // double_MVM_non_macro(psi, psi2, up, chi, chi2);
 
   psi->c[0] *= 0.001;
   psi->c[1] *= 0.001;
@@ -299,7 +309,7 @@ int main()
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 
-// void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
+// void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
 // {
 //  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
 //  __m128d chi_3rd, chi2_3rd;

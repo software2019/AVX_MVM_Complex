@@ -31,12 +31,12 @@ module load valgrind
   #icc avx_complex_vec.c -o test -O3 -march=core-avx2 -mtune=core-avx2 -no-multibyte-chars
 
 #valgrind --tool=cachegrind --LL=41943040,20,64 ./avx_complex_vec_macro
-valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_align_load  
+#valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_align_load  
 #valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_align_loadu  
 #valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_unalign_loadu    
 
 #./avx_complex_vec
-#./avx_complex_vec_align_load 
+./avx_complex_vec_align_load 
 #./avx_complex_vec_align_loadu
 #./avx_complex_vec_unalign_loadu
 

@@ -78,11 +78,10 @@ int main()
    * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
    ******************************************************************************/
 
-  // double_MVM(&chi, &chi2, &up, &psi, &psi2);
+  // double_MVM_macro(&chi, &chi2, &up, &psi, &psi2);
   // _suNf_theta_T_multiply(chi3, up, psi);
   // _suNf_theta_T_multiply(chi4, up, psi2);
 
-  // // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
   // // _suNf_theta_T_inverse_multiply(chi3, (up), psi);
   // // _suNf_theta_T_inverse_multiply(chi4, (up), psi2);
 
@@ -135,8 +134,11 @@ int main()
    *****************************************************************/
   // for (i = 0; i < n_warmup; ++i)
   // {
-  //   double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  //   double_MVM(&psi, &psi2, &up, &chi, &chi2);
+   //double_MVM_macro(chi, chi2, up, psi, psi2);
+   //double_MVM_macro(psi, psi2, up, chi, chi2);
+
+    // double_MVM_non_macro(chi, chi2, up, psi, psi2);
+    // double_MVM_non_macro(psi, psi2, up, chi, chi2);
 
   //   psi.c[0] *= 0.01;
   //   psi.c[1] *= 0.01;
@@ -150,8 +152,19 @@ int main()
   // gettimeofday(&start, 0);
   // for (i = 0; i < n_times; ++i)
   // {
-  //   double_MVM(&chi, &chi2, &up, &psi, &psi2);
-  //   double_MVM(&psi, &psi2, &up, &chi, &chi2);
+   // CALLGRIND_START_INSTRUMENTATION;
+  // CALLGRIND_TOGGLE_COLLECT;
+  double_MVM_non_macro(chi, chi2, up, psi, psi2);
+  // CALLGRIND_TOGGLE_COLLECT;
+  // CALLGRIND_STOP_INSTRUMENTATION;
+  double_MVM_non_macro(psi, psi2, up, chi, chi2);
+
+  // // CALLGRIND_START_INSTRUMENTATION;
+  // // CALLGRIND_TOGGLE_COLLECT;
+  // double_MVM_non_macro(chi, chi2, up, psi, psi2);
+  // // CALLGRIND_TOGGLE_COLLECT;
+  // // CALLGRIND_STOP_INSTRUMENTATION;
+  // double_MVM_non_macro(psi, psi2, up, chi, chi2);
 
   //   psi.c[0] *= 0.01;
   //   psi.c[1] *= 0.01;
@@ -207,7 +220,7 @@ int main()
   // printf("theta_T_multiply Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
   //single_MVM(chi, up, psi);
-  double_MVM(chi, chi2, up, psi, psi2);
+  double_MVM_non_macro(chi, chi2, up, psi, psi2);
   // single_MVM_inverse(&chi, &up, &psi);
   //double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
   // single_MVM_2x2(&chi, &up, &psi);
@@ -339,7 +352,7 @@ __m128d chi_3rd;
 }
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
-void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
+void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
 {
   __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
   __m128d chi_3rd, chi2_3rd;

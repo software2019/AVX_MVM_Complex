@@ -27,7 +27,7 @@ export MPI_MEMMAP_VERBOSE=1
 # mpirun -n 2 -print-rank-map vtune -collect hotspots -result-dir r_dphi_002hs ./speed_test_diracoperator -i ./speed_test_diracoperator2.in -o out_sf_measure_2501_3500 2
 
 export OMP_NUM_THREADS=1
-vtune -collect hotspots -result-dir r002hs ./avx_complex_vec
+vtune -collect hotspots -result-dir r002hs ./avx_complex_vec_align_load
 
 #export OMP_NUM_THREADS=8
 #mpirun -n 8 vtune -collect hotspots -result-dir r_dphi_003hs ./speed_test_diracoperator -i ./speed_test_diracoperator8.in -o out_sf_measure_2501_3500 2
