@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h> //this library allows for malloc to run
 #include <sys/time.h>

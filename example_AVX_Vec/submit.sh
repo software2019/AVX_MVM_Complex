@@ -36,7 +36,8 @@ module load valgrind
 #valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_unalign_loadu    
 
 #./avx_complex_vec
-./avx_complex_vec_align_load 
+#./avx_complex_vec_align_load 
+./avx_complex_vec_align_load_vasilis 
 #./avx_complex_vec_align_loadu
 #./avx_complex_vec_unalign_loadu
 

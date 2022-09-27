@@ -48,3 +48,22 @@ void my_init(suNf_vector *psi, suNf_vector *psi2, suNf *up, const int n)
   up->c[i] = my_rand(n);
  }
 }
+
+
+void error(int test, int no, char *name, char *text)
+{
+	if(test != 0)
+	{
+		printf("ERROR, %s:\n%s\n", name, text);
+		printf("ERROR, Exiting program...\n");
+		if(no < 0)
+		{
+			exit(0);
+		}
+		else
+		{
+			//finalize_process();
+			exit(no);
+		}
+	}
+}
