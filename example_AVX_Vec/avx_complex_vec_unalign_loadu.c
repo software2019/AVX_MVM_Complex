@@ -1,7 +1,5 @@
 #include "header.h"
 
-// double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
-// double_MVM(&chi, &chi2, &up, &psi, &psi2);
 /**************************************************************************************************
  *   Commands for compiling:
  *   icc avx_complex_vec.c  -o test -O3 -march=core-avx2 -mtune=core-avx2
@@ -98,61 +96,244 @@
 
 int main()
 {
- int i;
+ int i,j;
  int n = 5;
- double res1, res2, res3, res4, res5, res6, res7, res8;
+ double res1, res2, res3, res4, res5, res6, res7, res8, res9, res10, res11, res12;
  float elapsed, gflops;
- int n_times = 1;
+ int in = 100000000;//Test Type 1
+ int n_times = 0;//Test Type 2
  int n_warmup = 0;
  struct timeval start, end, etime;
 
-  suNf_vector *chi, *chi2,chi3, chi4, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
- suNf *up; //__attribute__((aligned(32)));
+ suNf_vector *chi, *chi2,chi3, chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
+ suNf *up, *v3; //__attribute__((aligned(32)));
 
+ suNf_spinor *v1, *v2;
+ v1 = malloc(in * sizeof(suNf_vector));
+ v2 = malloc(in * sizeof(suNf_vector));
+ v3 = malloc(in * sizeof(suNf));
+
+
+
+//  up = amalloc(sizeof(suNf), ALIGN);
+//  psi = amalloc(sizeof(suNf_vector), ALIGN);
+//  psi2 = amalloc(sizeof(suNf_vector), ALIGN);
+//  chi = amalloc(sizeof(suNf_vector), ALIGN);
+//  chi2 = amalloc(sizeof(suNf_vector), ALIGN);
+//  chi5 = amalloc(sizeof(suNf_vector), ALIGN);
+//  chi6 = amalloc(sizeof(suNf_vector), ALIGN);
+
+
+ 
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
  __m128d chi_3rd, chi2_3rd;
 
- /*Initialising the variables*/
-my_init(psi, psi2, up, n);
- /******************************************************************************
-  * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
-  ******************************************************************************/
 
-//  double_MVM_macro(&chi, &chi2, &up, &psi, &psi2);
-//  _suNf_theta_T_multiply(chi3, up, psi);
-//  _suNf_theta_T_multiply(chi4, up, psi2);
+/*=========================================================================
+  Test Type 1: Performance Test based on loading a long array of structures  
+  ========================================================================*/
+
+/* Vector Initilisation */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+      v1->c[i].c[j] = my_rand(n);
+      v2->c[i].c[j] = my_rand(n);
+    }
+    for(j=0; j<9; j++)
+    {
+     v3->c[j] = my_rand(n);
+    }
+ }
+
+/* double AVX MACRO Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+
+ /* Case 1: AVX double MVM Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+  gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ printf("\n");
+ lprintf("MACRO",0,"Double_MVM_AVX ualignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+
+/* double AVX NON-MACRO  Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_non_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+
+ /* Case 2: AVX double MVM Non-Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_non_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+  gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ lprintf("NON-MACRO",0,"Double_MVM_AVX unalignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+
+
+/* HiRep Macro Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+
+ }
+
+
+/* Case 3: HiRep Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+
+ }
+  gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ lprintf("HIREP_MACRO",0,"theta_T_multiply unalignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  printf("\n");
+
+
+/*====================================================================================*/
+/*====================================================================================*/
+
+
+
+ /*Initialising the variables*/
+//   my_init(psi, psi2, up, n);
+
+
+ /*******************************************************************************************
+  * Test Type 2: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+  *******************************************************************************************/
+
+//  double_MVM_non_macro(chi5, chi6, up, psi, psi2);
+//  double_MVM_macro(chi, chi2, up, psi, psi2);
+//  _suNf_theta_T_multiply(chi3, (*up), (*psi));
+//  _suNf_theta_T_multiply(chi4, (*up), (*psi2));
 
 //  for (i = 0; i < 3; i++)
 //  {
-//   res1 = creal(chi->c[i]);
-//   res2 = cimag(chi->c[i]);
+//   res1 = _complex_re(chi->c[i]);
+//   res2 = _complex_im(chi->c[i]); 
 
-//   res3 = creal(chi3.c[i]);
-//   res4 = cimag(chi3.c[i]);
+//   res5 = _complex_re(chi2->c[i]); 
+//   res6 = _complex_im(chi2->c[i]); 
 
-//   res5 = creal(chi2->c[i]);
-//   res6 = cimag(chi2->c[i]);
+//   res9 = _complex_re(chi5->c[i]);
+//   res10 = _complex_im(chi5->c[i]); 
 
-//   res7 = creal(chi4.c[i]);
-//   res8 = cimag(chi4.c[i]);
+//   res11 = _complex_re(chi6->c[i]); 
+//   res12 = _complex_im(chi6->c[i]); 
 
-//   if ((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15))
-//   {
-//    printf("Error! First AVX_MVM and T_multiply are not equal\n");
-//   }
-//   else
-//   {
-//    printf("First chi passed at element %d\n", i);
-//   }
+//   res3 = _complex_re(chi3.c[i]); 
+//   res4 = _complex_im(chi3.c[i]); 
 
-//   if ((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15))
-//   {
-//    printf("Error! Second AVX_MVM and T_multiply are not equal\n");
-//   }
-//   else
-//   {
-//    printf("Second chi passed at element %d\n", i);
-//   }
+//   res7 = _complex_re(chi4.c[i]); 
+//   res8 = _complex_im(chi4.c[i]); 
+
+//   printf("\n");
+//   error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+//   lprintf("TEST",0,"chi of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+//   error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+//   lprintf("TEST",0,"chi2 of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+
+//   error((fabs((res9 - res3) / res9) > 1.e-15) || (fabs((res10 - res4) / res10) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+//   lprintf("TEST",0,"chi of double_MVM_nonMacro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+//   error((fabs((res11 - res7) / res11) > 1.e-15) || (fabs((res12 - res8) / res12) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+//   lprintf("TEST",0,"chi2 of double_MVM_non_Macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
 //   printf("\n");
 
 //   res1 = .0;
@@ -164,7 +345,14 @@ my_init(psi, psi2, up, n);
 //   res6 = .0;
 //   res7 = .0;
 //   res8 = .0;
+
+//   res9 = .0;
+//   res10 = .0;
+//   res11 = .0;
+//   res12 = .0;
+
 //  }
+
 
  /*****************************************************************
   * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
@@ -212,7 +400,7 @@ my_init(psi, psi2, up, n);
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("Double_MVM_AVX Macro aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ lprintf("MACRO",0,"Double_MVM_AVX unalignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 
@@ -257,7 +445,7 @@ my_init(psi, psi2, up, n);
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("Double_MVM_AVX Non-Macro aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+lprintf("NON_MACRO",0,"Double_MVM_AVX unalignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 
@@ -307,8 +495,22 @@ my_init(psi, psi2, up, n);
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("theta_T_multiply Aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ lprintf("HIREP_MACRO",0,"theta_T_multiply unalignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
+
+//  afree(up);
+//  afree(psi);
+//  afree(psi2);
+//  afree(chi);
+//  afree(chi2);
+//  afree(chi5);
+//  afree(chi6);
+
+
+
+ free(v1);
+ free(v2);
+ free(v3);
 
  return 0;
 }

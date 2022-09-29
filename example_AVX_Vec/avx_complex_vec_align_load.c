@@ -1,8 +1,6 @@
 
 #include "header.h"
 
-// double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2);
-// double_MVM(&chi, &chi2, &up, &psi, &psi2);
 /**************************************************************************************************
  *   Commands for compiling:
  *   icc avx_complex_vec.c  -o test -O3 -march=core-avx2 -mtune=core-avx2
@@ -19,7 +17,7 @@
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 
-#define double_MVM_macro(mc, mc2, mu, mp, mp2)            \
+#define double_MVM_macro(mc, mc2, mu, mp, mp2)     \
 {                                                  \
 temp1 = _mm256_load_pd((double *)(mu));           \
 temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);  \
@@ -99,105 +97,272 @@ _mm_store_pd((double *)(mc2) + 4, chi2_3rd);\
 
 int main()
 {
- int i;
+ int i, j;
  int n = 5;
- double res1, res2, res3, res4, res5, res6, res7, res8;
+ double res1, res2, res3, res4, res5, res6, res7, res8, res9, res10, res11, res12;
  float elapsed, gflops;
- int n_times = 100000;
+ int in = 100000000;//Test Type 1
+ int n_times = 0;//Test Type 2
  int n_warmup = 0;
  struct timeval start, end, etime;
 
- suNf_vector *chi, *chi2,chi3, chi4, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
- suNf *up; //__attribute__((aligned(32)));
+ suNf_vector *chi, *chi2,chi3, chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
+ suNf *up, *v3; //__attribute__((aligned(32)));
+
+ suNf_spinor *v1, *v2;
+ v1 = malloc(in * sizeof(suNf_vector));
+ v2 = malloc(in * sizeof(suNf_vector));
+ v3 = malloc(in * sizeof(suNf));
 
  up = amalloc(sizeof(suNf), ALIGN);
  psi = amalloc(sizeof(suNf_vector), ALIGN);
  psi2 = amalloc(sizeof(suNf_vector), ALIGN);
  chi = amalloc(sizeof(suNf_vector), ALIGN);
  chi2 = amalloc(sizeof(suNf_vector), ALIGN);
+ chi5 = amalloc(sizeof(suNf_vector), ALIGN);
+ chi6 = amalloc(sizeof(suNf_vector), ALIGN);
 
 //  up = _mm_malloc(sizeof(suNf), MEM_ALIGN);
 //  psi = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
 //  psi2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
 //  chi = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
 //  chi2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi5 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi6 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  v1 = _mm_malloc(sizeof(suNf_vector), 16);
+//  v2 = _mm_malloc(sizeof(suNf_vector), 16);
 
 
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
  __m128d chi_3rd, chi2_3rd;
 
 
- /*Initialising the variables*/
- my_init(psi, psi2, up, n);
+/*=========================================================================
+ Test Type 1:  Performance Test based on loading a long array of structures  
+===========================================================================*/
 
- // /* Vector initialized: 6 doubles */
- // psi->c[0] = (1.0 + 4.0 * I);
- // psi->c[1] = (2.0 + 5.0 * I);
- // psi->c[2] = (3.0 + 6.0 * I);
-
- // psi2->c[0] = (1.0 + 2.0 * I);
- // psi2->c[1] = (3.0 + 4.0 * I);
- // psi2->c[2] = (2.0 + 1.0 * I);
-
- // /* Matrix (3x3) initialized: 18 doubles */
- // up->c[0] = (1.0 + 2.0 * I);
- // up->c[1] = (3.0 + 4.0 * I);
- // up->c[2] = (5.0 + 6.0 * I);
-
- // up->c[3] = (2.0 + 1.0 * I);
- // up->c[4] = (3.0 + 2.0 * I);
- // up->c[5] = (1.0 + 3.0 * I);
-
- // up->c[6] = (4.0 + 5.0 * I);
- // up->c[7] = (6.0 + 4.0 * I);
- // up->c[8] = (5.0 + 6.0 * I);
-
- /******************************************************************************
-  * Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
-  ******************************************************************************/
-
- //double_MVM_non_macro(chi, chi2, up, psi, psi2);
- double_MVM_macro(chi, chi2, up, psi, psi2);
- _suNf_theta_T_multiply(chi3, (*up), (*psi));
- _suNf_theta_T_multiply(chi4, (*up), (*psi2));
-
-//  printf("chi[0] = %.1fre\n", _complex_re(chi->c[0]));
-//  printf("chi[0] = %.1fim\n", _complex_im(chi->c[0]));
-
-
- for (i = 0; i < 3; i++)
+/* Vector Initilisation */
+ for(i=0; i<in; i++)
  {
-  res1 = _complex_re(chi->c[i]);//creal(chi->c[i]);
-  res2 = _complex_im(chi->c[i]); //cimag(chi->c[i]);
+    for(j=0; j<3; j++)
+    {
+      v1->c[i].c[j] = my_rand(n);
+      v2->c[i].c[j] = my_rand(n);
+    }
+    for(j=0; j<9; j++)
+    {
+     v3->c[j] = my_rand(n);
+    }
+ }
 
-  res3 = _complex_re(chi3.c[i]); //creal(chi3.c[i]);
-  res4 = _complex_im(chi3.c[i]); //cimag(chi3.c[i]);
 
-  res5 = _complex_re(chi2->c[i]); //creal(chi2->c[i]);
-  res6 = _complex_im(chi2->c[i]); //cimag(chi2->c[i]);
+/* double AVX MACRO Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
 
-  res7 = _complex_re(chi4.c[i]); //creal(chi4.c[i]);
-  res8 = _complex_im(chi4.c[i]); //cimag(chi4.c[i]);
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
 
-  printf("\n");
-  error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
-  printf("chi of double_MVM and theta_T_multiply at element %d are equal: Test Passed!\n", i);
-
-  error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
-  printf("chi2 of double_MVM and theta_T_multiply at element %d are equal: Test Passed!\n", i);
-  printf("\n");
-
-  res1 = .0;
-  res2 = .0;
-  res3 = .0;
-  res4 = .0;
-
-  res5 = .0;
-  res6 = .0;
-  res7 = .0;
-  res8 = .0;
+    double_MVM_macro(chi, chi2, up, psi, psi2);
 
  }
+
+
+ /* Case 1: AVX double MVM Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+ gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+  printf("\n");
+ lprintf("MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+
+/* double AVX NON-MACRO  Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_non_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+
+ /* Case 2: AVX double MVM non-Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+    double_MVM_non_macro(chi, chi2, up, psi, psi2);
+
+ }
+
+  gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ lprintf("NON-MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+
+
+
+/* HiRep MACRO Warmup code */
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+
+ }
+
+
+/* Case 3: HiRep Macro perf measurement */
+gettimeofday(&start, 0);
+ for(i=0; i<in; i++)
+ {
+    for(j=0; j<3; j++)
+    {
+     psi->c[j] = v1->c[i].c[j];
+     psi2->c[j] = v2->c[i].c[j];
+    }
+
+    for(j=0; j<9; j++)
+    {
+     up->c[j] = v3->c[j];
+    }
+
+  _suNf_theta_T_multiply((*chi), (*up), (*psi));
+  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+
+ }
+  gettimeofday(&end, 0);
+ timeval_subtract(&etime, &end, &start);
+ elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+ lprintf("HIREP_MACRO",0,"theta_T_multiply alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+  printf("\n");
+
+
+/*====================================================================================*/
+/*====================================================================================*/
+
+
+
+ /*Initialising the variables*/
+ //my_init(psi, psi2, up, n);
+
+
+ /*******************************************************************************************
+  * Test Type 2: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+  *******************************************************************************************/
+
+//  double_MVM_non_macro(chi5, chi6, up, psi, psi2);
+//  double_MVM_macro(chi, chi2, up, psi, psi2);
+//  _suNf_theta_T_multiply(chi3, (*up), (*psi));
+//  _suNf_theta_T_multiply(chi4, (*up), (*psi2));
+
+//  for (i = 0; i < 3; i++)
+//  {
+//   res1 = _complex_re(chi->c[i]);
+//   res2 = _complex_im(chi->c[i]); 
+
+//   res5 = _complex_re(chi2->c[i]); 
+//   res6 = _complex_im(chi2->c[i]); 
+
+//   res9 = _complex_re(chi5->c[i]);
+//   res10 = _complex_im(chi5->c[i]); 
+
+//   res11 = _complex_re(chi6->c[i]); 
+//   res12 = _complex_im(chi6->c[i]); 
+
+//   res3 = _complex_re(chi3.c[i]); 
+//   res4 = _complex_im(chi3.c[i]); 
+
+//   res7 = _complex_re(chi4.c[i]); 
+//   res8 = _complex_im(chi4.c[i]); 
+
+//   printf("\n");
+//   error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+//   lprintf("TEST",0,"chi of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+//   error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+//   lprintf("TEST",0,"chi2 of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+
+//   error((fabs((res9 - res3) / res9) > 1.e-15) || (fabs((res10 - res4) / res10) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+//   lprintf("TEST",0,"chi of double_MVM_nonMacro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+
+//   error((fabs((res11 - res7) / res11) > 1.e-15) || (fabs((res12 - res8) / res12) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+//   lprintf("TEST",0,"chi2 of double_MVM_non_Macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+//   printf("\n");
+
+//   res1 = .0;
+//   res2 = .0;
+//   res3 = .0;
+//   res4 = .0;
+
+//   res5 = .0;
+//   res6 = .0;
+//   res7 = .0;
+//   res8 = .0;
+
+//   res9 = .0;
+//   res10 = .0;
+//   res11 = .0;
+//   res12 = .0;
+
+//  }
+
 
  /*****************************************************************
   * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
@@ -232,20 +397,20 @@ int main()
   double_MVM_macro(chi, chi2, up, psi, psi2);
   // CALLGRIND_TOGGLE_COLLECT;
   // CALLGRIND_STOP_INSTRUMENTATION;
-//   double_MVM_macro(psi, psi2, up, chi, chi2);
+  double_MVM_macro(psi, psi2, up, chi, chi2);
 
-//   psi->c[0] *= 0.001;
-//   psi->c[1] *= 0.001;
-//   psi->c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
-//   psi2->c[0] *= 0.001;
-//   psi2->c[1] *= 0.001;
-//   psi2->c[2] *= 0.001;
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
  }
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("Double_MVM_AVX Macro aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ lprintf("MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 /* Non-Macro version of new routine */
@@ -275,20 +440,20 @@ int main()
   double_MVM_non_macro(chi, chi2, up, psi, psi2);
   // CALLGRIND_TOGGLE_COLLECT;
   // CALLGRIND_STOP_INSTRUMENTATION;
-//   double_MVM_non_macro(psi, psi2, up, chi, chi2);
+  double_MVM_non_macro(psi, psi2, up, chi, chi2);
 
-//   psi->c[0] *= 0.001;
-//   psi->c[1] *= 0.001;
-//   psi->c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
-//   psi2->c[0] *= 0.001;
-//   psi2->c[1] *= 0.001;
-//   psi2->c[2] *= 0.001;
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
  }
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("Double_MVM_AVX Non-Macro aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+ lprintf("NON_MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 /* HiRep Macro function */
@@ -323,22 +488,21 @@ int main()
   // CALLGRIND_TOGGLE_COLLECT;
   // CALLGRIND_STOP_INSTRUMENTATION;
 
-//   _suNf_theta_T_multiply((*psi), (*up), (*chi));
-//   _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
+  _suNf_theta_T_multiply((*psi), (*up), (*chi));
+  _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
 
-//   psi->c[0] *= 0.001;
-//   psi->c[1] *= 0.001;
-//   psi->c[2] *= 0.001;
+  psi->c[0] *= 0.001;
+  psi->c[1] *= 0.001;
+  psi->c[2] *= 0.001;
 
-//   psi2->c[0] *= 0.001;
-//   psi2->c[1] *= 0.001;
-//   psi2->c[2] *= 0.001;
+  psi2->c[0] *= 0.001;
+  psi2->c[1] *= 0.001;
+  psi2->c[2] *= 0.001;
  }
  gettimeofday(&end, 0);
  timeval_subtract(&etime, &end, &start);
  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("theta_T_multiply Aligned_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
-
+ lprintf("HIREP_MACRO",0,"theta_T_multiply alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
  afree(up);
@@ -346,12 +510,23 @@ int main()
  afree(psi2);
  afree(chi);
  afree(chi2);
+ afree(chi5);
+ afree(chi6);
+ free(v1);
+ free(v2);
+ free(v3);
 
 //  _mm_free(up);
 //  _mm_free(psi);
 //  _mm_free(psi2);
 //  _mm_free(chi);
 //  _mm_free(chi2);
+//  _mm_free(chi5);
+//  _mm_free(chi6);
+//  free(v1);
+//  free(v2);
+//  free(v3);
+ 
 
  return 0;
 }
@@ -509,95 +684,3 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  _mm_store_pd((double *)chi2 + 4, chi2_3rd);
 }
 
-/* Memory allocation and aligned */
-struct addr_t
-{
- char *addr;
- char *true_addr;
- struct addr_t *next;
-};
-
-static struct addr_t *first = NULL;
-
-void *amalloc(size_t size, int p)
-{
- int shift;
- char *true_addr, *addr;
- unsigned long mask;
- struct addr_t *new;
-
- if ((size <= 0) || (p < 0))
-  return (NULL);
-
- shift = 1 << p;
- mask = (unsigned long)(shift - 1);
-
- true_addr = (char *)malloc(size + shift);
- new = (struct addr_t *)malloc(sizeof(*first));
-
- if ((true_addr == NULL) || (new == NULL))
- {
-  free(true_addr);
-  free(new);
-  return (NULL);
- }
-
- addr = (char *)(((unsigned long)(true_addr + shift)) & (~mask));
- (*new).addr = addr;
- (*new).true_addr = true_addr;
- (*new).next = first;
- first = new;
-
-#ifdef AMALLOC_MEASURE
- insert((void *)addr, size);
-#endif
-
- return ((void *)(addr));
-}
-
-void afree(void *addr)
-{
- struct addr_t *p, *q;
-
-#ifdef AMALLOC_MEASURE
- remove(addr);
-#endif
-
- q = NULL;
-
- for (p = first; p != NULL; p = (*p).next)
- {
-  if ((*p).addr == addr)
-  {
-   if (q != NULL)
-    (*q).next = (*p).next;
-   else
-    first = (*p).next;
-
-   free((*p).true_addr);
-   free(p);
-   return;
-  }
-
-  q = p;
- }
-}
-
-// void error(int test, int no, char *name, char *text)
-// {
-// 	if(test != 0)
-// 	{
-// 		printf("ERROR, %s:\n%s\n", name, text);
-// 		printf("ERROR, Exiting program...\n");
-// 		if(no < 0)
-// 		{
-// 			exit(0);
-// 		}
-// 		else
-// 		{
-// 			//finalize_process();
-// 			exit(no);
-//       printf("success");
-// 		}
-// 	}
-// }
