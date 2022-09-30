@@ -106,6 +106,13 @@ int main()
  int n_warmup = 0;
  struct timeval start, end, etime;
 
+ //----------------set the current thread to core 0 only----------------
+cpu_set_t mask;
+CPU_ZERO(&mask);
+CPU_SET(0,&mask);
+if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
+    printf("WARNING: Could not set CPU Affinity, continuing...\n");
+
  suNf_vector *chi, *chi2,chi3, chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
  suNf *up, *v3; //__attribute__((aligned(32)));
 
@@ -138,7 +145,7 @@ int main()
 
 
 /*=========================================================================
- Test Type 1:  Performance Test based on loading a long array of structures  
+ Test Type 2:  Performance Test based on loading a long array of structures  
 ===========================================================================*/
 
 /* Vector Initilisation */
@@ -303,65 +310,65 @@ gettimeofday(&start, 0);
 
 
  /*******************************************************************************************
-  * Test Type 2: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+  * Test Type 1: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   *******************************************************************************************/
 
-//  double_MVM_non_macro(chi5, chi6, up, psi, psi2);
-//  double_MVM_macro(chi, chi2, up, psi, psi2);
-//  _suNf_theta_T_multiply(chi3, (*up), (*psi));
-//  _suNf_theta_T_multiply(chi4, (*up), (*psi2));
+ double_MVM_non_macro(chi5, chi6, up, psi, psi2);
+ double_MVM_macro(chi, chi2, up, psi, psi2);
+ _suNf_theta_T_multiply(chi3, (*up), (*psi));
+ _suNf_theta_T_multiply(chi4, (*up), (*psi2));
 
-//  for (i = 0; i < 3; i++)
-//  {
-//   res1 = _complex_re(chi->c[i]);
-//   res2 = _complex_im(chi->c[i]); 
+ for (i = 0; i < 3; i++)
+ {
+  res1 = _complex_re(chi->c[i]);
+  res2 = _complex_im(chi->c[i]); 
 
-//   res5 = _complex_re(chi2->c[i]); 
-//   res6 = _complex_im(chi2->c[i]); 
+  res5 = _complex_re(chi2->c[i]); 
+  res6 = _complex_im(chi2->c[i]); 
 
-//   res9 = _complex_re(chi5->c[i]);
-//   res10 = _complex_im(chi5->c[i]); 
+  res9 = _complex_re(chi5->c[i]);
+  res10 = _complex_im(chi5->c[i]); 
 
-//   res11 = _complex_re(chi6->c[i]); 
-//   res12 = _complex_im(chi6->c[i]); 
+  res11 = _complex_re(chi6->c[i]); 
+  res12 = _complex_im(chi6->c[i]); 
 
-//   res3 = _complex_re(chi3.c[i]); 
-//   res4 = _complex_im(chi3.c[i]); 
+  res3 = _complex_re(chi3.c[i]); 
+  res4 = _complex_im(chi3.c[i]); 
 
-//   res7 = _complex_re(chi4.c[i]); 
-//   res8 = _complex_im(chi4.c[i]); 
+  res7 = _complex_re(chi4.c[i]); 
+  res8 = _complex_im(chi4.c[i]); 
 
-//   printf("\n");
-//   error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
-//   lprintf("TEST",0,"chi of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+  printf("\n");
+  error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+  lprintf("TEST",0,"chi of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
 
-//   error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
-//   lprintf("TEST",0,"chi2 of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+  error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+  lprintf("TEST",0,"chi2 of double_MVM_macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
 
 
-//   error((fabs((res9 - res3) / res9) > 1.e-15) || (fabs((res10 - res4) / res10) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
-//   lprintf("TEST",0,"chi of double_MVM_nonMacro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+  error((fabs((res9 - res3) / res9) > 1.e-15) || (fabs((res10 - res4) / res10) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
+  lprintf("TEST",0,"chi of double_MVM_nonMacro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
 
-//   error((fabs((res11 - res7) / res11) > 1.e-15) || (fabs((res12 - res8) / res12) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
-//   lprintf("TEST",0,"chi2 of double_MVM_non_Macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
-//   printf("\n");
+  error((fabs((res11 - res7) / res11) > 1.e-15) || (fabs((res12 - res8) / res12) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
+  lprintf("TEST",0,"chi2 of double_MVM_non_Macro and theta_T_multiply at element %d are equal: Test Passed!\n", i);
+  printf("\n");
 
-//   res1 = .0;
-//   res2 = .0;
-//   res3 = .0;
-//   res4 = .0;
+  res1 = .0;
+  res2 = .0;
+  res3 = .0;
+  res4 = .0;
 
-//   res5 = .0;
-//   res6 = .0;
-//   res7 = .0;
-//   res8 = .0;
+  res5 = .0;
+  res6 = .0;
+  res7 = .0;
+  res8 = .0;
 
-//   res9 = .0;
-//   res10 = .0;
-//   res11 = .0;
-//   res12 = .0;
+  res9 = .0;
+  res10 = .0;
+  res11 = .0;
+  res12 = .0;
 
-//  }
+ }
 
 
  /*****************************************************************

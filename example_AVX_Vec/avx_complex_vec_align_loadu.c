@@ -104,6 +104,12 @@ int main()
  int n_times = 0;//Test Type 2
  int n_warmup = 0;
  struct timeval start, end, etime;
+  //----------------set the current thread to core 0 only----------------
+cpu_set_t mask;
+CPU_ZERO(&mask);
+CPU_SET(0,&mask);
+if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
+    printf("WARNING: Could not set CPU Affinity, continuing...\n");
 
  suNf_vector *chi, *chi2,chi3, chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy;
  suNf *up, *v3;
@@ -134,7 +140,7 @@ int main()
 
 
  /*========================================================================
-  Test Type 1: Performance Test based on loading a long array of structures  
+  Test Type 2: Performance Test based on loading a long array of structures  
   =========================================================================*/
 
 /* Vector Initilisation */
@@ -297,7 +303,7 @@ gettimeofday(&start, 0);
 //  my_init(psi, psi2, up, n);
 
  /*******************************************************************************************
-  * Test Type 2: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
+  * Test Type 1: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
   *******************************************************************************************/
 
 //  double_MVM_non_macro(chi5, chi6, up, psi, psi2);
