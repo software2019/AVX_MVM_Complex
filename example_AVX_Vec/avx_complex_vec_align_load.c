@@ -104,14 +104,14 @@ int main()
  int in = 100000000;//Test Type 1
  int n_times = 0;//Test Type 2
  int n_warmup = 0;
- struct timeval start, end, etime;
- double omp_start, omp_end; 
-
- clock_t t1,t2;
- struct timeval tv1,tv2; struct timezone tz;
+ 
+/* ************ timing block A start ************* */
+clock_t t1,t2;
+struct timeval start, end, etime;
 # ifdef _OPENMP
     double wt1,wt2;
 # endif
+/* ************ timing block A end ************* */
 
  //----------------set the current thread to core 0 only----------------
 cpu_set_t mask;
@@ -180,9 +180,9 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
 
  /* Case 1: AVX double MVM Macro perf measurement */
-//gettimeofday(&start, 0);
 
-  gettimeofday(&tv1, &tz);
+ /* ************ timing block B start ************* */
+  gettimeofday(&start, 0);
 # ifdef _OPENMP
     wt1=omp_get_wtime();
 # endif
@@ -208,21 +208,16 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 # ifdef _OPENMP
     wt2=omp_get_wtime();
 # endif
-  gettimeofday(&tv2, &tz);
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
 
     lprintf("MVM_MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
 # ifdef _OPENMP
     lprintf("MVM_MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
 # endif
-    lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (tv2.tv_sec-tv1.tv_sec) + (tv2.tv_usec-tv1.tv_usec)*1e-6 );
+    lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
-//  gettimeofday(&end, 0);
-//  timeval_subtract(&etime, &end, &start);
-//  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
-//   printf("\n");
-//  lprintf("MACRO",0,"Double_MVM_AVX alignMem_load Time: [%f msec]\n", elapsed);
- //lprintf("MACRO", 0, "Time: [%f msec]\n", elapsed);
-
+/* ************ timing block B end ************* */
 
 /* double AVX NON-MACRO  Warmup code */
 //  for(i=0; i<in; i++)
@@ -244,8 +239,9 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
 
  /* Case 2: AVX double MVM non-Macro perf measurement */
- //gettimeofday(&start, 0);
-  gettimeofday(&tv1, &tz);
+
+ /* ************ timing block C start ************* */
+  gettimeofday(&start, 0);
 # ifdef _OPENMP
     wt1=omp_get_wtime();
 # endif
@@ -272,21 +268,16 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 # ifdef _OPENMP
     wt2=omp_get_wtime();
 # endif
-  gettimeofday(&tv2, &tz);
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
 
     lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
 # ifdef _OPENMP
     lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
 # endif
-    lprintf("MVM_NON-MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (tv2.tv_sec-tv1.tv_sec) + (tv2.tv_usec-tv1.tv_usec)*1e-6 );
+    lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
-//   gettimeofday(&end, 0);
-//  timeval_subtract(&etime, &end, &start);
-//  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
-//  lprintf("NON-MACRO",0,"Double_MVM_AVX alignMem_load Time: [%f msec]\n", elapsed);
-
-
-
+/* ************ timing block C end ************* */
 
 /* HiRep MACRO Warmup code */
 //  for(i=0; i<in; i++)
@@ -309,8 +300,9 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
 
 /* Case 3: HiRep Macro perf measurement */
-//gettimeofday(&start, 0);
-  gettimeofday(&tv1, &tz);
+
+/* ************ timing block D start ************* */
+  gettimeofday(&start, 0);
 # ifdef _OPENMP
     wt1=omp_get_wtime();
 # endif
@@ -333,23 +325,20 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
  }
 
-   t2=clock();
+  t2=clock();
 # ifdef _OPENMP
     wt2=omp_get_wtime();
 # endif
-  gettimeofday(&tv2, &tz);
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
 
     lprintf("THETA_T_MULTIPLY",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
 # ifdef _OPENMP
     lprintf("THETA_T_MULTIPLY",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
 # endif
-    lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n", (tv2.tv_sec-tv1.tv_sec) + (tv2.tv_usec-tv1.tv_usec)*1e-6 );
+    lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
-//   gettimeofday(&end, 0);
-//  timeval_subtract(&etime, &end, &start);
-//  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
-//  lprintf("HIREP_MACRO",0,"theta_T_multiply alignMem_load Time:[%f msec]\n", elapsed);
-//   printf("\n");
+/* ************ timing block D end ************* */
 
 
 /*====================================================================================*/
@@ -431,7 +420,12 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
  psi_copy = psi;
  psi2_copy = psi2;
 
- gettimeofday(&start, 0);
+  gettimeofday(&start, 0);
+# ifdef _OPENMP
+    wt1=omp_get_wtime();
+# endif
+  t1=clock();
+
  for (i = 0; i < n_times; ++i)
  {
   // CALLGRIND_START_INSTRUMENTATION;
@@ -449,10 +443,19 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
   psi2->c[1] *= 0.001;
   psi2->c[2] *= 0.001;
  }
- gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- //lprintf("MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+  t2=clock();
+# ifdef _OPENMP
+    wt2=omp_get_wtime();
+# endif
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
+
+//     lprintf("MVM_MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// # ifdef _OPENMP
+//     lprintf("MVM_MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// # endif
+//     lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
 
 /* Non-Macro version of new routine */
@@ -474,7 +477,13 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
  psi_copy = psi;
  psi2_copy = psi2;
- gettimeofday(&start, 0);
+
+  gettimeofday(&start, 0);
+# ifdef _OPENMP
+    wt1=omp_get_wtime();
+# endif
+  t1=clock();
+
  for (i = 0; i < n_times; ++i)
  {
   // CALLGRIND_START_INSTRUMENTATION;
@@ -492,10 +501,19 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
   psi2->c[1] *= 0.001;
   psi2->c[2] *= 0.001;
  }
- gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- //lprintf("NON_MACRO",0,"Double_MVM_AVX alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+  t2=clock();
+# ifdef _OPENMP
+    wt2=omp_get_wtime();
+# endif
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
+
+//     lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// # ifdef _OPENMP
+//     lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// # endif
+//     lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
 
 /* HiRep Macro function */
@@ -520,7 +538,13 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
  psi_copy = psi;
  psi2_copy = psi2;
- gettimeofday(&start, 0);
+
+  gettimeofday(&start, 0);
+# ifdef _OPENMP
+    wt1=omp_get_wtime();
+# endif
+  t1=clock();
+
  for (i = 0; i < n_times; ++i)
  {
   // CALLGRIND_START_INSTRUMENTATION;
@@ -541,10 +565,20 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
   psi2->c[1] *= 0.001;
   psi2->c[2] *= 0.001;
  }
- gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- //lprintf("HIREP_MACRO",0,"theta_T_multiply alignMem_load Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+  t2=clock();
+# ifdef _OPENMP
+    wt2=omp_get_wtime();
+# endif
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
+
+//     lprintf("THETA_T_MULTIPLY",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// # ifdef _OPENMP
+//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// # endif
+//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+ 
 
 
  afree(up);
