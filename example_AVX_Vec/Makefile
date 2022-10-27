@@ -1,8 +1,16 @@
 #****************************************************************************************************
 # Variables to control Makefile operation
-CC = gcc #the compiler: icc/gcc for C program
+
+CC = icc 
+CFLAGS = -O2 -qopenmp -march=core-avx2 -mtune=core-avx2  -g 
+
+#CC = gcc 
+#CFLAGS = -O3 -fopenmp -march=core-avx2 -mtune=core-avx2  -g
+
+#CC = clang 
+#CFLAGS = -O3 -fopenmp -march=core-avx2 -mtune=core-avx2  -g
+
 LIBS = -lm #-lefence
-CFLAGS = -O3 -march=core-avx2 -mtune=core-avx2  # -g -march=haswell -mtune=haswell -xcore-avx2 -mtune=native compiler flags, Extra flags to give to the C compiler.
 INCLUDES = -I . # Inclusing suN.h header file from Include directory
 #*****************************************************************************************************
 
@@ -33,7 +41,7 @@ various.o: various.c header.h Makefile # $< the name of the related file that ca
 	${CC} ${CFLAGS} ${INCLUDES} $< -c
 
 asm: 
-	${CC} ${CFLAGS} ${INCLUDES} -S avx_complex_vec_align_load.c ${LIBS}
+	${CC} ${CFLAGS} ${INCLUDES} -S avx_complex_vec.c ${LIBS}
 
 pre: 
 	${CC} ${CFLAGS} ${INCLUDES} -E avx_complex_vec_macro.c ${LIBS} 

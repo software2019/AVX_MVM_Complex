@@ -88,9 +88,9 @@ temp7 = _mm256_fmaddsub_pd(temp10, temp9, temp2);\
 temp2 = _mm256_add_pd(temp3, temp7);\
 chi_3rd = _mm256_castpd256_pd128(temp2);\
 chi2_3rd = _mm256_extractf128_pd(temp2, 1);\
-_mm256_store_pd((double *)(mc), temp11);\
+_mm256_storeu_pd((double *)(mc), temp11);\
 _mm_store_pd((double *)(mc) + 4, chi_3rd);\
-_mm256_store_pd((double *)(mc2), temp1);\
+_mm256_storeu_pd((double *)(mc2), temp1);\
 _mm_store_pd((double *)(mc2) + 4, chi2_3rd);\
 }
 
@@ -99,10 +99,10 @@ int main()
 {
  int i, j;
  int n = 5;
- double res1, res2, res3, res4, res5, res6, res7, res8, res9, res10, res11, res12;
+ double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
  float elapsed, gflops;
- int in = 100000000;//Test Type 1
- int n_times = 0;//Test Type 2
+ int in = 100000000;
+ int n_times = 0;
  int n_warmup = 0;
  
 /* ************ timing block A start ************* */
@@ -120,91 +120,97 @@ CPU_SET(0,&mask);
 if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
     printf("WARNING: Could not set CPU Affinity, continuing...\n");
 
- suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy; // __attribute__((aligned(32)));
- suNf *up, *v3; //__attribute__((aligned(32)));
- suNf_spinor *v1, *v2;
+ suNf *up, *v3; 
+ suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy, *v1, *v2;
 
- v1 = malloc(in * sizeof(suNf_vector));
- v2 = malloc(in * sizeof(suNf_vector));
- v3 = malloc(in * sizeof(suNf));
 
- up = amalloc(sizeof(suNf), ALIGN);
- psi = amalloc(sizeof(suNf_vector), ALIGN);
- psi2 = amalloc(sizeof(suNf_vector), ALIGN);
- chi = amalloc(in*sizeof(suNf_vector), ALIGN);
- chi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
- chi3 = amalloc(in*sizeof(suNf_vector), ALIGN);
- chi4 = amalloc(in*sizeof(suNf_vector), ALIGN);
- chi5 = amalloc(in*sizeof(suNf_vector), ALIGN);
- chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  up = amalloc(in*sizeof(suNf), ALIGN);
+  v3 = amalloc(in*sizeof(suNf), ALIGN);
 
- __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
- __m128d chi_3rd, chi2_3rd;
+  v1 = amalloc(in*sizeof(suNf_vector), ALIGN); 
+  v2 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  psi = amalloc(in*sizeof(suNf_vector), ALIGN);
+  psi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi3 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi4 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi5 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
+
+  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
+  __m128d chi_3rd, chi2_3rd;
 
 
 /*=========================================================================
- Test Type 2:  Performance Test based on loading a long array of structures  
+      Test:  Performance Test based on loading a long array of structures  
 ===========================================================================*/
 
 /* Vector Initilisation */
- for(i=0; i<in; i++)
- {
+
+  for(i=0; i<in; i++)
+{
     for(j=0; j<3; j++)
     {
-      v1->c[i].c[j] = my_rand(n);
-      v2->c[i].c[j] = my_rand(n);
+      (v1+i)->c[j] = my_rand(n);
+      (v2+i)->c[j] = my_rand(n);
     }
+
     for(j=0; j<9; j++)
     {
-     v3->c[j] = my_rand(n);
+      (v3+i)->c[j] = my_rand(n);
     }
- }
+}
 
+  /******************************************************* 
+        Case 1: AVX double MVM Macro perf measurement 
+  *******************************************************/
 
-/* double AVX MACRO Warmup code */
-//  for(i=0; i<in; i++)
-//  {
-//     for(j=0; j<3; j++)
-//     {
-//      psi->c[j] = v1->c[i].c[j];
-//      psi2->c[j] = v2->c[i].c[j];
-//     }
+/* Double_MVM Warmup code */
+for(i=0; i<in; i++)
+{ 
+    for(j=0; j<3; j++)
+    {
+      (psi+i)->c[j] = (v1+i)->c[j];
+      (psi2+i)->c[j] = (v2+i)->c[j];
+    }
 
-//     for(j=0; j<9; j++)
-//     {
-//      up->c[j] = v3->c[j];
-//     }
+    for(j=0; j<9; j++)
+    {
+      (up+i)->c[j] = (v3+i)->c[j];
+    }
 
-//     double_MVM_macro(chi+i, chi2+i, up, psi, psi2);
-//  }
+    double_MVM_macro((chi+i), (chi2+i), (up), (psi), (psi2));
 
+}
 
- /* Case 1: AVX double MVM Macro perf measurement */
-
- /* ************ timing block B start ************* */
+ /* ************************** timing block B start ***************************** */
   gettimeofday(&start, 0);
 # ifdef _OPENMP
     wt1=omp_get_wtime();
 # endif
   t1=clock();
 
- for(i=0; i<in; i++)
- {
+for(i=0; i<in; i++)
+{ 
     for(j=0; j<3; j++)
     {
-     psi->c[j] = v1->c[i].c[j];
-     psi2->c[j] = v2->c[i].c[j];
+      (psi+i)->c[j] = (v1+i)->c[j];
+      (psi2+i)->c[j] = (v2+i)->c[j];
     }
 
     for(j=0; j<9; j++)
     {
-     up->c[j] = v3->c[j];
+      (up+i)->c[j] = (v3+i)->c[j];
     }
 
-    double_MVM_macro((chi+i), (chi2+i), up, psi, psi2);
- }
+    __asm volatile("# LLVM-MCA-BEGIN double_MVM_macro":::"memory");
+        double_MVM_macro((chi+i), (chi2+i), (up), (psi), (psi2));
+    __asm volatile("# LLVM-MCA-END":::"memory");
 
- t2=clock();
+}
+
+t2=clock();
 # ifdef _OPENMP
     wt2=omp_get_wtime();
 # endif
@@ -217,113 +223,58 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 # endif
     lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
-/* ************ timing block B end ************* */
-
-/* double AVX NON-MACRO  Warmup code */
-//  for(i=0; i<in; i++)
-//  {
-//     for(j=0; j<3; j++)
-//     {
-//      psi->c[j] = v1->c[i].c[j];
-//      psi2->c[j] = v2->c[i].c[j];
-//     }
-
-//     for(j=0; j<9; j++)
-//     {
-//      up->c[j] = v3->c[j];
-//     }
-
-//     double_MVM_non_macro(chi5+i, chi6+i, up, psi, psi2);
-
-//  }
+/* **************************** timing block B end ********************************* */
 
 
- /* Case 2: AVX double MVM non-Macro perf measurement */
+  /******************************************************* 
+          Case 2: HiRep Macro Perf Measurement 
+  *******************************************************/
 
- /* ************ timing block C start ************* */
-  gettimeofday(&start, 0);
-# ifdef _OPENMP
-    wt1=omp_get_wtime();
-# endif
-  t1=clock();
-
- for(i=0; i<in; i++)
- {
+/* theta_T_mul Warmup Code */
+for(i=0; i<in; i++)
+{
     for(j=0; j<3; j++)
     {
-     psi->c[j] = v1->c[i].c[j];
-     psi2->c[j] = v2->c[i].c[j];
+      (psi+i)->c[j] = (v1+i)->c[j];
+      (psi2+i)->c[j] = (v2+i)->c[j];
     }
 
     for(j=0; j<9; j++)
     {
-     up->c[j] = v3->c[j];
+      (up+i)->c[j] = (v3+i)->c[j];
     }
 
-    double_MVM_non_macro((chi5+i), (chi6+i), up, psi, psi2);
+  _suNf_theta_T_multiply((*(chi5+i)), *(up), *(psi));
+  _suNf_theta_T_multiply((*(chi6+i)), *(up), *(psi2));
+  
+}
 
- }
-
-  t2=clock();
-# ifdef _OPENMP
-    wt2=omp_get_wtime();
-# endif
-  gettimeofday(&end, 0);
-  timeval_subtract(&etime, &end, &start);
-
-    lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
-# ifdef _OPENMP
-    lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
-# endif
-    lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
-
-/* ************ timing block C end ************* */
-
-/* HiRep MACRO Warmup code */
-//  for(i=0; i<in; i++)
-//  {
-//     for(j=0; j<3; j++)
-//     {
-//      psi->c[j] = v1->c[i].c[j];
-//      psi2->c[j] = v2->c[i].c[j];
-//     }
-
-//     for(j=0; j<9; j++)
-//     {
-//      up->c[j] = v3->c[j];
-//     }
-
-//   _suNf_theta_T_multiply((*(chi3+i)), (*up), (*psi));
-//   _suNf_theta_T_multiply((*(chi4+i)), (*up), (*psi2));
-
-//  }
-
-
-/* Case 3: HiRep Macro perf measurement */
-
-/* ************ timing block D start ************* */
+/* ************ timing block C start ************* */
   gettimeofday(&start, 0);
 # ifdef _OPENMP
     wt1=omp_get_wtime();
 # endif
   t1=clock();
  for(i=0; i<in; i++)
- {
+{
     for(j=0; j<3; j++)
     {
-     psi->c[j] = v1->c[i].c[j];
-     psi2->c[j] = v2->c[i].c[j];
+      (psi+i)->c[j] = (v1+i)->c[j];
+      (psi2+i)->c[j] = (v2+i)->c[j];
     }
 
     for(j=0; j<9; j++)
     {
-     up->c[j] = v3->c[j];
+      (up+i)->c[j] = (v3+i)->c[j];
     }
 
-  _suNf_theta_T_multiply((*(chi3+i)), (*up), (*psi));
-  _suNf_theta_T_multiply((*(chi4+i)), (*up), (*psi2));
+  __asm volatile("# LLVM-MCA-BEGIN _suNf_theta_T_multiply":::"memory");
+     _suNf_theta_T_multiply((*(chi5+i)), *(up), *(psi));
+     _suNf_theta_T_multiply((*(chi6+i)), *(up), *(psi2));
+  __asm volatile("# LLVM-MCA-END":::"memory");
+  
 
- }
+}
 
   t2=clock();
 # ifdef _OPENMP
@@ -338,286 +289,60 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 # endif
     lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
-/* ************ timing block D end ************* */
+/* ************ timing block C end ************* */
 
 
-/*====================================================================================*/
-/*====================================================================================*/
- /*Initialising the variables*/
- //my_init(psi, psi2, up, n);
+/**********************************************************************
+  * Output Result Check: double_MVM() == _suNf_theta_T_multiply()
+  *********************************************************************/
 
+for (i = 0; i < in; i++)
+{
+  for(j=0; j<3; j++)
+  {
+  res1 = _complex_re((chi+i)->c[j]);
+  res2 = _complex_im((chi+i)->c[j]); 
+  res3 = _complex_re((chi2+i)->c[j]); 
+  res4 = _complex_im((chi2+i)->c[j]); 
 
- /*******************************************************************************************
-  * Test Type 1: Checking the results are identical: double_MVM() == _suNf_theta_T_multiply()
-  *******************************************************************************************/
+  res9 =  _complex_re((chi5+i)->c[j]); 
+  res10 = _complex_im((chi5+i)->c[j]); 
+  res11 = _complex_re((chi6+i)->c[j]); 
+  res12 = _complex_im((chi6+i)->c[j]); 
 
- for (i = 0; i < in; i++)
- {
-  res1 = _complex_re(chi->c[i]);
-  res2 = _complex_im(chi->c[i]); 
-
-  res5 = _complex_re(chi2->c[i]); 
-  res6 = _complex_im(chi2->c[i]); 
-
-  res9 = _complex_re(chi5->c[i]);
-  res10 = _complex_im(chi5->c[i]); 
-
-  res11 = _complex_re(chi6->c[i]); 
-  res12 = _complex_im(chi6->c[i]); 
-
-  res3 = _complex_re(chi3->c[i]); 
-  res4 = _complex_im(chi3->c[i]); 
-
-  res7 = _complex_re(chi4->c[i]); 
-  res8 = _complex_im(chi4->c[i]); 
-
-
-  error((fabs((res1 - res3) / res1) > 1.e-15) || (fabs((res2 - res4) / res2) > 1.e-15), 1, "First Vector in double_MVM and theta_T_multiply", " are not equal ==> Test Failed!");
-  error((fabs((res5 - res7) / res5) > 1.e-15) || (fabs((res6 - res8) / res6) > 1.e-15), 1, "Second Vector in double_MVM and theta_T_multiply", " are not equal ==>Test Failed!");
-  error((fabs((res9 - res3) / res9) > 1.e-15) || (fabs((res10 - res4) / res10) > 1.e-15), 1, "First Vector in double_MVM_nonMacro and theta_T_multiply", " are not equal ==> Test Failed!");
-  error((fabs((res11 - res7) / res11) > 1.e-15) || (fabs((res12 - res8) / res12) > 1.e-15), 1, "Second Vector in double_MVM_nonMacro and theta_T_multiply", " are not equal ==>Test Failed!");
+  error((fabs((res1 - res9) / res1) > 1.e-15) || (fabs((res2 - res10) / res2) > 1.e-15), 1, "First Vector in double_MVM_macro and theta_T_multiply", " are not equal ==> Test Failed!");
+  error((fabs((res3 - res11) / res3) > 1.e-15) || (fabs((res4 - res12) / res4) > 1.e-15), 1, "Second Vector in double_MVM_macro and theta_T_multiply", " are not equal ==>Test Failed!");
 
   res1 = .0;
   res2 = .0;
   res3 = .0;
   res4 = .0;
 
-  res5 = .0;
-  res6 = .0;
-  res7 = .0;
-  res8 = .0;
-
   res9 = .0;
   res10 = .0;
   res11 = .0;
   res12 = .0;
 
- }
+  }
+}
 
+  afree(up);
+  afree(psi);
+  afree(psi2);
+  afree(chi);
+  afree(chi2);
+  afree(chi3);
+  afree(chi4);
+  afree(chi5);
+  afree(chi6);
+  afree(v1);
+  afree(v2);
+  afree(v3);
 
- /*****************************************************************
-  * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
-  *****************************************************************/
-
- /* Macro version of new routine */
- psi_copy = psi;
- psi2_copy = psi2;
-
- for (i = 0; i < n_warmup; ++i)
- {
-  double_MVM_macro(chi, chi2, up, psi, psi2);
-  double_MVM_macro(psi, psi2, up, chi, chi2);
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
- psi_copy = psi;
- psi2_copy = psi2;
-
-  gettimeofday(&start, 0);
-# ifdef _OPENMP
-    wt1=omp_get_wtime();
-# endif
-  t1=clock();
-
- for (i = 0; i < n_times; ++i)
- {
-  // CALLGRIND_START_INSTRUMENTATION;
-  // CALLGRIND_TOGGLE_COLLECT;
-  double_MVM_macro(chi, chi2, up, psi, psi2);
-  // CALLGRIND_TOGGLE_COLLECT;
-  // CALLGRIND_STOP_INSTRUMENTATION;
-  double_MVM_macro(psi, psi2, up, chi, chi2);
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
-  t2=clock();
-# ifdef _OPENMP
-    wt2=omp_get_wtime();
-# endif
-  gettimeofday(&end, 0);
-  timeval_subtract(&etime, &end, &start);
-
-//     lprintf("MVM_MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
-// # ifdef _OPENMP
-//     lprintf("MVM_MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
-// # endif
-//     lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
-
-
-/* Non-Macro version of new routine */
- psi_copy = psi;
- psi2_copy = psi2;
- for (i = 0; i < n_warmup; ++i)
- {
-  double_MVM_non_macro(chi, chi2, up, psi, psi2);
-  double_MVM_non_macro(psi, psi2, up, chi, chi2);
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
- psi_copy = psi;
- psi2_copy = psi2;
-
-  gettimeofday(&start, 0);
-# ifdef _OPENMP
-    wt1=omp_get_wtime();
-# endif
-  t1=clock();
-
- for (i = 0; i < n_times; ++i)
- {
-  // CALLGRIND_START_INSTRUMENTATION;
-  // CALLGRIND_TOGGLE_COLLECT;
-  double_MVM_non_macro(chi, chi2, up, psi, psi2);
-  // CALLGRIND_TOGGLE_COLLECT;
-  // CALLGRIND_STOP_INSTRUMENTATION;
-  double_MVM_non_macro(psi, psi2, up, chi, chi2);
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
-  t2=clock();
-# ifdef _OPENMP
-    wt2=omp_get_wtime();
-# endif
-  gettimeofday(&end, 0);
-  timeval_subtract(&etime, &end, &start);
-
-//     lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
-// # ifdef _OPENMP
-//     lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
-// # endif
-//     lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
-
-
-/* HiRep Macro function */
- psi_copy = psi;
- psi2_copy = psi2;
- for (i = 0; i < n_warmup; ++i)
- {
-  _suNf_theta_T_multiply((*chi), (*up), (*psi));
-  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
-
-  _suNf_theta_T_multiply((*psi), (*up), (*chi));
-  _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
- psi_copy = psi;
- psi2_copy = psi2;
-
-  gettimeofday(&start, 0);
-# ifdef _OPENMP
-    wt1=omp_get_wtime();
-# endif
-  t1=clock();
-
- for (i = 0; i < n_times; ++i)
- {
-  // CALLGRIND_START_INSTRUMENTATION;
-  // CALLGRIND_TOGGLE_COLLECT;
-  _suNf_theta_T_multiply((*chi), (*up), (*psi));
-  _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
-  // CALLGRIND_TOGGLE_COLLECT;
-  // CALLGRIND_STOP_INSTRUMENTATION;
-
-  _suNf_theta_T_multiply((*psi), (*up), (*chi));
-  _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
-
-  psi->c[0] *= 0.001;
-  psi->c[1] *= 0.001;
-  psi->c[2] *= 0.001;
-
-  psi2->c[0] *= 0.001;
-  psi2->c[1] *= 0.001;
-  psi2->c[2] *= 0.001;
- }
-
-  t2=clock();
-# ifdef _OPENMP
-    wt2=omp_get_wtime();
-# endif
-  gettimeofday(&end, 0);
-  timeval_subtract(&etime, &end, &start);
-
-//     lprintf("THETA_T_MULTIPLY",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
-// # ifdef _OPENMP
-//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
-// # endif
-//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
- 
-
-
- afree(up);
- afree(psi);
- afree(psi2);
- afree(chi);
- afree(chi2);
- afree(chi3);
- afree(chi4);
- afree(chi5);
- afree(chi6);
-
- free(v1);
- free(v2);
- free(v3);
-//  free(chi);
-//  free(chi2);
-//  free(chi3);
-//  free(chi4);
-//  free(chi5);
-//  free(chi6);
-
-//  _mm_free(up);
-//  _mm_free(psi);
-//  _mm_free(psi2);
-//  _mm_free(chi);
-//  _mm_free(chi2);
-//  _mm_free(chi5);
-//  _mm_free(chi6);
-//  free(v1);
-//  free(v2);
-//  free(v3);
- 
-
- return 0;
+  return 0;
 }
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
-
 void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
 {
  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
@@ -762,10 +487,10 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  /* ===========(Pair 3) End: Matrix 1&2 ============*/
 
  /*Storing Results*/
- _mm256_store_pd((double *)chi, temp11);
- _mm_store_pd((double *)chi + 4, chi_3rd);
+ _mm256_storeu_pd((double *)(chi), temp11);
+ _mm_store_pd((double *)(chi + 4), chi_3rd);
 
- _mm256_store_pd((double *)chi2, temp1);
- _mm_store_pd((double *)chi2 + 4, chi2_3rd);
+ _mm256_storeu_pd((double *)(chi2), temp1);
+ _mm_store_pd((double *)(chi2 + 4), chi2_3rd);
 }
 
