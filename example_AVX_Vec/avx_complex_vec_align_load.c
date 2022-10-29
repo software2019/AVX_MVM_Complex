@@ -18,7 +18,10 @@
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 
 #define double_MVM_macro(mc, mc2, mu, mp, mp2)     \
+do                                                 \
 {                                                  \
+__m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;\
+__m128d chi_3rd, chi2_3rd;                        \
 temp1 = _mm256_load_pd((double *)(mu));           \
 temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);  \
 temp1 = _mm256_shuffle_pd(temp1, temp1, 0b1111);  \
@@ -92,7 +95,7 @@ _mm256_storeu_pd((double *)(mc), temp11);\
 _mm_store_pd((double *)(mc) + 4, chi_3rd);\
 _mm256_storeu_pd((double *)(mc2), temp1);\
 _mm_store_pd((double *)(mc2) + 4, chi2_3rd);\
-}
+} while (0)
 
 
 int main()
@@ -121,7 +124,7 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
     printf("WARNING: Could not set CPU Affinity, continuing...\n");
 
  suNf *up, *v3; 
- suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2, *psi_copy, *psi2_copy, *v1, *v2;
+ suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2, *v1, *v2;
 
 
   up = amalloc(in*sizeof(suNf), ALIGN);
@@ -137,9 +140,6 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
   chi4 = amalloc(in*sizeof(suNf_vector), ALIGN);
   chi5 = amalloc(in*sizeof(suNf_vector), ALIGN);
   chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
-
-  __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
-  __m128d chi_3rd, chi2_3rd;
 
 
 /*=========================================================================
@@ -169,19 +169,7 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 /* Double_MVM Warmup code */
 for(i=0; i<in; i++)
 { 
-    for(j=0; j<3; j++)
-    {
-      (psi+i)->c[j] = (v1+i)->c[j];
-      (psi2+i)->c[j] = (v2+i)->c[j];
-    }
-
-    for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = (v3+i)->c[j];
-    }
-
-    double_MVM_macro((chi+i), (chi2+i), (up), (psi), (psi2));
-
+  double_MVM_macro((chi+i), (chi2+i), ((v3+i)), ((v1+i)), ((v2+i)));
 }
 
  /* ************************** timing block B start ***************************** */
@@ -193,21 +181,9 @@ for(i=0; i<in; i++)
 
 for(i=0; i<in; i++)
 { 
-    for(j=0; j<3; j++)
-    {
-      (psi+i)->c[j] = (v1+i)->c[j];
-      (psi2+i)->c[j] = (v2+i)->c[j];
-    }
-
-    for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = (v3+i)->c[j];
-    }
-
-    __asm volatile("# LLVM-MCA-BEGIN double_MVM_macro":::"memory");
-        double_MVM_macro((chi+i), (chi2+i), (up), (psi), (psi2));
-    __asm volatile("# LLVM-MCA-END":::"memory");
-
+  __asm volatile("# LLVM-MCA-BEGIN double_MVM_macro":::"memory");
+      double_MVM_macro((chi+i), (chi2+i), ((v3+i)), ((v1+i)), ((v2+i)));
+  __asm volatile("# LLVM-MCA-END":::"memory");
 }
 
 t2=clock();
@@ -233,20 +209,8 @@ t2=clock();
 /* theta_T_mul Warmup Code */
 for(i=0; i<in; i++)
 {
-    for(j=0; j<3; j++)
-    {
-      (psi+i)->c[j] = (v1+i)->c[j];
-      (psi2+i)->c[j] = (v2+i)->c[j];
-    }
-
-    for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = (v3+i)->c[j];
-    }
-
-  _suNf_theta_T_multiply((*(chi5+i)), *(up), *(psi));
-  _suNf_theta_T_multiply((*(chi6+i)), *(up), *(psi2));
-  
+  _suNf_theta_T_multiply((*(chi5+i)), *((v3+i)), *((v1+i)));
+  _suNf_theta_T_multiply((*(chi6+i)), *((v3+i)), *((v2+i)));
 }
 
 /* ************ timing block C start ************* */
@@ -257,23 +221,10 @@ for(i=0; i<in; i++)
   t1=clock();
  for(i=0; i<in; i++)
 {
-    for(j=0; j<3; j++)
-    {
-      (psi+i)->c[j] = (v1+i)->c[j];
-      (psi2+i)->c[j] = (v2+i)->c[j];
-    }
-
-    for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = (v3+i)->c[j];
-    }
-
   __asm volatile("# LLVM-MCA-BEGIN _suNf_theta_T_multiply":::"memory");
-     _suNf_theta_T_multiply((*(chi5+i)), *(up), *(psi));
-     _suNf_theta_T_multiply((*(chi6+i)), *(up), *(psi2));
+  _suNf_theta_T_multiply((*(chi5+i)), *((v3+i)), *((v1+i)));
+  _suNf_theta_T_multiply((*(chi6+i)), *((v3+i)), *((v2+i)));
   __asm volatile("# LLVM-MCA-END":::"memory");
-  
-
 }
 
   t2=clock();
@@ -322,10 +273,10 @@ for (i = 0; i < in; i++)
   res10 = .0;
   res11 = .0;
   res12 = .0;
-
   }
 }
 
+/* Free the allocated memory */
   afree(up);
   afree(psi);
   afree(psi2);
