@@ -227,7 +227,7 @@ for(i=0; i<in; i++)
 }
 
  /* ************************** timing block B start ***************************** */
-
+/* Benchmarking the double_MVM_macro routine */
 while(elapsed < 2.3)
 {
     for(i=0; i<=reps; i++)
@@ -247,11 +247,12 @@ while(elapsed < 2.3)
 flop = reps * in * (9 + 6 + 9 );//9 muls, 6 adds, 9 fmaddsub
 byte = reps * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
 mb = (float) (byte/1.e6);
-gbs = (float) byte/elapsed/1.e9;
+gbs = (mb)/elapsed/1.e3;
 gflops = (float) (flop)/elapsed/1.e9;
-AI = (float) (flop/byte);
+AI = (float) (flop)/(float)(byte);//AI = Arithematic Intensity or Opsperbyte
 
-printf("reps %d, sec %f, size %d, MB %f,GFlops %f, GB/s %f flops/byte %f\n", reps, elapsed, in, mb, gflops, gbs, AI);
+//printf("reps, sec, size, MB, GFlops, GB/s, flops/byte\n");
+printf("%d, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", reps, elapsed, in, mb, gflops, gbs, AI);
 
 
 /* **************************** timing block B end ********************************* */
@@ -400,7 +401,7 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  /* =======Leftover element(3rd) row 1 & 2 and col ======= */
  temp12 = _mm256_loadu_pd((double *)up + 2);         /* [2][3][4][5] */
  temp12 = _mm256_permute2f128_pd(temp12, temp12, 1); /* [4][5][2][3] */
- temp13 = _mm256_load_pd((double *)up + 8);          /* [8][9][10][11] */
+ temp13 = _mm256_loadu_pd((double *)up + 8);          /* [8][9][10][11] */
  temp12 = _mm256_blend_pd(temp12, temp13, 12);       /* [H1 H2]:[4][5][10][11] */
 
  temp13 = _mm256_loadu_pd((double *)psi + 2);
