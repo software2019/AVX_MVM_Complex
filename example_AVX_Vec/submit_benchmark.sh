@@ -24,8 +24,8 @@ export MPI_MEMMAP_VERBOSE=1
 
 export OMP_NUM_THREADS=1
 #echo "Number of Threads = " $OMP_NUM_THREADS
-
-for ((i=10; i<710; i+=10 )) ; do
+echo "reps,  sec,      size,    MB,        GFlops,        GB/s,        flops/byte"
+for ((i=10; i<700; i+=10 )) ; do
     ./avx2_benchmark $i
 done
 

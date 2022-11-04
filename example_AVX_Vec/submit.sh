@@ -19,7 +19,7 @@ export MPI_DSM_VERBOSE=1
 export MPI_SHARED_VERBOSE=1 
 export MPI_MEMMAP_VERBOSE=1 
 
-module load valgrind
+# module load valgrind
 # Launch MPI-based executable
 
   export OMP_NUM_THREADS=1
@@ -36,8 +36,8 @@ module load valgrind
 #valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no   ./avx_complex_vec_unalign_loadu    
 
 #./avx_complex_vec
-#./avx_complex_vec_align_load 
-./avx_complex_vec_align_load_vasilis 
+./avx_complex_vec_align_load 
+#./avx_complex_vec_align_load_vasilis 
 #./avx_complex_vec_align_loadu
 #./avx_complex_vec_unalign_loadu
 
