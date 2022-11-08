@@ -201,57 +201,62 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 /* Vector Initilisation */
 //lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-  for(i=0; i<in; i++)
-{
+for(i=0; i<in; i++)
+  {
     for(j=0; j<3; j++)
-    {
-      (psi+i)->c[j] = my_rand(n);
-      (psi2+i)->c[j] = my_rand(n);
-    }
+      {
+        (psi+i)->c[j] = my_rand(n);
+        (psi2+i)->c[j] = my_rand(n);
+      }
 
     for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = my_rand(n);
-    }
-}
+      {
+        (up+i)->c[j] = my_rand(n);
+      }
+  }
 
   /******************************************************* 
         Case 1: AVX double MVM Macro perf measurement 
   *******************************************************/
 
 /* Double_MVM Warmup code */
-for(i=0; i<in; i++)
-{ 
-  double_MVM_macro((chi+i), (chi2+i), ((up+i)), ((psi+i)), ((psi2+i)));
-  //single_MVM_macro((chi+i),((up+i)), ((psi+i)));
-}
+// for(i=0; i<in; i++)
+// { 
+//   double_MVM_macro((chi+i), (chi2+i), ((up+i)), ((psi+i)), ((psi2+i)));
+//   //single_MVM_macro((chi+i),((up+i)), ((psi+i)));
+// }
 
  /* ************************** timing block B start ***************************** */
 /* Benchmarking the double_MVM_macro routine */
 while(elapsed < 2.3)
-{
-    for(i=0; i<=reps; i++)
-    {
-        t1=clock();
-        for(j=0; j<in; j++)
-        { 
-          double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+  {
+      t1=clock();
+      for(i=0; i<=reps; i++)
+        {
+          for(j=0; j<in; j++)
+            { 
+              double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+            }
+
+          // if((in-1) > in) 
+          //   {
+          //     printf("in = %d\n",(in-1));
+          //   } 
         }
-        t2=clock();
-        elapsed += ((t2-t1)/1000000.0);
-    }
-    reps++;
-}
+      t2=clock();
+      elapsed = ((t2-t1)/1000000.0);
+      reps++; 
+  }
+
 
 /* Data Movement and FLOPs Count */
-flop = reps * in * (9 + 6 + 9 );//9 muls, 6 adds, 9 fmaddsub
-byte = reps * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
+flop = (int) (reps * (float) (reps+1)/2) * in * (9 + 6 + 9 * 3 );//9 muls, 6 adds, 9 fmaddsub
+byte = (int) (reps * (float) (reps+1)/2) * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
 mb = (float) (byte/1.e6);
 gbs = (mb)/elapsed/1.e3;
 gflops = (float) (flop)/elapsed/1.e9;
 AI = (float) (flop)/(float)(byte);//AI = Arithematic Intensity or Opsperbyte
 
-//printf("reps, sec, size, MB, GFlops, GB/s, flops/byte\n");
 printf("%d, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", reps, elapsed, in, mb, gflops, gbs, AI);
 
 
