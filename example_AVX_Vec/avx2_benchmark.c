@@ -158,12 +158,11 @@ int main(int argc, char *argv[])
 {
  int i, j;
  int n = 5;
- int in = atoi(argv[1]);
+ long int in = atoi(argv[1]);
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
  float elapsed = 0.0, gflops, mb, gbs, AI;
- int flop, byte;
- int reps = 0;
- int n_warmup = 0;
+ long long  int flop, byte;
+ long int reps = 0, final_reps;
  
 /* ************ timing block A start ************* */
 clock_t t1,t2;
@@ -228,7 +227,7 @@ for(i=0; i<in; i++)
 
  /* ************************** timing block B start ***************************** */
 /* Benchmarking the double_MVM_macro routine */
-while(elapsed < 2.3)
+while(elapsed < 2.1)
   {
       t1=clock();
       for(i=0; i<=reps; i++)
@@ -250,10 +249,11 @@ while(elapsed < 2.3)
 
 
 /* Data Movement and FLOPs Count */
-flop = (int) (reps * (float) (reps+1)/2) * in * (9 + 6 + 9 * 3 );//9 muls, 6 adds, 9 fmaddsub
-byte = (int) (reps * (float) (reps+1)/2) * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
-mb = (float) (byte/1.e6);
-gbs = (mb)/elapsed/1.e3;
+final_reps = (int) (reps * (float) (reps+1)/2);
+flop = final_reps * in * (9 + 6 + 9 * 3);//9 muls, 6 adds, 9 fmaddsub
+byte = final_reps * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
+mb = (float) (byte)/1.e6;
+gbs = mb/elapsed/1.e3;
 gflops = (float) (flop)/elapsed/1.e9;
 AI = (float) (flop)/(float)(byte);//AI = Arithematic Intensity or Opsperbyte
 
