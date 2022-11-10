@@ -160,9 +160,9 @@ int main(int argc, char *argv[])
  int n = 5;
  long int in = atoi(argv[1]);
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
- float elapsed = 0.0, gflops, mb, gbs, AI;
+ double elapsed = 0.0, gflops, mb, gbs, AI;
  long long  int flop, byte;
- long int reps = 0, final_reps;
+ long int reps = 10, final_reps;
  
 /* ************ timing block A start ************* */
 clock_t t1,t2;
@@ -227,37 +227,32 @@ for(i=0; i<in; i++)
 
  /* ************************** timing block B start ***************************** */
 /* Benchmarking the double_MVM_macro routine */
-while(elapsed < 2.1)
-  {
-      t1=clock();
-      for(i=0; i<=reps; i++)
+  while(elapsed < 2.0)
+    {
+      gettimeofday(&start, 0);
+      for(i=0; i<reps; i++)
         {
           for(j=0; j<in; j++)
             { 
               double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
             }
-
-          // if((in-1) > in) 
-          //   {
-          //     printf("in = %d\n",(in-1));
-          //   } 
         }
-      t2=clock();
-      elapsed = ((t2-t1)/1000000.0);
-      reps++; 
-  }
+      gettimeofday(&end, 0);
+      timeval_subtract(&etime, &end, &start);
+      elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;
+      final_reps = reps;
+      reps = (int) ((reps*2.1)/elapsed); 
+    }
+    elapsed/=final_reps;
+  /* Data Movement and FLOPs Count */
+  flop = in * (9 + 6 + 9 * 3); /* 9 muls, 6 adds, 9 fmaddsub */
+  byte = in * (4 * sizeof(suNf_vector) + sizeof(suNf));
+  mb = (float) (byte)/1.e6;
+  gbs = mb/elapsed/1.e3;
+  gflops = (float) (flop)/elapsed/1.e9;
+  AI = (float) (flop)/(float)(byte); /* AI = Arithematic Intensity or Opsperbyte */
 
-
-/* Data Movement and FLOPs Count */
-final_reps = (int) (reps * (float) (reps+1)/2);
-flop = final_reps * in * (9 + 6 + 9 * 3);//9 muls, 6 adds, 9 fmaddsub
-byte = final_reps * in * (4 * sizeof(suNf_vector) + sizeof(suNf));
-mb = (float) (byte)/1.e6;
-gbs = mb/elapsed/1.e3;
-gflops = (float) (flop)/elapsed/1.e9;
-AI = (float) (flop)/(float)(byte);//AI = Arithematic Intensity or Opsperbyte
-
-printf("%d, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", reps, elapsed, in, mb, gflops, gbs, AI);
+  printf("%d, %.15g, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
 
 
 /* **************************** timing block B end ********************************* */
