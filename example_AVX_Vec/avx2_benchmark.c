@@ -199,9 +199,6 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 /* Vector Initilisation */
 //lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-
-//_OMP_PRAGMA(_omp_parallel _omp_for private(i,j,psi,psi2,up)
-
 #pragma omp parallel default(shared) private(i,j) firstprivate(in, psi, psi2, up)
 {
   int n = 5;
@@ -218,7 +215,6 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
       for(j=0; j<9; j++)
         {
           (up+i)->c[j] = my_rand(n);
-          //printf("TID %d up[%d] = %f\n",omp_get_thread_num(), i , _complex_re((up+i)->c[j]));
         }
       
     }
