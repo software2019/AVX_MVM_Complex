@@ -157,7 +157,6 @@
 int main(int argc, char *argv[])
 {
  int i, j;
- int n = 5;
  long int in = atoi(argv[1]);
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
  double elapsed = 0.0, gflops, mb, gbs, AI;
@@ -200,38 +199,38 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 /* Vector Initilisation */
 //lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-for(i=0; i<in; i++)
-  {
-    for(j=0; j<3; j++)
-      {
-        (psi+i)->c[j] = my_rand(n);
-        (psi2+i)->c[j] = my_rand(n);
-      }
 
-    for(j=0; j<9; j++)
-      {
-        (up+i)->c[j] = my_rand(n);
-      }
-  }
+//_OMP_PRAGMA(_omp_parallel _omp_for private(i,j,psi,psi2,up)
 
-  /******************************************************* 
-        Case 1: AVX double MVM Macro perf measurement 
-  *******************************************************/
+#pragma omp parallel default(shared) private(i,j) firstprivate(in, psi, psi2, up)
+{
+  int n = 5;
+  #pragma omp for schedule(static) 
+  for(i=0; i<in; i++)
+    {
+      
+      for(j=0; j<3; j++)
+        {
+          (psi+i)->c[j] = my_rand(n);
+          (psi2+i)->c[j] = my_rand(n);
+        }
 
-/* Double_MVM Warmup code */
-// for(i=0; i<in; i++)
-// { 
-//   double_MVM_macro((chi+i), (chi2+i), ((up+i)), ((psi+i)), ((psi2+i)));
-//   //single_MVM_macro((chi+i),((up+i)), ((psi+i)));
-// }
+      for(j=0; j<9; j++)
+        {
+          (up+i)->c[j] = my_rand(n);
+          //printf("TID %d up[%d] = %f\n",omp_get_thread_num(), i , _complex_re((up+i)->c[j]));
+        }
+      
+    }
+}
 
- /* ************************** timing block B start ***************************** */
-/* Benchmarking the double_MVM_macro routine */
+/* Synthetic Simulation: Benchmarking of the double_MVM_macro routine */
   while(elapsed < 2.0)
     {
       gettimeofday(&start, 0);
       for(i=0; i<reps; i++)
         {
+          #pragma omp parallel for schedule(static) default(shared) private(j) firstprivate(in, psi, psi2, up)
           for(j=0; j<in; j++)
             { 
               double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
@@ -239,11 +238,13 @@ for(i=0; i<in; i++)
         }
       gettimeofday(&end, 0);
       timeval_subtract(&etime, &end, &start);
-      elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;
+      elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
       final_reps = reps;
-      reps = (int) ((reps*2.1)/elapsed); 
+      reps = (int) ((reps*2.1)/elapsed);
     }
-    elapsed/=final_reps;
+
+      elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
+
   /* Data Movement and FLOPs Count */
   flop = in * (9 + 6 + 9 * 3); /* 9 muls, 6 adds, 9 fmaddsub */
   byte = in * (4 * sizeof(suNf_vector) + sizeof(suNf));
@@ -254,8 +255,6 @@ for(i=0; i<in; i++)
 
   printf("%d, %.15g, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
 
-
-/* **************************** timing block B end ********************************* */
 
 
 /******************************************************* 
@@ -345,6 +344,7 @@ for (i = 0; i < in; i++)
   
   return 0;
 }
+
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
