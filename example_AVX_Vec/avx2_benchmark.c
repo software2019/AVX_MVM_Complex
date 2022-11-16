@@ -162,7 +162,16 @@ int main(int argc, char *argv[])
  double elapsed = 0.0, gflops, mb, gbs, AI;
  long long  int flop, byte;
  long int reps = 10, final_reps;
- 
+
+/* Rescaling data with the number of threads */
+#pragma omp parallel  
+{
+  #pragma omp master
+  {
+    in = in* omp_get_num_threads();
+  }
+}
+
 /* ************ timing block A start ************* */
 clock_t t1,t2;
 struct timeval start, end, etime;
@@ -213,12 +222,12 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
     }
 }
 
-/* Synthetic Simulation: Benchmarking of the double_MVM_macro routine */
+/***************Synthetic Simulation: Benchmarking of the double_MVM_macro routine***************/
   while(elapsed < 2.0)
     {
       gettimeofday(&start, 0);
 #pragma omp parallel default(shared) private(i, j) 
-  {
+  { 
       for(i=0; i<reps; i++)
         {
           //#pragma omp parallel for schedule(static) default(shared) private(j) 
@@ -257,7 +266,7 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
   gflops = (float) (flop)/elapsed/1.e9;
   AI = (float) (flop)/(float)(byte); /* AI = Arithematic Intensity or Opsperbyte */
 
-  printf("%d, %.15g, %.15g, %d, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
+  printf("%ld, %.15g, %.15g, %ld, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
 
 
 
