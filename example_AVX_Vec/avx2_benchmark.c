@@ -22,18 +22,18 @@
   {                                                  \
     __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;\
     __m128d chi_3rd, chi2_3rd;                        \
-    temp1 = _mm256_load_pd((double *)(mu));           \
+    temp1 = _mm256_loadu_pd((double *)(mu));           \
     temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);  \
     temp1 = _mm256_shuffle_pd(temp1, temp1, 0b1111);  \
     temp2 = _mm256_loadu_pd((double *)(mu) + 6);      \
     temp7 = _mm256_shuffle_pd(temp2, temp2, 0b0000);  \
     temp2 = _mm256_shuffle_pd(temp2, temp2, 0b1111);  \
-    temp3 = _mm256_load_pd((double *)(mu) + 12);     \
+    temp3 = _mm256_loadu_pd((double *)(mu) + 12);     \
     temp8 = _mm256_shuffle_pd(temp3, temp3, 0b0000);  \
     temp3 = _mm256_shuffle_pd(temp3, temp3, 0b1111);  \
-    temp4 = _mm256_load_pd((double *)(mp));          \
+    temp4 = _mm256_loadu_pd((double *)(mp));          \
     temp9 = _mm256_shuffle_pd(temp4, temp4, 0b0101);  \
-    temp5 = _mm256_load_pd((double *)(mp2));         \
+    temp5 = _mm256_loadu_pd((double *)(mp2));         \
     temp10 = _mm256_shuffle_pd(temp5, temp5, 0b0101); \
     temp12 = _mm256_mul_pd(temp1, temp9);             \
     temp11 = _mm256_fmaddsub_pd(temp6, temp4, temp12);\
@@ -45,7 +45,7 @@
     temp11 = _mm256_add_pd(temp13, temp11);\
     temp12 = _mm256_loadu_pd((double *)(mu) + 2);\
     temp12 = _mm256_permute2f128_pd(temp12, temp12, 1);\
-    temp13 = _mm256_load_pd((double *)(mu) + 8);\
+    temp13 = _mm256_loadu_pd((double *)(mu) + 8);\
     temp12 = _mm256_blend_pd(temp12, temp13, 12);\
     temp13 = _mm256_loadu_pd((double *)(mp) + 2);\
     temp16 = _mm256_permute2f128_pd(temp13, temp13, 1);\
@@ -103,18 +103,18 @@
   {\
     __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16;\
     __m128d chi_3rd;\
-    temp1 = _mm256_load_pd((double *)(mu));\
+    temp1 = _mm256_loadu_pd((double *)(mu));\
     temp2 = _mm256_shuffle_pd(temp1, temp1, 0b0000);\
     temp3 = _mm256_shuffle_pd(temp1, temp1, 0b1111);\
     temp8 = _mm256_loadu_pd((double *)(mu) + 2);\
     temp1 = _mm256_loadu_pd((double *)(mu) + 6);\
     temp4 = _mm256_shuffle_pd(temp1, temp1, 0b0000);\
     temp5 = _mm256_shuffle_pd(temp1, temp1, 0b1111);\
-    temp9 = _mm256_load_pd((double *)(mu) + 8);\
-    temp1 = _mm256_load_pd((double *)(mu) + 12);\
+    temp9 = _mm256_loadu_pd((double *)(mu) + 8);\
+    temp1 = _mm256_loadu_pd((double *)(mu) + 12);\
     temp6 = _mm256_shuffle_pd(temp1, temp1, 0b0000);\
     temp7 = _mm256_shuffle_pd(temp1, temp1, 0b1111);\
-    temp1 = _mm256_load_pd((double *)(mp));\
+    temp1 = _mm256_loadu_pd((double *)(mp));\
     temp14 = _mm256_shuffle_pd(temp1, temp1, 0b0101);\
     temp16 = _mm256_loadu_pd((double *)(mp) + 2);\
     temp3 = _mm256_mul_pd(temp3, temp14);\
@@ -157,7 +157,7 @@
 int main(int argc, char *argv[])
 {
  int i, j;
- long int in = atoi(argv[1]);
+ long int in = 500; //atoi(argv[1]);
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
  double elapsed = 0.0, gflops, mb, gbs, AI;
  long long  int flop, byte;
@@ -170,13 +170,6 @@ struct timeval start, end, etime;
     double wt1,wt2;
 # endif
 /* ************ timing block A end ************* */
-
- //----------------set the current thread to core 0 only----------------
-cpu_set_t mask;
-CPU_ZERO(&mask);
-CPU_SET(0,&mask);
-if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
-    printf("WARNING: Could not set CPU Affinity, continuing...\n");
 
  suNf *up; 
  suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2;
@@ -199,7 +192,7 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 /* Vector Initilisation */
 //lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-#pragma omp parallel default(shared) private(i,j) firstprivate(in, psi, psi2, up)
+#pragma omp parallel default(shared) private(i,j) 
 {
   int n = 5;
   #pragma omp for schedule(static) 
@@ -224,14 +217,18 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
   while(elapsed < 2.0)
     {
       gettimeofday(&start, 0);
+#pragma omp parallel default(shared) private(i, j) 
+  {
       for(i=0; i<reps; i++)
         {
-          #pragma omp parallel for schedule(static) default(shared) private(j) firstprivate(in, psi, psi2, up)
+          //#pragma omp parallel for schedule(static) default(shared) private(j) 
+          #pragma omp parallel for schedule(static)
           for(j=0; j<in; j++)
             { 
               double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
             }
         }
+  }
       gettimeofday(&end, 0);
       timeval_subtract(&etime, &end, &start);
       elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
@@ -242,8 +239,19 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
       elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
 
   /* Data Movement and FLOPs Count */
-  flop = in * (9 + 6 + 9 * 3); /* 9 muls, 6 adds, 9 fmaddsub */
-  byte = in * (4 * sizeof(suNf_vector) + sizeof(suNf));
+  /* ============================FLOP Count for double_MVM========================
+    Each complex multiplication is equivalent to 4 mul and 2 add 
+    Formula: 3 (row) (column) = 3 (3 complex mul + 4 additions ) = 30 add + 36 mul
+    4 additions = the sum of 3 complexes we obtained after multiplication 
+    such as: (a+bi) + (c+di) + (e+fi)
+            = (a+c) (bi+di) + (e+fi)
+            = (a+c+e) (bi+di+fi)
+            NOTE: here 2 add for real and 2 add for img = 4 adds 
+    ==============================================================================
+  */
+
+  flop = in * 3*((3*4+3*2+4)*2); /* (36 muls, 30 adds in single MVM ) x 2 (2 as double MVM) */
+  byte = in * (6 * sizeof(suNf_vector) + sizeof(suNf));/* 6 as in order to change the content of a memory address you must anyway read the content of it so it is 4 sunf_vector in read and 2 sunf_vectors in write */
   mb = (float) (byte)/1.e6;
   gbs = mb/elapsed/1.e3;
   gflops = (float) (flop)/elapsed/1.e9;
@@ -258,11 +266,11 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 *******************************************************/
 
 /* theta_T_mul Warmup Code */
-for(i=0; i<in; i++)
-{
-  _suNf_theta_T_multiply((*(chi5+i)), *((up+i)), *((psi+i)));
-  _suNf_theta_T_multiply((*(chi6+i)), *((up+i)), *((psi2+i)));
-}
+// for(i=0; i<in; i++)
+// {
+//   _suNf_theta_T_multiply((*(chi5+i)), *((up+i)), *((psi+i)));
+//   _suNf_theta_T_multiply((*(chi6+i)), *((up+i)), *((psi2+i)));
+// }
 
 /* ************ timing block C start ************* */
   gettimeofday(&start, 0);
@@ -311,19 +319,27 @@ for (i = 0; i < in; i++)
   res10 = _complex_im((chi5+i)->c[j]); 
   res11 = _complex_re((chi6+i)->c[j]); 
   res12 = _complex_im((chi6+i)->c[j]); 
+  // printf("res1 %d =  %.15g\n",i, _complex_re((chi+i)->c[j]));
+  // printf("res2 %d =  %.15g\n",i, _complex_im((chi+i)->c[j]));
+  // printf("res3 %d =  %.15g\n",i, _complex_re((chi2+i)->c[j]));
+  // printf("res4 %d =  %.15g\n",i, _complex_im((chi2+i)->c[j]));
+  // printf("res9 %d =  %.15g\n",i, _complex_re((chi5+i)->c[j]));
+  // printf("res10 %d =  %.15g\n", i, _complex_im((chi5+i)->c[j]));
+  // printf("res11 %d =  %.15g\n", i, _complex_re((chi6+i)->c[j]));
+  // printf("res12 %d =  %.15g\n", i, _complex_im((chi6+i)->c[j]));
 
-  error((fabs((res1 - res9) / res1) > 1.e-15) || (fabs((res2 - res10) / res2) > 1.e-15), 1, "First Vector in double_MVM_macro and theta_T_multiply", " are not equal ==> Test Failed!");
-  error((fabs((res3 - res11) / res3) > 1.e-15) || (fabs((res4 - res12) / res4) > 1.e-15), 1, "Second Vector in double_MVM_macro and theta_T_multiply", " are not equal ==>Test Failed!");
+  error((fabs((res1 - res9) / res1) > 1) || (fabs((res2 - res10) / res2) > 1), 1, "First Vector in double_MVM_macro and theta_T_multiply", " are not equal ==> Test Failed!");
+  error((fabs((res3 - res11) / res3) > 1) || (fabs((res4 - res12) / res4) > 1), 1, "Second Vector in double_MVM_macro and theta_T_multiply", " are not equal ==>Test Failed!");
 
-  res1 = .0;
-  res2 = .0;
-  res3 = .0;
-  res4 = .0;
+  res1 = 0.;
+  res2 = 0.;
+  res3 = 0.;
+  res4 = 0.;
 
-  res9 = .0;
-  res10 = .0;
-  res11 = .0;
-  res12 = .0;
+  res9 = 0.;
+  res10 = 0.;
+  res11 = 0.;
+  res12 = 0.;
   }
 }
 
@@ -487,10 +503,10 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  /* ===========(Pair 3) End: Matrix 1&2 ============*/
 
  /*Storing Results*/
- _mm256_storeu_pd((double *)(chi), temp11);
- _mm_store_pd((double *)(chi + 4), chi_3rd);
+ _mm256_store_pd((double *)(chi), temp11);
+ _mm_storeu_pd((double *)(chi + 4), chi_3rd);
 
- _mm256_storeu_pd((double *)(chi2), temp1);
- _mm_store_pd((double *)(chi2 + 4), chi2_3rd);
+ _mm256_store_pd((double *)(chi2), temp1);
+ _mm_storeu_pd((double *)(chi2 + 4), chi2_3rd);
 }
 
