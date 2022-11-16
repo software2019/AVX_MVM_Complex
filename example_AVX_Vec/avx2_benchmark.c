@@ -157,7 +157,7 @@
 int main(int argc, char *argv[])
 {
  int i, j;
- long int in = 500; //atoi(argv[1]);
+ long int in = atoi(argv[1]);
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
  double elapsed = 0.0, gflops, mb, gbs, AI;
  long long  int flop, byte;
