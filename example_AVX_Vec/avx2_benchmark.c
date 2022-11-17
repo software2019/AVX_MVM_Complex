@@ -201,7 +201,7 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 /* Vector Initilisation */
 //lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-#pragma omp parallel default(shared) private(i,j) 
+#pragma omp parallel default(shared) private(i,j) firstprivate(in)
 {
   int n = 5;
   #pragma omp for schedule(static) 
@@ -226,12 +226,12 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
   while(elapsed < 2.0)
     {
       gettimeofday(&start, 0);
-#pragma omp parallel default(shared) private(i, j) 
+#pragma omp parallel default(shared) private(i, j) firstprivate(reps, in)
   { 
       for(i=0; i<reps; i++)
         {
-          //#pragma omp parallel for schedule(static) default(shared) private(j) 
-          #pragma omp parallel for schedule(static)
+          //#pragma omp parallel for schedule(static) default(shared) private(j) firstprivate(in)
+          #pragma omp for schedule(static)
           for(j=0; j<in; j++)
             { 
               double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
