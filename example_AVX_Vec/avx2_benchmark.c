@@ -1,6 +1,4 @@
 
-#include "header.h"
-
 /**************************************************************************************************
  *   Commands for compiling:
  *   icc avx_complex_vec.c  -o test -O3 -march=core-avx2 -mtune=core-avx2
@@ -16,7 +14,8 @@
  ***************************************************************************************************/
 
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
-
+#include "header.h"
+#define INITIAL_REP 10
 #define double_MVM_macro(mc, mc2, mu, mp, mp2)       \
   do                                                 \
   {                                                  \
@@ -156,52 +155,50 @@
 
 int main(int argc, char *argv[])
 {
- int i, j;
- long int in = atoi(argv[1]);
- double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
- double elapsed = 0.0, gflops, mb, gbs, AI;
- long long  int flop, byte;
- long int reps = 10, final_reps;
+  int i, j;
+  long int in = atoi(argv[1]);
+  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
+  double elapsed = 0.0, gflops, mb, gbs, AI;
+  long long  int flop, byte;
+  long int reps = INITIAL_REP, final_reps;
 
 /* Rescaling data with the number of threads */
-#pragma omp parallel  
-{
-  #pragma omp master
+  #pragma omp parallel  
   {
-    in = in* omp_get_num_threads();
+    #pragma omp master
+    {
+      in = in* omp_get_num_threads();
+    }
   }
-}
 
 /* ************ timing block A start ************* */
-clock_t t1,t2;
-struct timeval start, end, etime;
-# ifdef _OPENMP
+  clock_t t1,t2;
+  struct timeval start, end, etime;
+  # ifdef _OPENMP
     double wt1,wt2;
-# endif
+  # endif
 /* ************ timing block A end ************* */
 
- suNf *up; 
- suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2;
+  suNf *up; 
+  suNf_vector *chi, *chi2, *chi3, *chi4, *chi5, *chi6, *psi, *psi2;
 
- /* allocate memory */
-//lprintf("MAIN", 0, "Allocating matrix and vectors\n");
-up = amalloc(in*sizeof(suNf), ALIGN);
-psi = amalloc(in*sizeof(suNf_vector), ALIGN);
-psi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi3 = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi4 = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi5 = amalloc(in*sizeof(suNf_vector), ALIGN);
-chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
+/* allocate memory */
+  up = amalloc(in*sizeof(suNf), ALIGN);
+  psi = amalloc(in*sizeof(suNf_vector), ALIGN);
+  psi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi2 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi3 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi4 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi5 = amalloc(in*sizeof(suNf_vector), ALIGN);
+  chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
-/*=========================================================================
-      Test:  Performance Test based on loading a long array of structures  
-===========================================================================*/
+/********************************************************************************************
+ * Synthetic Simulation: Benchmarking of the double_MVM_macro and theta_T_multiply routines
+ * ******************************************************************************************/
 
-/* Vector Initilisation */
-//lprintf("MAIN", 0, "Randomizing matrix and vectors...\n");
-#pragma omp parallel default(shared) private(i,j) firstprivate(in)
+/* Initialization a long array of Vectors and Matrices*/
+#pragma omp parallel default(shared) private(i,j) 
 {
   int n = 5;
   #pragma omp for schedule(static) 
@@ -222,22 +219,66 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
     }
 }
 
-/***************Synthetic Simulation: Benchmarking of the double_MVM_macro routine***************/
+/* double_MVM_macro: Persistence Thread Case */
+printf("====double_MVM: Persistence Thread Case==== \n");
+  while(elapsed < 2.0)
+    {
+  gettimeofday(&start, 0);
+#pragma omp parallel default(shared) private(i, j) 
+  { 
+    for(i=0; i<reps; i++)
+      {
+        #pragma omp for schedule(static) nowait
+        for(j=0; j<in; j++)
+          { 
+            double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+          }
+      }
+  }
+  gettimeofday(&end, 0);
+  timeval_subtract(&etime, &end, &start);
+  elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
+  final_reps = reps;
+  reps = (int) ((reps*2.1)/elapsed);
+    }
+
+  elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
+
+/* ======================Data Movement and FLOPs Count===================== */
+/* FLOP Count for double_MVM
+ * Each complex multiplication is equivalent to 4 mul and 2 add 
+ * Formula: 3 (row) (column) = 3 (3 complex mul + 4 additions ) = 30 add + 36 mul
+ * 4 additions = the sum of 3 complexes we obtained after multiplication 
+ * such as: (a+bi) + (c+di) + (e+fi)
+            = (a+c) (bi+di) + (e+fi)
+            = (a+c+e) (bi+di+fi)
+ * NOTE: here 2 add for real and 2 add for img = 4 adds 
+ */
+
+  flop = in * 3*((3*4+3*2+4)*2); /* (36 muls, 30 adds in single MVM ) x 2 (2 as double MVM) */
+  byte = in * (6 * sizeof(suNf_vector) + sizeof(suNf));/* 6 as in order to change the content of a memory address you must anyway read the content of it so it is 4 sunf_vector in read and 2 sunf_vectors in write */
+  mb = (float) (byte)/1.e6;
+  AI = (float) (flop)/(float)(byte); /* AI = Arithematic Intensity or Opsperbyte */
+  gbs = mb/elapsed/1.e3;
+  gflops = (float) (flop)/elapsed/1.e9;
+  printf("%ld, %.15g, %.15g, %ld, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
+
+
+/* double_MVM_macro: Non-Persistence Thread Case */
+  printf("====double_MVM: Non-Persistence Thread Case==== \n");
+  reps = INITIAL_REP;
+  elapsed = 0.0;
   while(elapsed < 2.0)
     {
       gettimeofday(&start, 0);
-#pragma omp parallel default(shared) private(i, j) firstprivate(reps, in)
-  { 
       for(i=0; i<reps; i++)
         {
-          //#pragma omp parallel for schedule(static) default(shared) private(j) firstprivate(in)
-          #pragma omp for schedule(static)
+          #pragma omp parallel for schedule(static) default(shared) private(j) 
           for(j=0; j<in; j++)
             { 
               double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
             }
         }
-  }
       gettimeofday(&end, 0);
       timeval_subtract(&etime, &end, &start);
       elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
@@ -245,70 +286,75 @@ chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
       reps = (int) ((reps*2.1)/elapsed);
     }
 
-      elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
-
-  /* Data Movement and FLOPs Count */
-  /* ============================FLOP Count for double_MVM========================
-    Each complex multiplication is equivalent to 4 mul and 2 add 
-    Formula: 3 (row) (column) = 3 (3 complex mul + 4 additions ) = 30 add + 36 mul
-    4 additions = the sum of 3 complexes we obtained after multiplication 
-    such as: (a+bi) + (c+di) + (e+fi)
-            = (a+c) (bi+di) + (e+fi)
-            = (a+c+e) (bi+di+fi)
-            NOTE: here 2 add for real and 2 add for img = 4 adds 
-    ==============================================================================
-  */
-
-  flop = in * 3*((3*4+3*2+4)*2); /* (36 muls, 30 adds in single MVM ) x 2 (2 as double MVM) */
-  byte = in * (6 * sizeof(suNf_vector) + sizeof(suNf));/* 6 as in order to change the content of a memory address you must anyway read the content of it so it is 4 sunf_vector in read and 2 sunf_vectors in write */
-  mb = (float) (byte)/1.e6;
+  elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
   gbs = mb/elapsed/1.e3;
   gflops = (float) (flop)/elapsed/1.e9;
-  AI = (float) (flop)/(float)(byte); /* AI = Arithematic Intensity or Opsperbyte */
-
   printf("%ld, %.15g, %.15g, %ld, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
-
 
 
 /******************************************************* 
         Case 2: HiRep Macro Perf Measurement 
 *******************************************************/
 
-/* theta_T_mul Warmup Code */
-// for(i=0; i<in; i++)
-// {
-//   _suNf_theta_T_multiply((*(chi5+i)), *((up+i)), *((psi+i)));
-//   _suNf_theta_T_multiply((*(chi6+i)), *((up+i)), *((psi2+i)));
-// }
-
-/* ************ timing block C start ************* */
+/* theta_T_multiply: Persistence Thread Case */ 
+  printf("====theta_T_multiply: Persistence Thread Case==== \n");
+  reps = INITIAL_REP;
+  elapsed = 0.0;
+  while(elapsed < 2.0)
+    {
   gettimeofday(&start, 0);
-# ifdef _OPENMP
-    wt1=omp_get_wtime();
-# endif
-  t1=clock();
- for(i=0; i<in; i++)
-{
-  __asm volatile("# LLVM-MCA-BEGIN _suNf_theta_T_multiply":::"memory");
-  _suNf_theta_T_multiply((*(chi5+i)), *((up+i)), *((psi+i)));
-  _suNf_theta_T_multiply((*(chi6+i)), *((up+i)), *((psi2+i)));
-  __asm volatile("# LLVM-MCA-END":::"memory");
-}
-
-  t2=clock();
-# ifdef _OPENMP
-    wt2=omp_get_wtime();
-# endif
+#pragma omp parallel default(shared) private(i, j) 
+  { 
+    for(i=0; i<reps; i++)
+      {
+        #pragma omp for schedule(static) nowait
+        for(j=0; j<in; j++)
+          { 
+             _suNf_theta_T_multiply((*(chi5+j)), *((up+j)), *((psi+j)));
+             _suNf_theta_T_multiply((*(chi6+j)), *((up+j)), *((psi2+j)));
+          }
+      }
+  }
   gettimeofday(&end, 0);
   timeval_subtract(&etime, &end, &start);
+  elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
+  final_reps = reps;
+  reps = (int) ((reps*2.1)/elapsed);
+    }
 
-//     lprintf("THETA_T_MULTIPLY",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
-// # ifdef _OPENMP
-//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
-// # endif
-//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+  elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
+  gbs = mb/elapsed/1.e3;
+  gflops = (float) (flop)/elapsed/1.e9;
+  printf("%ld, %.15g, %.15g, %ld, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
 
-/* ************ timing block C end ************* */
+
+/* theta_T_multiply: Non-Persistence Thread Case */
+  printf("====theta_T_multiply: Non-Persistence Thread Case==== \n");
+  reps = INITIAL_REP;
+  elapsed = 0.0;
+  while(elapsed < 2.0)
+    {
+      gettimeofday(&start, 0);
+      for(i=0; i<reps; i++)
+        {
+          #pragma omp parallel for schedule(static) default(shared) private(j) 
+          for(j=0; j<in; j++)
+            { 
+              _suNf_theta_T_multiply((*(chi5+j)), *((up+j)), *((psi+j)));
+               _suNf_theta_T_multiply((*(chi6+j)), *((up+j)), *((psi2+j)));
+            }
+        }
+      gettimeofday(&end, 0);
+      timeval_subtract(&etime, &end, &start);
+      elapsed = (etime.tv_sec) + (etime.tv_usec)*1e-6;/*overall elapsed = actual kernel time (j loop) + resps time (i loop)*/
+      final_reps = reps;
+      reps = (int) ((reps*2.1)/elapsed);
+    }
+
+  elapsed/=final_reps;/* Actual elapsed: actual kernel time (j loop)*/
+  gbs = mb/elapsed/1.e3;
+  gflops = (float) (flop)/elapsed/1.e9;
+  printf("%ld, %.15g, %.15g, %ld, %.15g, %.15g, %.15g, %.15g\n", final_reps, final_reps*elapsed, elapsed, in, mb, gflops, gbs, AI);
 
 
 /**********************************************************************
@@ -328,17 +374,18 @@ for (i = 0; i < in; i++)
   res10 = _complex_im((chi5+i)->c[j]); 
   res11 = _complex_re((chi6+i)->c[j]); 
   res12 = _complex_im((chi6+i)->c[j]); 
-  // printf("res1 %d =  %.15g\n",i, _complex_re((chi+i)->c[j]));
-  // printf("res2 %d =  %.15g\n",i, _complex_im((chi+i)->c[j]));
-  // printf("res3 %d =  %.15g\n",i, _complex_re((chi2+i)->c[j]));
-  // printf("res4 %d =  %.15g\n",i, _complex_im((chi2+i)->c[j]));
-  // printf("res9 %d =  %.15g\n",i, _complex_re((chi5+i)->c[j]));
-  // printf("res10 %d =  %.15g\n", i, _complex_im((chi5+i)->c[j]));
-  // printf("res11 %d =  %.15g\n", i, _complex_re((chi6+i)->c[j]));
-  // printf("res12 %d =  %.15g\n", i, _complex_im((chi6+i)->c[j]));
+  
+  // printf("res1 %d =  %.15g\n",i, res1);
+  // printf("res2 %d =  %.15g\n",i, res2);
+  // printf("res3 %d =  %.15g\n",i, res3);
+  // printf("res4 %d =  %.15g\n",i, res4);
+  // printf("res9 %d =  %.15g\n",i, res9);
+  // printf("res10 %d =  %.15g\n", i, res10);
+  // printf("res11 %d =  %.15g\n", i, res11);
+  // printf("res12 %d =  %.15g\n", i, res12);
 
-  error((fabs((res1 - res9) / res1) > 1) || (fabs((res2 - res10) / res2) > 1), 1, "First Vector in double_MVM_macro and theta_T_multiply", " are not equal ==> Test Failed!");
-  error((fabs((res3 - res11) / res3) > 1) || (fabs((res4 - res12) / res4) > 1), 1, "Second Vector in double_MVM_macro and theta_T_multiply", " are not equal ==>Test Failed!");
+  error((fabs((res1 - res9) / res1) > 1.e-15) || (fabs((res2 - res10) / res2) > 1.e-15), 1, "First Vector in double_MVM_macro and theta_T_multiply", " are not equal ==> Test Failed!");
+  error((fabs((res3 - res11) / res3) > 1.e-15) || (fabs((res4 - res12) / res4) > 1.e-15), 1, "Second Vector in double_MVM_macro and theta_T_multiply", " are not equal ==>Test Failed!");
 
   res1 = 0.;
   res2 = 0.;
