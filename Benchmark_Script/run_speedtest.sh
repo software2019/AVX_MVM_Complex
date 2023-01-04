@@ -2,9 +2,9 @@
 MAXCORE=16
 NSOCKETS=2
 NODES=$1
-localt=(4 6 8 10)
-locall=6
-MAXT=120
+localt=(4 6 8 10 12 14 16 18 20)
+locall=8
+MAXT=240
 counter=0
 
 EXEC="speed_test_diracoperator"
@@ -81,16 +81,13 @@ for paral in $(seq 0 3); do
 
         break
     fi
-
+ 
     ((maxnpt = MAXPROC / (2 ** paral)))
     ((procpernode = MAXPROCPERNODE / (2 ** paral)))
 
     if ((procpernode == 0)); then
         break
     fi
-
-    ((freeprocpernode = MAXPROCPERNODE - procpernode))
-    ((maxompproc = freeprocpernode + 1))
 
     NPTLIST=$(seq 1 $maxnpt)
 
@@ -122,21 +119,24 @@ log:default = -1
 log:inverter = -1
 log:forcestat = 0
 EOF
-            omplist=($(seq 2 2 $maxompproc))
-            omplist=(1 ${omplist[@]})
+            (( maxompproc =  ( maxnpt - npt )/NODES + 1 ))
+            #omplist=($(seq 2 2 $maxompproc))
+            #omplist=(1 ${omplist[@]})
+            omplist=($(seq 1 $maxompproc))
+            
             for ompproc in ${omplist[@]}; do
                 ((ompproc * npt * NPX * NPY * NPZ > MAXPROC)) && continue
-		(( counter+=1 ))
-		if (( counter == 1)) ; then
-		    ifelse="if"
-		else
+        		(( counter+=1 ))
+		        if (( counter == 1)) ; then
+		            ifelse="if"
+        		else
                     ifelse="elif"
-		fi
+        		fi
                 cat <<EOF >>$jobmpi
 $ifelse (( SLURM_ARRAY_TASK_ID == $counter )) ; then
 export OMP_NUM_THREADS=$ompproc
 rm -f ${outfile}_${NODES}_${npt}_${lct}_${paral}_${ompproc} 
-mpirun -n $((npt * NPX * NPY * NPZ)) --map-by node ./$EXEC -i loc_speed_${NODES}_${npt}_${lct}_${paral}.in -o ${outfile}_${NODES}_${npt}_${lct}_${paral}_${ompproc}
+mpirun -n $((npt * NPX * NPY * NPZ)) --ppn $(((npt * NPX * NPY * NPZ) / NODES))  ./$EXEC -i loc_speed_${NODES}_${npt}_${lct}_${paral}.in -o ${outfile}_${NODES}_${npt}_${lct}_${paral}_${ompproc}
 $parse_out_script ${outfile}_${NODES}_${npt}_${lct}_${paral}_${ompproc} >>$reportfile
 EOF
                 #sbatch $jobmpi
