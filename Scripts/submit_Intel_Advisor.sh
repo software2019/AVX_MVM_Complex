@@ -24,17 +24,17 @@ export LC_ALL=C; unset LANGUAGE
 
 # Launch MPI-based executable
 
- export OMP_NUM_THREADS=1
+ export OMP_NUM_THREADS=16
 # NOTE: in order to get roofline chart there is a need to run: 1) first survey collection then 2) trip counts and FLOP and finally 5) Roofline  
 # 1. =========Survey the application==========
-# advisor -collect=survey --project-dir=./advi_results2 ./avx_complex_vec_align_load
-# advisor --collect=dependencies --mark-up-list=17 --project-dir=./advi_results ./avx_complex_vec_align_load
+#mpirun -n 1 advisor -collect=survey --project-dir=./advi_results2 ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
+#mpirun -n 1 advisor --collect=dependencies --mark-up-list=17 --project-dir=./advi_results ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
 
 # 2. =========Collect Trip Counts and FLOP Data==========
- #advisor --collect=tripcounts --flop --enable-cache-simulation --project-dir=./advi_results2  ./avx_complex_vec_align_load 
+#mpirun -n 1 advisor --collect=tripcounts --flop --enable-cache-simulation --project-dir=./advi_results2  ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
 
 # 3. ========Collect memory access patterns(MAP) data for loops==========
-#mpirun -n 1 advisor --collect=map --enable-cache-simulation --cachesim-mode=cache-misses --project-dir=./advi_results2 ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
+mpirun -n 1 advisor --collect=map --enable-cache-simulation --cachesim-mode=cache-misses --project-dir=./advi_results2 ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
 #Mem Access Patterns of a specific loop: dphi_fused first loop
 #mpirun -n 1 advisor --collect=map --mark-up-list=17 --project-dir=./advi_results_Dependence ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
 #Run a Memory Access Patterns analysis. Model cache misses for a default cache configuration
@@ -48,16 +48,9 @@ export LC_ALL=C; unset LANGUAGE
 # Collect dependencies of bulk loop whose ID: 17
 #mpirun -n 1 advisor --collect=dependencies --mark-up-list=17 --project-dir=./advi_results_Dependence ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
 
-#*****************************************************************************
-# 5. Run Roofline Analysis: The following 3 runs we need 
-#*****************************************************************************
-
-#advisor -collect=survey --project-dir=./advi_results_bench2 ./avx2_benchmark_roofline2 333300 
-#advisor --collect=tripcounts --flop --enable-cache-simulation --project-dir=./advi_results_bench2  ./avx2_benchmark_roofline2 333300
-advisor -c=roofline --project-dir=./advi_results_bench2 ./avx2_benchmark_roofline2 333300
-
-#*******************************************************************************
-
+# 5. Run Roofline Analysis
+ #mpirun -n 1 advisor -c=roofline --project-dir=/home/mrahman/my_result/Advisor -- ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3503
+ 
  #advisor --collect=roofline --project-dir=./advi  --search-dir src:p=./advi –- myApplication
 
  #mpirun -n 1 ./speed_test_diracoperator -i ./speed_test_diracoperator.in -o out_sf_measure_2501_3500

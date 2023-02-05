@@ -3,7 +3,7 @@
 #SBATCH -J m_2501_3500          # Job name
 #SBATCH --partition test        # Job queue
 #SBATCH -o job.%j.out           # Name of stdout output file 
-#SBATCH -N 1                    # Total number of nodes requested
+#SBATCH -N 2                    # Total number of nodes requested
 #SBATCH -n 1                    # Total number of mpi tasks requested
 #SBATCH -t 72:00:00             # Run time (hh:mm:ss) - 1.5 hours
 

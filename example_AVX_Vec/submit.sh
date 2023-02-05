@@ -8,21 +8,29 @@
 #SBATCH -t 72:00:00             # Run time (hh:mm:ss) - 1.5 hours
 
 source /opt/ohpc/pub/oneAPI/setvars.sh
-
 echo "cat /proc/sys/kernel/perf_event_paranoid"
 cat /proc/sys/kernel/perf_event_paranoid
 
 export I_MPI_DEBUG=5 
-export OMP_DISPLAY_AFFINITY=TRUE 
 unset MPI_DSM_OFF                 #Turns off nonuniform memory access (NUMA) optimization in the MPI library.
 export MPI_DSM_VERBOSE=1 
 export MPI_SHARED_VERBOSE=1 
 export MPI_MEMMAP_VERBOSE=1 
 
+# specify number of OMP threads
+export OMP_NUM_THREADS=4
+# enable thread binding and print out info on thread affinity
+export OMP_DISPLAY_ENV=true # turns on display of OMP's internal control variables
+export OMP_DISPLAY_AFFINITY=true # display the affinity of each OMP thread
+export OMP_AFFINITY_FORMAT="Thread Affinity: %0.3L %.8n %.15{thread_affinity} %.12H"
+
+export OMP_PROC_BIND=close 
+export OMP_PLACES=cores #bind each thread to a core
+
+
 # module load valgrind
 # Launch MPI-based executable
 
-  export OMP_NUM_THREADS=1
   #echo "Number of Threads = " $OMP_NUM_THREADS
   
   #icc xandar_openmp.c -o test1 -qopenmp
@@ -40,6 +48,7 @@ export MPI_MEMMAP_VERBOSE=1
 #./avx_complex_vec_align_load_vasilis 
 #./avx_complex_vec_align_loadu
 #./avx_complex_vec_unalign_loadu
+# ./avx2_benchmark 10
 
 #Without the flag: -no-multibyte-chars, the following error occurs: "Catastrophic error: could not set locale "" to allow processing of multibyte characters"
 

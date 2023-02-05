@@ -24,16 +24,16 @@ export OMP_PROC_BIND=close # Specified omp threads are binded to soc1
 #export OMP_PROC_BIND=spread # Specified omp threads are divided into both soc1 and soc2  
 export OMP_PLACES=cores
 
-for ((i=2; i<=32; i*=2 )) ; do
+for ((i=2; i<=16; i*=2 )) ; do
     export OMP_NUM_THREADS=$i
     echo "Number of Threads = " $OMP_NUM_THREADS
     echo "reps, overall sec, actual sec, size, MB, GFlops, GB/s, flops/byte"
 
     for ((j=32; j<=3328; j+=32 )) ; do
-        ./avx2_benchmark $j
+        ./avx2_single_benchmark $j
     done
 
     for ((j=3328; j<=332800; j+=3328 )) ; do
-        ./avx2_benchmark $j
+        ./avx2_single_benchmark $j
     done
 done
