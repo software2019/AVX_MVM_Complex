@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#SBATCH -J m_2501_3600        # Job name
+#SBATCH --partition test    # Job queue
+#SBATCH -o job.%j.out         # Name of stdout output file 
+#SBATCH -N 1                  # Total number of nodes requested
+#SBATCH -n 1                  # Total number of mpi tasks requested
+#SBATCH -t 72:00:00           # Run time (hh:mm:ss) - 1.5 hours
+
+source /opt/ohpc/pub/oneAPI/setvars.sh
+
+echo "cat /proc/sys/kernel/perf_event_paranoid"
+cat /proc/sys/kernel/perf_event_paranoid
+
+export I_MPI_DEBUG=5 
+export OMP_DISPLAY_AFFINITY=TRUE 
+unset MPI_DSM_OFF 
+export MPI_DSM_VERBOSE=1 
+export MPI_SHARED_VERBOSE=1 
+export MPI_MEMMAP_VERBOSE=1 
+
+# Launch MPI-based executable
+
+#mpirun -n 64 ./mk_sfcorrelators -i T16L16_b2.3_csw1.950000_k0.13450000_id0.sfms.in_2501_3500 -o out_sf_measure_2501_3500
+
+
+#Memory error analysis types: 
+#mi1: Memory error analysis that answers the question Does my target leak memory?
+#mi2: Memory error analysis that answers the question Does my target have memory access problems?
+#mi3: Memory error analysis that answers the question Where are the memory access problems?
+export OMP_NUM_THREADS=16
+mpirun -n 4 inspxe-cl -collect mi3 -result-dir /home/mrahman/my_result/Inspector/r003_mi3 ./speed_test_diracoperator -i ./speed_test_diracoperator4.in -o out_sf_measure_2501_3500 2
+
+#Threading error analysis_types
+#export OMP_NUM_THREADS=16
+#mpirun -n 4 inspxe-cl -collect ti3 -result-dir /home/mrahman/my_result/Inspector/r004_4mpi_16omp ./speed_test_diracoperator -i ./speed_test_diracoperator4.in -o out_sf_measure_2501_3500 2
+
+
+#Command to run jobs on reserved nodes
+#inspxe-gui
+#sbatch --reservation=mrahman_14 -q test submit_TA_parallel.mpi
