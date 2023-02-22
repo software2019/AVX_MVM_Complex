@@ -46,7 +46,7 @@
 ```bash
 ../Make/write_mkflags.pl -f ../Make/MkFlags.ini -n 3 -r FUND --cc icc --mpicc mpiicc  --mpi --cflags "-Wall -O3 -qopenmp -march=core-avx2 -mtune=core-avx2" --ldflags " -qopenmp"  --ndebug --fuse --probempi --no-checkspinor && ../Make/nj 
 
-../Make/write_mkflags.pl -f ../Make/MkFlags.ini -n 3 -r FUND --cc icc --mpicc mpiicc  --mpi --cflags "-Wall -O3 -qopenmp -march=core-avx2 -mtune=core-avx2" --ldflags " -qopenmp"  --ndebug --probempi --no-checkspinor && ../Make/nj Benchmarks/
+../Make/write_mkflags.pl -f ../Make/MkFlags.ini -n 3 -r FUND --cc icc --mpicc mpiicc  --mpi --cflags "-Wall -O3 -qopenmp -march=core-avx2 -mtune=core-avx2" --ldflags " -qopenmp"  --ndebug --probempi --no-checkspinor && ../Make/nj 
 
 ../Make/write_mkflags.pl -f ../Make/MkFlags.ini -n 3 -r FUND --cc icc --mpicc mpiicc  --mpi --cflags "-Wall -O3 -qopenmp -march=core-avx2 -mtune=core-avx2" --ldflags " -qopenmp"  --ndebug --newgeo --probempi --no-checkspinor && ../Make/nj 
 ```
@@ -109,4 +109,26 @@
 ```
 
 
+
+## Command for running the run_speedtest.sh   
+```bash
+./run_speedtest.sh 1 # for 1 node
+```   
+
+## Comnand for Slrum job array Submissions   
+# Submitting Array Jobs  
+
+```bash
+sbatch --array=1-1000 job_2_1.mpi
+sbatch --array=1-1000 job_2_2.mpi
+sbatch --array=1-943 job_2_3.mpi
+
+
+sbatch --array=1-1000 job_4_1.mpi
+sbatch --array=1-1000 job_4_2.mpi
+sbatch --array=1-1000 job_4_3.mpi
+sbatch --array=1-30 job_4_4.mpi
+
+sbatch --array=1-33 job_1_1.mpi 
+```
 
