@@ -122,9 +122,7 @@
 
 
 
-ShidurRahman#9991
-A0UuA83*Gye4
-
+## UCloud and HIPPO Document Links  
 https://cloud.sdu.dk
 servicedesk@escience.sdu.dk
 https://servicedesk.cloud.sdu.dk
