@@ -123,11 +123,13 @@
 
 
 ## UCloud and HIPPO Document Links  
-https://cloud.sdu.dk
-servicedesk@escience.sdu.dk
-https://servicedesk.cloud.sdu.dk
-https://docs.cloud.sdu.dk/
-https://docs.hpc-type3.sdu.dk/
+- https://cloud.sdu.dk   
+- servicedesk@escience.sdu.dk    
+- https://servicedesk.cloud.sdu.dk    
+- https://docs.cloud.sdu.dk/    
+- https://docs.hpc-type3.sdu.dk/    
+
+
 
 ## Command for running the run_speedtest.sh   
 ```bash
