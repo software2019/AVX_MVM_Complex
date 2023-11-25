@@ -1,0 +1,18 @@
+:: WARNING: setvars.sh has already been run. Skipping re-execution.
+   To force a re-execution of setvars.sh, use the '--force' option.
+   Using '--force' can result in excessive use of your environment variables.
+SLURM_CPUS_PER_TASK=4  NODES=1 SLURM_TASKS_PER_NODE=1
+OMP: pid 58563 tid 58563 thread 0 bound to OS proc set {0,32}
+OMP: pid 58563 tid 58572 thread 2 bound to OS proc set {2,34}
+I'm thread 0 in process 0
+OMP: pid 58563 tid 58571 thread 1 bound to OS proc set {1,33}
+I'm thread 1 in process 0
+I'm thread 2 in process 0
+OMP: pid 58563 tid 58573 thread 3 bound to OS proc set {3,35}
+I'm thread 3 in process 0
+
+Provided thread support level: 1
+  0 - MPI_THREAD_SINGLE
+  1 - MPI_THREAD_FUNNELED
+  2 - MPI_THREAD_SERIALIZED
+  3 - MPI_THREAD_MULTIPLE

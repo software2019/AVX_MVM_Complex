@@ -1,0 +1,39 @@
+[OMP][0]Number of Threads requested = 1
+[SYSTEM][0]Gauge group: SU(3)
+[SYSTEM][0]Fermion representation: dim = 3
+[SYSTEM][0][RepID: 0][world_size: 32]
+[SYSTEM][0][MPI_ID: 0][MPI_size: 32]
+[SYSTEM][0]MACROS=-DBC_T_PERIODIC -DBC_X_PERIODIC -DBC_Y_PERIODIC -DBC_Z_PERIODIC -DUPDATE_EO -DNDEBUG -DIO_FLUSH -DAVX2_HIREP -DWITH_FUSE_MASTER_FOR -DWITH_MPI -DNG=3 -DGAUGE_SUN -DREPR_FUNDAMENTAL -DREPR_NAME="REPR_FUNDAMENTAL" -D_XOPEN_SOURCE=600
+
+[GEOMETRY][0]CId = 0 (0,0,0,0)
+[GEOMETRY_INIT][0]Global size is 32x16x16x16
+[GEOMETRY_INIT][0]Local size is 8x8x8x8
+[GEOMETRY_INIT][0]Extended local size is 10x10x10x10
+[GEOMETRY_INIT][0]The lattice borders are (1,1,1,1)
+[GEOMETRY_INIT][0]Size of the bulk subblocking (2,2,2,2)
+[GEOMETRY_INIT][0]Process sign is 0
+[GEOMETRY][0]Geometry variable checked
+[GEOMETRY][0]Gauge field: size 11664 nbuffer 64 
+[GEOMETRY][0]Spinor field (EO): size 9104 nbuffer 16 
+[GEOMETRY][0]Even Spinor field: size 4552 nbuffer 8 
+[GEOMETRY][0]Odd Spinor field: size 4552 nbuffer 8 
+[SYSTEM][0]AVX2 support enabled
+[READINPUT][0]Warning: input parameter [ranlux start] not found in [loc_speed_1_4_8_8_3.in]!
+[READINPUT][0]Warning: input parameter [ranlux state] not found in [loc_speed_1_4_8_8_3.in]!
+[SETUP_RANDOM][0]RLXD [1,12345]
+[MAIN][0]n_warmup = 1000
+[MAIN][0]Allocating spinor field
+[MAIN][0]Randomizing spinor field...
+[LA_TEST][0]Square norm of the random spinor fields 1573294.770466 and 1573529.776467
+[LA_TEST][0]They must be different from zero
+[MAIN][0]Generating a random gauge field... 
+[init_su2_rand][0]Init rand for threads, performing 1 init
+[MAIN][0]done.
+[LA TEST][0]Flop per site = 1320
+[LA TEST][0]Byte per site = 3072
+[LA TEST][0]Dirac data movement = 12582912 bytes
+[LA TEST][0]Warmup application of the Diracoperator 1000 times.
+[LA TEST][0]
+[LA TEST][0]Evaluating the massless Diracoperator.
+[LA TEST][0]Massless Diracoperator reps: 553 , data: 12288.000000 kb, time: 2112.308479 msec, GFLOPS: 1.41547 , BAND: 3.29419 GB/s
+[SYSTEM][0]Process finalized.

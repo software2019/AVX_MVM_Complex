@@ -1,0 +1,35 @@
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use Cwd qw(abs_path getcwd);
+use File::Path qw(make_path);
+
+# set this option to re-generate the ninja.build file every time
+# this is useful if new files are added or files are deleted
+# or if NOCOMPILE options are changed often
+my $always_generate_ninja = 1;
+
+
+my $ownpath = abs_path($0);
+my $cwd = getcwd;
+$ownpath =~ m{^(.*?)/Make/.*} or die("Wrong install dir for b script!\n");
+my $rootdir = $1;
+$cwd =~ s{^$rootdir/?}{};
+if ($cwd) { $cwd .= "/"; }
+
+
+my $builddir = "$rootdir/build";
+my $ninja_file = "$builddir/build.ninja";
+if (not (-e $builddir)) {
+     make_path($builddir);
+}
+if (not (-s $ninja_file) || $always_generate_ninja) {
+     print "Generating Ninja build file [$ninja_file]\n";
+     system("$rootdir/Make/build.pl > $ninja_file")==0 or die("Failed to run $rootdir/Make/build.pl: $!");
+}
+
+my $ninja_cmd = "ninja -C $rootdir -f $ninja_file ";
+my @ninja_args = ();
+my $skip = 0;
+my $ntargets = 0;
+

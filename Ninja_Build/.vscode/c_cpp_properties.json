@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "HiRep",
+            "defines": [
+                "NG=",
+                "",
+                "",
+                "REPR_NAME=\"\"",
+                "_XOPEN_SOURCE=600"
+            ],
+            "compilerPath": "/opt/ohpc/pub/intel/compilers_and_libraries_2019.5.281/linux/bin/intel64/icc",
+            "intelliSenseMode": "gcc-x64",
+            "includePath": ["/home/mrahman/AVX_MVM_Complex/Ninja_Build/Include","/home/mrahman/AVX_MVM_Complex/Ninja_Build/Include/Core"],
+            "cStandard": "c11",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}

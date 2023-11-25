@@ -30,7 +30,7 @@ int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *
 double complex my_rand(const int n)
 {
  double complex c;
- c = (double)(rand() % n) / 5 + (double)(rand() % n) / 5 * I; //%n means return random numbers less than n or 0 to n-1
+ c = (double)(rand() % n) / 5 + 0.000001 + (double)(rand() % n) / 5 * I;//%n means return random numbers less than n or 0 to n-1
  return c;
 }
 

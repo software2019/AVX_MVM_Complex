@@ -1,0 +1,872 @@
+
+[0] Code Region - double_MVM_macro
+
+Iterations:        300
+Instructions:      19800
+Total Cycles:      7823
+Total uOps:        24300
+
+Dispatch Width:    4
+uOps Per Cycle:    3.11
+IPC:               2.53
+Block RThroughput: 25.0
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+[7]: Encoding Size
+
+[1]    [2]    [3]    [4]    [5]    [6]    [7]    Encodings:                    Instructions:
+ 2      7     1.00    *                    7     c4 43 7d 05 34 24 00          vpermilpd	$0, (%r12), %ymm14
+ 2      7     1.00    *                    7     c4 c3 7d 05 04 24 0f          vpermilpd	$15, (%r12), %ymm0
+ 2      7     1.00    *                    8     c4 43 7d 05 6c 24 30 00       vpermilpd	$0, 48(%r12), %ymm13
+ 2      7     1.00    *                    8     c4 c3 7d 05 64 24 30 0f       vpermilpd	$15, 48(%r12), %ymm4
+ 2      7     1.00    *                    8     c4 43 7d 05 4c 24 60 00       vpermilpd	$0, 96(%r12), %ymm9
+ 2      7     1.00    *                    8     c4 c3 7d 05 74 24 60 0f       vpermilpd	$15, 96(%r12), %ymm6
+ 1      6     0.50    *                    5     c4 c1 7d 28 0e                vmovapd	(%r14), %ymm1
+ 1      1     1.00                         6     c4 63 7d 05 d1 05             vpermilpd	$5, %ymm1, %ymm10
+ 2      7     1.00    *                    6     c4 63 7d 05 1b 05             vpermilpd	$5, (%rbx), %ymm11
+ 1      3     0.50                         5     c4 c1 7d 59 da                vmulpd	%ymm10, %ymm0, %ymm3
+ 1      5     0.50                         5     c4 e2 8d b6 d9                vfmaddsub231pd	%ymm1, %ymm14, %ymm3
+ 1      3     0.50                         5     c4 c1 5d 59 d2                vmulpd	%ymm10, %ymm4, %ymm2
+ 1      5     0.50                         5     c4 e2 95 b6 d1                vfmaddsub231pd	%ymm1, %ymm13, %ymm2
+ 1      3     1.00                         6     c4 e3 6d 06 fb 02             vperm2f128	$2, %ymm3, %ymm2, %ymm7
+ 1      3     1.00                         6     c4 e3 65 06 db 01             vperm2f128	$1, %ymm3, %ymm3, %ymm3
+ 1      1     0.33                         6     c4 e3 65 0d da 0c             vblendpd	$12, %ymm2, %ymm3, %ymm3
+ 1      6     0.50    *                    7     c4 c1 7d 10 6c 24 10          vmovupd	16(%r12), %ymm5
+ 1      3     1.00                         6     c4 e3 55 06 d5 01             vperm2f128	$1, %ymm5, %ymm5, %ymm2
+ 2      7     0.50    *                    8     c4 c3 6d 0d 54 24 40 0c       vblendpd	$12, 64(%r12), %ymm2, %ymm2
+ 1      6     0.50    *                    6     c4 c1 7d 10 6e 10             vmovupd	16(%r14), %ymm5
+ 1      3     1.00                         6     c4 63 55 06 c5 01             vperm2f128	$1, %ymm5, %ymm5, %ymm8
+ 1      1     0.33                         6     c4 e3 3d 0d ed 0c             vblendpd	$12, %ymm5, %ymm8, %ymm5
+ 1      1     1.00                         6     c4 63 7d 05 e2 00             vpermilpd	$0, %ymm2, %ymm12
+ 1      1     1.00                         6     c4 e3 7d 05 d2 0f             vpermilpd	$15, %ymm2, %ymm2
+ 1      1     1.00                         6     c4 63 7d 05 fd 05             vpermilpd	$5, %ymm5, %ymm15
+ 1      3     0.50                         4     c5 05 59 fa                   vmulpd	%ymm2, %ymm15, %ymm15
+ 1      5     0.50                         5     c4 c2 85 96 ec                vfmaddsub132pd	%ymm12, %ymm15, %ymm5
+ 1      3     0.50                         5     c4 c1 7d 59 c3                vmulpd	%ymm11, %ymm0, %ymm0
+ 2      11    0.50    *                    5     c4 e2 8d b6 03                vfmaddsub231pd	(%rbx), %ymm14, %ymm0
+ 1      3     0.50                         5     c4 c1 5d 59 e3                vmulpd	%ymm11, %ymm4, %ymm4
+ 2      11    0.50    *                    5     c4 62 dd 96 2b                vfmaddsub132pd	(%rbx), %ymm4, %ymm13
+ 1      3     1.00                         6     c4 e3 15 06 e0 02             vperm2f128	$2, %ymm0, %ymm13, %ymm4
+ 1      3     1.00                         6     c4 e3 7d 06 c0 01             vperm2f128	$1, %ymm0, %ymm0, %ymm0
+ 1      1     0.33                         6     c4 c3 7d 0d c5 0c             vblendpd	$12, %ymm13, %ymm0, %ymm0
+ 1      6     0.50    *                    5     c5 7d 10 73 10                vmovupd	16(%rbx), %ymm14
+ 1      3     1.00                         6     c4 43 0d 06 fe 01             vperm2f128	$1, %ymm14, %ymm14, %ymm15
+ 1      1     0.33                         6     c4 43 05 0d fe 0c             vblendpd	$12, %ymm14, %ymm15, %ymm15
+ 1      1     1.00                         6     c4 43 7d 05 ef 05             vpermilpd	$5, %ymm15, %ymm13
+ 1      3     0.50                         4     c5 15 59 ea                   vmulpd	%ymm2, %ymm13, %ymm13
+ 1      5     0.50                         5     c4 42 9d b6 ef                vfmaddsub231pd	%ymm15, %ymm12, %ymm13
+ 1      3     0.50                         5     c4 41 4d 59 d2                vmulpd	%ymm10, %ymm6, %ymm10
+ 1      5     0.50                         5     c4 c2 ad 96 c9                vfmaddsub132pd	%ymm9, %ymm10, %ymm1
+ 1      3     0.50                         5     c4 c1 4d 59 f3                vmulpd	%ymm11, %ymm6, %ymm6
+ 2      11    0.50    *                    5     c4 62 cd 96 0b                vfmaddsub132pd	(%rbx), %ymm6, %ymm9
+ 1      3     1.00                         6     c4 e3 35 06 f1 02             vperm2f128	$2, %ymm1, %ymm9, %ymm6
+ 1      3     1.00                         6     c4 e3 75 06 c9 01             vperm2f128	$1, %ymm1, %ymm1, %ymm1
+ 1      1     0.33                         6     c4 c3 75 0d c9 0c             vblendpd	$12, %ymm9, %ymm1, %ymm1
+ 1      6     0.50    *                    7     c4 41 7d 10 4c 24 70          vmovupd	112(%r12), %ymm9
+ 1      3     1.00                         6     c4 c3 35 06 d1 01             vperm2f128	$1, %ymm9, %ymm9, %ymm2
+ 1      1     0.33                         6     c4 c3 6d 0d d1 0c             vblendpd	$12, %ymm9, %ymm2, %ymm2
+ 1      1     0.33                         6     c4 43 3d 0d c6 0c             vblendpd	$12, %ymm14, %ymm8, %ymm8
+ 1      1     1.00                         6     c4 63 7d 05 ca 00             vpermilpd	$0, %ymm2, %ymm9
+ 1      1     1.00                         6     c4 e3 7d 05 d2 0f             vpermilpd	$15, %ymm2, %ymm2
+ 1      1     1.00                         6     c4 43 7d 05 d0 05             vpermilpd	$5, %ymm8, %ymm10
+ 1      3     0.50                         5     c4 c1 6d 59 d2                vmulpd	%ymm10, %ymm2, %ymm2
+ 1      5     0.50                         5     c4 c2 b5 b6 d0                vfmaddsub231pd	%ymm8, %ymm9, %ymm2
+ 1      3     1.00                         4     c5 cd 58 c9                   vaddpd	%ymm1, %ymm6, %ymm1
+ 1      3     1.00                         4     c5 f5 58 ca                   vaddpd	%ymm2, %ymm1, %ymm1
+ 1      3     1.00                         4     c5 c5 58 fb                   vaddpd	%ymm3, %ymm7, %ymm7
+ 1      3     1.00                         4     c5 c5 58 fd                   vaddpd	%ymm5, %ymm7, %ymm7
+ 2      1     1.00           *             7     c4 c1 7d 11 7c 35 00          vmovupd	%ymm7, (%r13,%rsi)
+ 2      1     1.00           *             7     c4 c1 79 29 4c 35 20          vmovapd	%xmm1, 32(%r13,%rsi)
+ 1      3     1.00                         4     c5 dd 58 e0                   vaddpd	%ymm0, %ymm4, %ymm4
+ 1      3     1.00                         5     c4 c1 5d 58 e5                vaddpd	%ymm13, %ymm4, %ymm4
+ 2      1     1.00           *             6     c4 c1 7d 11 24 37             vmovupd	%ymm4, (%r15,%rsi)
+ 2      1     1.00           *             8     c4 c3 7d 19 4c 37 20 01       vextractf128	$1, %ymm1, 32(%r15,%rsi)
+
+
+Resources:
+[0]   - BWDivider
+[1]   - BWFPDivider
+[2]   - BWPort0
+[3]   - BWPort1
+[4]   - BWPort2
+[5]   - BWPort3
+[6]   - BWPort4
+[7]   - BWPort5
+[8]   - BWPort6
+[9]   - BWPort7
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
+ -      -     14.00  17.00  8.50   8.50   4.00   26.00   -     3.00   
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$0, (%r12), %ymm14
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$15, (%r12), %ymm0
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$0, 48(%r12), %ymm13
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$15, 48(%r12), %ymm4
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$0, 96(%r12), %ymm9
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$15, 96(%r12), %ymm6
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovapd	(%r14), %ymm1
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$5, %ymm1, %ymm10
+ -      -      -      -     0.50   0.50    -     1.00    -      -     vpermilpd	$5, (%rbx), %ymm11
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm10, %ymm0, %ymm3
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub231pd	%ymm1, %ymm14, %ymm3
+ -      -     0.01   0.99    -      -      -      -      -      -     vmulpd	%ymm10, %ymm4, %ymm2
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub231pd	%ymm1, %ymm13, %ymm2
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm3, %ymm2, %ymm7
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm3, %ymm3, %ymm3
+ -      -     0.01   0.99    -      -      -      -      -      -     vblendpd	$12, %ymm2, %ymm3, %ymm3
+ -      -      -      -     1.00    -      -      -      -      -     vmovupd	16(%r12), %ymm5
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm5, %ymm5, %ymm2
+ -      -     1.00    -     0.50   0.50    -      -      -      -     vblendpd	$12, 64(%r12), %ymm2, %ymm2
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%r14), %ymm5
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm5, %ymm5, %ymm8
+ -      -     0.99   0.01    -      -      -      -      -      -     vblendpd	$12, %ymm5, %ymm8, %ymm5
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$0, %ymm2, %ymm12
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$15, %ymm2, %ymm2
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$5, %ymm5, %ymm15
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm2, %ymm15, %ymm15
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub132pd	%ymm12, %ymm15, %ymm5
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm11, %ymm0, %ymm0
+ -      -     0.01   0.99   0.50   0.50    -      -      -      -     vfmaddsub231pd	(%rbx), %ymm14, %ymm0
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm11, %ymm4, %ymm4
+ -      -     0.01   0.99   0.50   0.50    -      -      -      -     vfmaddsub132pd	(%rbx), %ymm4, %ymm13
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm0, %ymm13, %ymm4
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm0, %ymm0, %ymm0
+ -      -     1.00    -      -      -      -      -      -      -     vblendpd	$12, %ymm13, %ymm0, %ymm0
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rbx), %ymm14
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm14, %ymm14, %ymm15
+ -      -     0.01   0.99    -      -      -      -      -      -     vblendpd	$12, %ymm14, %ymm15, %ymm15
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$5, %ymm15, %ymm13
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm2, %ymm13, %ymm13
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub231pd	%ymm15, %ymm12, %ymm13
+ -      -     0.01   0.99    -      -      -      -      -      -     vmulpd	%ymm10, %ymm6, %ymm10
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub132pd	%ymm9, %ymm10, %ymm1
+ -      -     0.01   0.99    -      -      -      -      -      -     vmulpd	%ymm11, %ymm6, %ymm6
+ -      -     0.99   0.01   0.50   0.50    -      -      -      -     vfmaddsub132pd	(%rbx), %ymm6, %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm1, %ymm9, %ymm6
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm1, %ymm1, %ymm1
+ -      -      -     1.00    -      -      -      -      -      -     vblendpd	$12, %ymm9, %ymm1, %ymm1
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	112(%r12), %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm9, %ymm9, %ymm2
+ -      -     0.01   0.99    -      -      -      -      -      -     vblendpd	$12, %ymm9, %ymm2, %ymm2
+ -      -      -      -      -      -      -     1.00    -      -     vblendpd	$12, %ymm14, %ymm8, %ymm8
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$0, %ymm2, %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$15, %ymm2, %ymm2
+ -      -      -      -      -      -      -     1.00    -      -     vpermilpd	$5, %ymm8, %ymm10
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm10, %ymm2, %ymm2
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub231pd	%ymm8, %ymm9, %ymm2
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm1, %ymm6, %ymm1
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm2, %ymm1, %ymm1
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm3, %ymm7, %ymm7
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm5, %ymm7, %ymm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%ymm7, (%r13,%rsi)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovapd	%xmm1, 32(%r13,%rsi)
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm0, %ymm4, %ymm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm13, %ymm4, %ymm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%ymm4, (%r15,%rsi)
+ -      -      -      -     0.01   0.99   1.00    -      -      -     vextractf128	$1, %ymm1, 32(%r15,%rsi)
+
+[1] Code Region - _suNf_theta_T_multiply
+
+Iterations:        300
+Instructions:      97500
+Total Cycles:      29120
+Total uOps:        113700
+
+Dispatch Width:    4
+uOps Per Cycle:    3.90
+IPC:               3.35
+Block RThroughput: 94.8
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+[7]: Encoding Size
+
+[1]    [2]    [3]    [4]    [5]    [6]    [7]    Encodings:                    Instructions:
+ 1      5     0.50    *                    6     c4 c1 7b 10 04 24             vmovsd	(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 08          vmovsd	8(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 16                vmovsd	(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 08             vmovsd	8(%r14), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c ec                   vsubsd	%xmm4, %xmm5, %xmm5
+ 1      1     1.00                         5     c4 c1 f9 7e ed                vmovq	%xmm5, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 fc                   vaddsd	%xmm4, %xmm5, %xmm7
+ 2      1     1.00           *             8     c5 fb 11 bd 10 ff ff ff       vmovsd	%xmm7, -240(%rbp)
+ 1      1     1.00                         5     c4 c1 f9 6e f5                vmovq	%r13, %xmm6
+ 1      3     1.00                         4     c5 f9 2e f7                   vucomisd	%xmm7, %xmm6
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L98
+ 1      5     0.50    *                    7     48 8b 85 f0 fe ff ff          movq	-272(%rbp), %rax
+ 1      1     0.25                         3     48 89 c3                      movq	%rax, %rbx
+ 1      1     1.00           *             3     4c 89 28                      movq	%r13, (%rax)
+ 1      5     0.50    *                    8     c5 fb 10 95 10 ff ff ff       vmovsd	-240(%rbp), %xmm2
+ 2      1     1.00           *             5     c5 fb 11 50 08                vmovsd	%xmm2, 8(%rax)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 10          vmovsd	16(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 18          vmovsd	24(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 10             vmovsd	16(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 18             vmovsd	24(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L99
+ 1      1     1.00                         5     c4 c1 f9 6e dd                vmovq	%r13, %xmm3
+ 1      3     1.00                         4     c5 e3 58 fc                   vaddsd	%xmm4, %xmm3, %xmm7
+ 1      1     1.00                         5     c4 c1 f9 7e fd                vmovq	%xmm7, %r13
+ 2      8     1.00    *                    8     c5 fb 58 b5 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm6
+ 2      1     1.00           *             8     c5 fb 11 b5 10 ff ff ff       vmovsd	%xmm6, -240(%rbp)
+ 2      1     1.00           *             4     c5 fb 11 3b                   vmovsd	%xmm7, (%rbx)
+ 2      1     1.00           *             5     c5 fb 11 73 08                vmovsd	%xmm6, 8(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 20          vmovsd	32(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 28          vmovsd	40(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 20             vmovsd	32(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 28             vmovsd	40(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L100
+ 1      1     1.00                         5     c4 c1 f9 6e d5                vmovq	%r13, %xmm2
+ 1      3     1.00                         4     c5 eb 58 e4                   vaddsd	%xmm4, %xmm2, %xmm4
+ 2      1     1.00           *             4     c5 fb 11 23                   vmovsd	%xmm4, (%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 08                vmovsd	%xmm0, 8(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 44 24 30          vmovsd	48(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 38          vmovsd	56(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 16                vmovsd	(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 08             vmovsd	8(%r14), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c f4                   vsubsd	%xmm4, %xmm5, %xmm6
+ 1      1     1.00                         5     c4 c1 f9 7e f5                vmovq	%xmm6, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 fc                   vaddsd	%xmm4, %xmm5, %xmm7
+ 2      1     1.00           *             8     c5 fb 11 bd 10 ff ff ff       vmovsd	%xmm7, -240(%rbp)
+ 1      3     1.00                         4     c5 f9 2e f7                   vucomisd	%xmm7, %xmm6
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L101
+ 1      1     1.00           *             4     4c 89 6b 10                   movq	%r13, 16(%rbx)
+ 1      5     0.50    *                    8     c5 fb 10 9d 10 ff ff ff       vmovsd	-240(%rbp), %xmm3
+ 2      1     1.00           *             5     c5 fb 11 5b 18                vmovsd	%xmm3, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 40          vmovsd	64(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 48          vmovsd	72(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 10             vmovsd	16(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 18             vmovsd	24(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L102
+ 1      1     1.00                         5     c4 c1 f9 6e fd                vmovq	%r13, %xmm7
+ 1      3     1.00                         4     c5 c3 58 d4                   vaddsd	%xmm4, %xmm7, %xmm2
+ 1      1     1.00                         5     c4 c1 f9 7e d5                vmovq	%xmm2, %r13
+ 2      8     1.00    *                    8     c5 fb 58 b5 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm6
+ 2      1     1.00           *             8     c5 fb 11 b5 10 ff ff ff       vmovsd	%xmm6, -240(%rbp)
+ 2      1     1.00           *             5     c5 fb 11 53 10                vmovsd	%xmm2, 16(%rbx)
+ 2      1     1.00           *             5     c5 fb 11 73 18                vmovsd	%xmm6, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 50          vmovsd	80(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 58          vmovsd	88(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 20             vmovsd	32(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 28             vmovsd	40(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L103
+ 1      1     1.00                         5     c4 c1 f9 6e f5                vmovq	%r13, %xmm6
+ 1      3     1.00                         4     c5 cb 58 e4                   vaddsd	%xmm4, %xmm6, %xmm4
+ 2      1     1.00           *             5     c5 fb 11 63 10                vmovsd	%xmm4, 16(%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 18                vmovsd	%xmm0, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 44 24 60          vmovsd	96(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 68          vmovsd	104(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 16                vmovsd	(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 08             vmovsd	8(%r14), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c fc                   vsubsd	%xmm4, %xmm5, %xmm7
+ 1      1     1.00                         5     c4 c1 f9 7e fd                vmovq	%xmm7, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 fc                   vaddsd	%xmm4, %xmm5, %xmm7
+ 2      1     1.00           *             8     c5 fb 11 bd 10 ff ff ff       vmovsd	%xmm7, -240(%rbp)
+ 1      1     1.00                         5     c4 c1 f9 6e f5                vmovq	%r13, %xmm6
+ 1      3     1.00                         4     c5 f9 2e f7                   vucomisd	%xmm7, %xmm6
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L104
+ 1      1     1.00           *             4     4c 89 6b 20                   movq	%r13, 32(%rbx)
+ 1      5     0.50    *                    8     c5 fb 10 95 10 ff ff ff       vmovsd	-240(%rbp), %xmm2
+ 2      1     1.00           *             5     c5 fb 11 53 28                vmovsd	%xmm2, 40(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 70          vmovsd	112(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 78          vmovsd	120(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 10             vmovsd	16(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 18             vmovsd	24(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L105
+ 1      1     1.00                         5     c4 c1 f9 6e ed                vmovq	%r13, %xmm5
+ 1      3     1.00                         4     c5 d3 58 dc                   vaddsd	%xmm4, %xmm5, %xmm3
+ 1      1     1.00                         5     c4 c1 f9 7e dd                vmovq	%xmm3, %r13
+ 2      8     1.00    *                    8     c5 fb 58 b5 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm6
+ 2      1     1.00           *             8     c5 fb 11 b5 10 ff ff ff       vmovsd	%xmm6, -240(%rbp)
+ 2      1     1.00           *             5     c5 fb 11 5b 20                vmovsd	%xmm3, 32(%rbx)
+ 2      1     1.00           *             5     c5 fb 11 73 28                vmovsd	%xmm6, 40(%rbx)
+ 1      5     0.50    *                    10    c4 c1 7b 10 ac 24 80 00 00 00  vmovsd	128(%r12), %xmm5
+ 1      5     0.50    *                    10    c4 c1 7b 10 8c 24 88 00 00 00  vmovsd	136(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 56 20             vmovsd	32(%r14), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5e 28             vmovsd	40(%r14), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L106
+ 1      1     1.00                         5     c4 c1 f9 6e fd                vmovq	%r13, %xmm7
+ 1      3     1.00                         4     c5 c3 58 e4                   vaddsd	%xmm4, %xmm7, %xmm4
+ 2      1     1.00           *             5     c5 fb 11 63 20                vmovsd	%xmm4, 32(%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 28                vmovsd	%xmm0, 40(%rbx)
+ 1      5     0.50    *                    6     c4 c1 7b 10 04 24             vmovsd	(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 08          vmovsd	8(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 17                vmovsd	(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 08             vmovsd	8(%r15), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c f4                   vsubsd	%xmm4, %xmm5, %xmm6
+ 1      1     1.00                         5     c4 c1 f9 7e f5                vmovq	%xmm6, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 fc                   vaddsd	%xmm4, %xmm5, %xmm7
+ 2      1     1.00           *             8     c5 fb 11 bd 10 ff ff ff       vmovsd	%xmm7, -240(%rbp)
+ 1      3     1.00                         4     c5 f9 2e f7                   vucomisd	%xmm7, %xmm6
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L107
+ 1      5     0.50    *                    7     48 8b 85 f8 fe ff ff          movq	-264(%rbp), %rax
+ 1      1     0.25                         3     48 89 c3                      movq	%rax, %rbx
+ 1      1     1.00           *             3     4c 89 28                      movq	%r13, (%rax)
+ 1      5     0.50    *                    8     c5 fb 10 95 10 ff ff ff       vmovsd	-240(%rbp), %xmm2
+ 2      1     1.00           *             5     c5 fb 11 50 08                vmovsd	%xmm2, 8(%rax)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 10          vmovsd	16(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 18          vmovsd	24(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 10             vmovsd	16(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 18             vmovsd	24(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L108
+ 1      1     1.00                         5     c4 c1 f9 6e dd                vmovq	%r13, %xmm3
+ 1      3     1.00                         4     c5 e3 58 fc                   vaddsd	%xmm4, %xmm3, %xmm7
+ 1      1     1.00                         5     c4 c1 f9 7e fd                vmovq	%xmm7, %r13
+ 2      8     1.00    *                    8     c5 fb 58 b5 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm6
+ 2      1     1.00           *             8     c5 fb 11 b5 10 ff ff ff       vmovsd	%xmm6, -240(%rbp)
+ 2      1     1.00           *             4     c5 fb 11 3b                   vmovsd	%xmm7, (%rbx)
+ 2      1     1.00           *             5     c5 fb 11 73 08                vmovsd	%xmm6, 8(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 20          vmovsd	32(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 28          vmovsd	40(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 20             vmovsd	32(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 28             vmovsd	40(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L109
+ 1      1     1.00                         5     c4 c1 f9 6e ed                vmovq	%r13, %xmm5
+ 1      3     1.00                         4     c5 d3 58 e4                   vaddsd	%xmm4, %xmm5, %xmm4
+ 2      1     1.00           *             4     c5 fb 11 23                   vmovsd	%xmm4, (%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 08                vmovsd	%xmm0, 8(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 44 24 30          vmovsd	48(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 38          vmovsd	56(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 17                vmovsd	(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 08             vmovsd	8(%r15), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c fc                   vsubsd	%xmm4, %xmm5, %xmm7
+ 1      1     1.00                         5     c4 c1 f9 7e fd                vmovq	%xmm7, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 ec                   vaddsd	%xmm4, %xmm5, %xmm5
+ 2      1     1.00           *             8     c5 fb 11 ad 10 ff ff ff       vmovsd	%xmm5, -240(%rbp)
+ 1      3     1.00                         4     c5 f9 2e fd                   vucomisd	%xmm5, %xmm7
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L110
+ 1      1     1.00           *             4     4c 89 6b 10                   movq	%r13, 16(%rbx)
+ 1      5     0.50    *                    8     c5 fb 10 9d 10 ff ff ff       vmovsd	-240(%rbp), %xmm3
+ 2      1     1.00           *             5     c5 fb 11 5b 18                vmovsd	%xmm3, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 40          vmovsd	64(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 48          vmovsd	72(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 10             vmovsd	16(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 18             vmovsd	24(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L111
+ 1      1     1.00                         5     c4 c1 f9 6e d5                vmovq	%r13, %xmm2
+ 1      3     1.00                         4     c5 eb 58 ec                   vaddsd	%xmm4, %xmm2, %xmm5
+ 1      1     1.00                         5     c4 c1 f9 7e ed                vmovq	%xmm5, %r13
+ 2      8     1.00    *                    8     c5 fb 58 9d 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm3
+ 2      1     1.00           *             8     c5 fb 11 9d 10 ff ff ff       vmovsd	%xmm3, -240(%rbp)
+ 2      1     1.00           *             5     c5 fb 11 6b 10                vmovsd	%xmm5, 16(%rbx)
+ 2      1     1.00           *             5     c5 fb 11 5b 18                vmovsd	%xmm3, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 50          vmovsd	80(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 58          vmovsd	88(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 20             vmovsd	32(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 28             vmovsd	40(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L112
+ 1      1     1.00                         5     c4 c1 f9 6e dd                vmovq	%r13, %xmm3
+ 1      3     1.00                         4     c5 e3 58 e4                   vaddsd	%xmm4, %xmm3, %xmm4
+ 2      1     1.00           *             5     c5 fb 11 63 10                vmovsd	%xmm4, 16(%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 18                vmovsd	%xmm0, 24(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 44 24 60          vmovsd	96(%r12), %xmm0
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 68          vmovsd	104(%r12), %xmm1
+ 1      5     0.50    *                    5     c4 c1 7b 10 17                vmovsd	(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 08             vmovsd	8(%r15), %xmm3
+ 1      3     0.50                         4     c5 fb 59 ea                   vmulsd	%xmm2, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e3                   vmulsd	%xmm3, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 5c ec                   vsubsd	%xmm4, %xmm5, %xmm5
+ 1      1     1.00                         5     c4 c1 f9 7e ed                vmovq	%xmm5, %r13
+ 1      3     0.50                         4     c5 fb 59 eb                   vmulsd	%xmm3, %xmm0, %xmm5
+ 1      3     0.50                         4     c5 f3 59 e2                   vmulsd	%xmm2, %xmm1, %xmm4
+ 1      3     1.00                         4     c5 d3 58 fc                   vaddsd	%xmm4, %xmm5, %xmm7
+ 2      1     1.00           *             8     c5 fb 11 bd 10 ff ff ff       vmovsd	%xmm7, -240(%rbp)
+ 1      1     1.00                         5     c4 c1 f9 6e f5                vmovq	%r13, %xmm6
+ 1      3     1.00                         4     c5 f9 2e f7                   vucomisd	%xmm7, %xmm6
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L113
+ 1      1     1.00           *             4     4c 89 6b 20                   movq	%r13, 32(%rbx)
+ 1      5     0.50    *                    8     c5 fb 10 95 10 ff ff ff       vmovsd	-240(%rbp), %xmm2
+ 2      1     1.00           *             5     c5 fb 11 53 28                vmovsd	%xmm2, 40(%rbx)
+ 1      5     0.50    *                    7     c4 c1 7b 10 6c 24 70          vmovsd	112(%r12), %xmm5
+ 1      5     0.50    *                    7     c4 c1 7b 10 4c 24 78          vmovsd	120(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 10             vmovsd	16(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 18             vmovsd	24(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L114
+ 1      1     1.00                         5     c4 c1 f9 6e dd                vmovq	%r13, %xmm3
+ 1      3     1.00                         4     c5 e3 58 fc                   vaddsd	%xmm4, %xmm3, %xmm7
+ 1      1     1.00                         5     c4 c1 f9 7e fd                vmovq	%xmm7, %r13
+ 2      8     1.00    *                    8     c5 fb 58 b5 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm6
+ 2      1     1.00           *             8     c5 fb 11 b5 10 ff ff ff       vmovsd	%xmm6, -240(%rbp)
+ 2      1     1.00           *             5     c5 fb 11 7b 20                vmovsd	%xmm7, 32(%rbx)
+ 2      1     1.00           *             5     c5 fb 11 73 28                vmovsd	%xmm6, 40(%rbx)
+ 1      5     0.50    *                    10    c4 c1 7b 10 ac 24 80 00 00 00  vmovsd	128(%r12), %xmm5
+ 1      5     0.50    *                    10    c4 c1 7b 10 8c 24 88 00 00 00  vmovsd	136(%r12), %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 10 57 20             vmovsd	32(%r15), %xmm2
+ 1      5     0.50    *                    6     c4 c1 7b 10 5f 28             vmovsd	40(%r15), %xmm3
+ 1      3     0.50                         4     c5 d3 59 e2                   vmulsd	%xmm2, %xmm5, %xmm4
+ 1      3     0.50                         4     c5 f3 59 c3                   vmulsd	%xmm3, %xmm1, %xmm0
+ 1      3     1.00                         4     c5 db 5c e0                   vsubsd	%xmm0, %xmm4, %xmm4
+ 1      3     0.50                         4     c5 d3 59 c3                   vmulsd	%xmm3, %xmm5, %xmm0
+ 1      3     0.50                         4     c5 f3 59 f2                   vmulsd	%xmm2, %xmm1, %xmm6
+ 1      3     1.00                         4     c5 fb 58 c6                   vaddsd	%xmm6, %xmm0, %xmm0
+ 1      3     1.00                         4     c5 f9 2e e0                   vucomisd	%xmm0, %xmm4
+ 1      1     0.50                         6     0f 8a 00 00 00 00             jp	.L115
+ 1      1     1.00                         5     c4 c1 f9 6e d5                vmovq	%r13, %xmm2
+ 1      3     1.00                         4     c5 eb 58 e4                   vaddsd	%xmm4, %xmm2, %xmm4
+ 2      1     1.00           *             5     c5 fb 11 63 20                vmovsd	%xmm4, 32(%rbx)
+ 2      8     1.00    *                    8     c5 fb 58 85 10 ff ff ff       vaddsd	-240(%rbp), %xmm0, %xmm0
+ 2      1     1.00           *             5     c5 fb 11 43 28                vmovsd	%xmm0, 40(%rbx)
+
+
+Resources:
+[0]   - BWDivider
+[1]   - BWFPDivider
+[2]   - BWPort0
+[3]   - BWPort1
+[4]   - BWPort2
+[5]   - BWPort3
+[6]   - BWPort4
+[7]   - BWPort5
+[8]   - BWPort6
+[9]   - BWPort7
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
+ -      -     71.00  91.00  49.01  49.01  48.00  17.00  18.00  41.98  
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	(%r12), %xmm0
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	8(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	(%r14), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	8(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm5, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, -240(%rbp)
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm7, %xmm6
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L98
+ -      -      -      -      -     1.00    -      -      -      -     movq	-272(%rbp), %rax
+ -      -      -      -      -      -      -     1.00    -      -     movq	%rax, %rbx
+ -      -      -      -      -      -     1.00    -      -     1.00   movq	%r13, (%rax)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	-240(%rbp), %xmm2
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm2, 8(%rax)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	16(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	24(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	16(%r14), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	24(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L99
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm3, %xmm7
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm7, %r13
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, (%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, 8(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	32(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	40(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	32(%r14), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	40(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L100
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm2
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm2, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, (%rbx)
+ -      -      -     1.00    -     1.00    -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm0, 8(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	48(%r12), %xmm0
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	56(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	(%r14), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	8(%r14), %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm6
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm6, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, -240(%rbp)
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm7, %xmm6
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L101
+ -      -      -      -      -     1.00   1.00    -      -      -     movq	%r13, 16(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	-240(%rbp), %xmm3
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm3, 24(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	64(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	72(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	16(%r14), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	24(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L102
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm7
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm7, %xmm2
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm2, %r13
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm2, 16(%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, 24(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	80(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	88(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	32(%r14), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	40(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L103
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm6, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, 16(%rbx)
+ -      -      -     1.00    -     1.00    -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm0, 24(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	96(%r12), %xmm0
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	104(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	(%r14), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	8(%r14), %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm7
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm7, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, -240(%rbp)
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm7, %xmm6
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L104
+ -      -      -      -      -     1.00   1.00    -      -      -     movq	%r13, 32(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	-240(%rbp), %xmm2
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm2, 40(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	112(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	120(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	16(%r14), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	24(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L105
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm5
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm3, %r13
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm3, 32(%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, 40(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	128(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	136(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	32(%r14), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	40(%r14), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L106
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm7
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm7, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, 32(%rbx)
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm0, 40(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	(%r12), %xmm0
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	8(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	(%r15), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	8(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm6
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm6, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, -240(%rbp)
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm7, %xmm6
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L107
+ -      -      -      -     1.00    -      -      -      -      -     movq	-264(%rbp), %rax
+ -      -      -      -      -      -      -     1.00    -      -     movq	%rax, %rbx
+ -      -      -      -     1.00    -     1.00    -      -      -     movq	%r13, (%rax)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	-240(%rbp), %xmm2
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm2, 8(%rax)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	16(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	24(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	16(%r15), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	24(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L108
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm3, %xmm7
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm7, %r13
+ -      -      -     1.00    -     1.00    -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, (%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, 8(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	32(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	40(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	32(%r15), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	40(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L109
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm5
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, (%rbx)
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm0, 8(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	48(%r12), %xmm0
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	56(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	(%r15), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	8(%r15), %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm7
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm7, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm5
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm5, -240(%rbp)
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm5, %xmm7
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L110
+ -      -      -      -     1.00    -     1.00    -      -      -     movq	%r13, 16(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	-240(%rbp), %xmm3
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm3, 24(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	64(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	72(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	16(%r15), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	24(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L111
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm2
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm2, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm5, %r13
+ -      -      -     1.00    -     1.00    -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm3
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm3, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm5, 16(%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm3, 24(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	80(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	88(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	32(%r15), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	40(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L112
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm3, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, 16(%rbx)
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm0, 24(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	96(%r12), %xmm0
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	104(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	(%r15), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	8(%r15), %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm4, %xmm5, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm5, %r13
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm0, %xmm5
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm5, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, -240(%rbp)
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm7, %xmm6
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L113
+ -      -      -      -      -     1.00   1.00    -      -      -     movq	%r13, 32(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	-240(%rbp), %xmm2
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm2, 40(%rbx)
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	112(%r12), %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	120(%r12), %xmm1
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	16(%r15), %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	24(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L114
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm3
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm3, %xmm7
+ -      -     1.00    -      -      -      -      -      -      -     vmovq	%xmm7, %r13
+ -      -      -     1.00   1.00    -      -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, -240(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm7, 32(%rbx)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm6, 40(%rbx)
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	128(%r12), %xmm5
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	136(%r12), %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     vmovsd	32(%r15), %xmm2
+ -      -      -      -     1.00    -      -      -      -      -     vmovsd	40(%r15), %xmm3
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm5, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm1, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vsubsd	%xmm0, %xmm4, %xmm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm3, %xmm5, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulsd	%xmm2, %xmm1, %xmm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm6, %xmm0, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vucomisd	%xmm0, %xmm4
+ -      -      -      -      -      -      -      -     1.00    -     jp	.L115
+ -      -      -      -      -      -      -     1.00    -      -     vmovq	%r13, %xmm2
+ -      -      -     1.00    -      -      -      -      -      -     vaddsd	%xmm4, %xmm2, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovsd	%xmm4, 32(%rbx)
+ -      -      -     1.00    -     1.00    -      -      -      -     vaddsd	-240(%rbp), %xmm0, %xmm0
+ -      -      -      -      -     1.00   1.00    -      -      -     vmovsd	%xmm0, 40(%rbx)

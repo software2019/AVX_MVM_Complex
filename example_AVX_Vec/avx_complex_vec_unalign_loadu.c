@@ -44,13 +44,13 @@
   temp13 = _mm256_loadu_pd((double *)(mu) + 8);              \
   temp12 = _mm256_blend_pd(temp12, temp13, 12);             \
   temp13 = _mm256_loadu_pd((double *)(mp) + 2);             \
-  psi_3rd_perm = _mm256_permute2f128_pd(temp13, temp13, 1); \
-  temp13 = _mm256_blend_pd(psi_3rd_perm, temp13, 12);       \
-  realup0up1 = _mm256_shuffle_pd(temp12, temp12, 0b0000);   \
+  temp16 = _mm256_permute2f128_pd(temp13, temp13, 1); \
+  temp13 = _mm256_blend_pd(temp16, temp13, 12);       \
+  temp15 = _mm256_shuffle_pd(temp12, temp12, 0b0000);   \
   temp12 = _mm256_shuffle_pd(temp12, temp12, 0b1111);       \
   temp14 = _mm256_shuffle_pd(temp13, temp13, 0b0101);       \
   temp14 = _mm256_mul_pd(temp12, temp14);                   \
-  temp13 = _mm256_fmaddsub_pd(realup0up1, temp13, temp14);  \
+  temp13 = _mm256_fmaddsub_pd(temp15, temp13, temp14);  \
   temp11 = _mm256_add_pd(temp11, temp13);                   \
   temp1 = _mm256_mul_pd(temp1, temp10);                     \
   temp1 = _mm256_fmaddsub_pd(temp6, temp5, temp1);          \
@@ -63,9 +63,9 @@
   temp13 = _mm256_loadu_pd((double *)(mp2) + 2);            \
   temp14 = _mm256_permute2f128_pd(temp13, temp13, 1);       \
   temp14 = _mm256_blend_pd(temp14, temp13, 12);             \
-  psi4 = _mm256_shuffle_pd(temp14, temp14, 0b0101);         \
-  temp12 = _mm256_mul_pd(temp12, psi4);                     \
-  temp12 = _mm256_fmaddsub_pd(realup0up1, temp14, temp12);  \
+  temp17 = _mm256_shuffle_pd(temp14, temp14, 0b0101);         \
+  temp12 = _mm256_mul_pd(temp12, temp17);                     \
+  temp12 = _mm256_fmaddsub_pd(temp15, temp14, temp12);  \
   temp1 = _mm256_add_pd(temp1, temp12);                     \
   temp12 = _mm256_mul_pd(temp3, temp9);                     \
   temp4 = _mm256_fmaddsub_pd(temp8, temp4, temp12);         \
@@ -80,7 +80,7 @@
   temp9 = _mm256_blend_pd(temp10, temp9, 12);               \
   temp10 = _mm256_shuffle_pd(temp9, temp9, 0b0000);         \
   temp12 = _mm256_shuffle_pd(temp9, temp9, 0b1111);         \
-  temp9 = _mm256_blend_pd(psi_3rd_perm, temp13, 12);        \
+  temp9 = _mm256_blend_pd(temp16, temp13, 12);        \
   temp13 = _mm256_shuffle_pd(temp9, temp9, 0b0101);         \
   temp2 = _mm256_mul_pd(temp12, temp13);                    \
   temp7 = _mm256_fmaddsub_pd(temp10, temp9, temp2);         \
@@ -104,6 +104,7 @@ int main()
  int n_times = 0;//Test Type 2
  int n_warmup = 0;
  struct timeval start, end, etime;
+ double omp_start, omp_end; 
 
   //----------------set the current thread to core 0 only----------------
 cpu_set_t mask;
@@ -132,7 +133,7 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
 
  
- __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
+ __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
  __m128d chi_3rd, chi2_3rd;
 
 
@@ -174,7 +175,8 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
 
 
  /* Case 1: AVX double MVM Macro perf measurement */
-gettimeofday(&start, 0);
+//gettimeofday(&start, 0);
+omp_start=omp_get_wtime(); 
  for(i=0; i<in; i++)
  {
     for(j=0; j<3; j++)
@@ -192,11 +194,15 @@ gettimeofday(&start, 0);
 
  }
 
-  gettimeofday(&end, 0);
- timeval_subtract(&etime, &end, &start);
- elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
- printf("\n");
- lprintf("MACRO",0,"Double_MVM_AVX ualignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
+
+ omp_end=omp_get_wtime();  
+ printf("Elapsed Time in seconds is %f\n",omp_end-omp_start);
+ 
+ //gettimeofday(&end, 0);
+//  timeval_subtract(&etime, &end, &start);
+//  elapsed = etime.tv_sec * 1000. + etime.tv_usec * 0.001;
+//  printf("\n");
+//  lprintf("MACRO",0,"Double_MVM_AVX ualignMem_loadu Time: [%ld sec %ld usec]\n", etime.tv_sec, etime.tv_usec);
 
 
 /* double AVX NON-MACRO  Warmup code */
@@ -525,7 +531,7 @@ lprintf("NON_MACRO",0,"Double_MVM_AVX unalignMem_loadu Time: [%ld sec %ld usec]\
 /* Matrix up multiplied by the vector psi and psi2 and stored the product (vectors) to chi and chi2 */
 void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_vector *psi, const suNf_vector *psi2)
 {
- __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, realup0up1, psi_3rd_perm, psi4;
+ __m256d temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13, temp14, temp15, temp16, temp17;
  __m128d chi_3rd, chi2_3rd;
 
  /*===>Start of loading variables: up, psi, psi2<===*/
@@ -581,15 +587,15 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  temp12 = _mm256_blend_pd(temp12, temp13, 12);       /* [H1 H2]:[4][5][10][11] */
 
  temp13 = _mm256_loadu_pd((double *)psi + 2);
- psi_3rd_perm = _mm256_permute2f128_pd(temp13, temp13, 1);
- temp13 = _mm256_blend_pd(psi_3rd_perm, temp13, 12); /*[H1 H2]*/
+ temp16 = _mm256_permute2f128_pd(temp13, temp13, 1);
+ temp13 = _mm256_blend_pd(temp16, temp13, 12); /*[H1 H2]*/
 
- realup0up1 = _mm256_shuffle_pd(temp12, temp12, 0b0000); /* re re re re */
+ temp15 = _mm256_shuffle_pd(temp12, temp12, 0b0000); /* re re re re */
  temp12 = _mm256_shuffle_pd(temp12, temp12, 0b1111);     /* im im im im */
  temp14 = _mm256_shuffle_pd(temp13, temp13, 0b0101);     /* im re im re */
 
  temp14 = _mm256_mul_pd(temp12, temp14);
- temp13 = _mm256_fmaddsub_pd(realup0up1, temp13, temp14);
+ temp13 = _mm256_fmaddsub_pd(temp15, temp13, temp14);
 
  /* Addition: 2x2 results + leftover */
  temp11 = _mm256_add_pd(temp11, temp13);
@@ -617,9 +623,9 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  temp14 = _mm256_permute2f128_pd(temp13, temp13, 1);
  temp14 = _mm256_blend_pd(temp14, temp13, 12); /*[H1 H2]*/
 
- psi4 = _mm256_shuffle_pd(temp14, temp14, 0b0101); /*im re im re*/
- temp12 = _mm256_mul_pd(temp12, psi4);
- temp12 = _mm256_fmaddsub_pd(realup0up1, temp14, temp12);
+ temp17 = _mm256_shuffle_pd(temp14, temp14, 0b0101); /*im re im re*/
+ temp12 = _mm256_mul_pd(temp12, temp17);
+ temp12 = _mm256_fmaddsub_pd(temp15, temp14, temp12);
 
  /* Addition: 2x2 results + leftover */
  temp1 = _mm256_add_pd(temp1, temp12);
@@ -653,7 +659,7 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  temp10 = _mm256_shuffle_pd(temp9, temp9, 0b0000); /*re re re re*/
  temp12 = _mm256_shuffle_pd(temp9, temp9, 0b1111); /*im im im im*/
 
- temp9 = _mm256_blend_pd(psi_3rd_perm, temp13, 12); /*[H1 H2]*/
+ temp9 = _mm256_blend_pd(temp16, temp13, 12); /*[H1 H2]*/
  temp13 = _mm256_shuffle_pd(temp9, temp9, 0b0101);  /*im re im re */
 
  temp2 = _mm256_mul_pd(temp12, temp13);

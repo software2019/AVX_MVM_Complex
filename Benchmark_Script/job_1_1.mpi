@@ -1,0 +1,256 @@
+#!/bin/bash
+#SBATCH -J op_1_1               # Job name
+#SBATCH -o job.%j.out         # Name of stdout output file (%j expands to jobId)
+#SBATCH -N 1                  # Total number of nodes requested
+#SBATCH --time 0:02:00           # Run time (hh:mm:ss) - 1.5 hours
+#SBATCH --exclusive
+##SBATCH --qos=scavenger
+# Launch MPI-based executable
+
+# module load GCC/11.2.0   
+# module load  OpenMPI/4.1.1
+source /opt/ohpc/pub/oneAPI/setvars.sh
+
+export I_MPI_DEBUG=5 
+export OMP_DISPLAY_AFFINITY=TRUE 
+unset MPI_DSM_OFF 
+export MPI_DSM_VERBOSE=1 
+export MPI_SHARED_VERBOSE=1 
+export MPI_MEMMAP_VERBOSE=1 
+
+
+export  OMP_PROC_BIND=close # How I am going to bind omp threads on to those places 
+export  OMP_PLACES=cores    # Where I am going to place omp threads on the hardware, here is to cores
+
+if (( SLURM_ARRAY_TASK_ID == 1 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_4_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_4_8_3.in -o out_n1_1_1_4_8_3_4
+    ./parse_out.sh -n out_n1_1_1_4_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 2 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_6_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_6_8_3.in -o out_n1_1_1_6_8_3_4
+    ./parse_out.sh -n out_n1_1_1_6_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 3 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_8_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_8_8_3.in -o out_n1_1_1_8_8_3_4
+    ./parse_out.sh -n out_n1_1_1_8_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 4 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_10_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_10_8_3.in -o out_n1_1_1_10_8_3_4
+    ./parse_out.sh -n out_n1_1_1_10_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 5 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_12_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_12_8_3.in -o out_n1_1_1_12_8_3_4
+    ./parse_out.sh -n out_n1_1_1_12_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 6 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_14_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_14_8_3.in -o out_n1_1_1_14_8_3_4
+    ./parse_out.sh -n out_n1_1_1_14_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 7 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_16_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_16_8_3.in -o out_n1_1_1_16_8_3_4
+    ./parse_out.sh -n out_n1_1_1_16_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 8 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_18_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_18_8_3.in -o out_n1_1_1_18_8_3_4
+    ./parse_out.sh -n out_n1_1_1_18_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 9 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_20_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_20_8_3.in -o out_n1_1_1_20_8_3_4
+    ./parse_out.sh -n out_n1_1_1_20_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 10 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_22_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_22_8_3.in -o out_n1_1_1_22_8_3_4
+    ./parse_out.sh -n out_n1_1_1_22_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 11 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_24_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_24_8_3.in -o out_n1_1_1_24_8_3_4
+    ./parse_out.sh -n out_n1_1_1_24_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 12 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_26_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_26_8_3.in -o out_n1_1_1_26_8_3_4
+    ./parse_out.sh -n out_n1_1_1_26_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 13 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_28_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_28_8_3.in -o out_n1_1_1_28_8_3_4
+    ./parse_out.sh -n out_n1_1_1_28_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 14 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_30_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_30_8_3.in -o out_n1_1_1_30_8_3_4
+    ./parse_out.sh -n out_n1_1_1_30_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 15 )) ; then
+export OMP_NUM_THREADS=4
+EXECONTROL=`tail -n1 out_n1_1_1_32_8_3_4_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 8 --ppn 8  ./speed_test_diracoperator -i loc_speed_1_1_32_8_3.in -o out_n1_1_1_32_8_3_4
+    ./parse_out.sh -n out_n1_1_1_32_8_3_4_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 16 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_4_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_4_8_3.in -o out_n1_1_2_4_8_3_2
+    ./parse_out.sh -n out_n1_1_2_4_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 17 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_5_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_5_8_3.in -o out_n1_1_2_5_8_3_2
+    ./parse_out.sh -n out_n1_1_2_5_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 18 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_6_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_6_8_3.in -o out_n1_1_2_6_8_3_2
+    ./parse_out.sh -n out_n1_1_2_6_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 19 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_7_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_7_8_3.in -o out_n1_1_2_7_8_3_2
+    ./parse_out.sh -n out_n1_1_2_7_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 20 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_8_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_8_8_3.in -o out_n1_1_2_8_8_3_2
+    ./parse_out.sh -n out_n1_1_2_8_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 21 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_9_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_9_8_3.in -o out_n1_1_2_9_8_3_2
+    ./parse_out.sh -n out_n1_1_2_9_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 22 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_10_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_10_8_3.in -o out_n1_1_2_10_8_3_2
+    ./parse_out.sh -n out_n1_1_2_10_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 23 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_11_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_11_8_3.in -o out_n1_1_2_11_8_3_2
+    ./parse_out.sh -n out_n1_1_2_11_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 24 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_12_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_12_8_3.in -o out_n1_1_2_12_8_3_2
+    ./parse_out.sh -n out_n1_1_2_12_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 25 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_13_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_13_8_3.in -o out_n1_1_2_13_8_3_2
+    ./parse_out.sh -n out_n1_1_2_13_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 26 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_14_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_14_8_3.in -o out_n1_1_2_14_8_3_2
+    ./parse_out.sh -n out_n1_1_2_14_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 27 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_15_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_15_8_3.in -o out_n1_1_2_15_8_3_2
+    ./parse_out.sh -n out_n1_1_2_15_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 28 )) ; then
+export OMP_NUM_THREADS=2
+EXECONTROL=`tail -n1 out_n1_1_2_16_8_3_2_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 16 --ppn 16  ./speed_test_diracoperator -i loc_speed_1_2_16_8_3.in -o out_n1_1_2_16_8_3_2
+    ./parse_out.sh -n out_n1_1_2_16_8_3_2_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 29 )) ; then
+export OMP_NUM_THREADS=1
+EXECONTROL=`tail -n1 out_n1_1_4_4_8_3_1_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 32 --ppn 32  ./speed_test_diracoperator -i loc_speed_1_4_4_8_3.in -o out_n1_1_4_4_8_3_1
+    ./parse_out.sh -n out_n1_1_4_4_8_3_1_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 30 )) ; then
+export OMP_NUM_THREADS=1
+EXECONTROL=`tail -n1 out_n1_1_4_5_8_3_1_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 32 --ppn 32  ./speed_test_diracoperator -i loc_speed_1_4_5_8_3.in -o out_n1_1_4_5_8_3_1
+    ./parse_out.sh -n out_n1_1_4_5_8_3_1_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 31 )) ; then
+export OMP_NUM_THREADS=1
+EXECONTROL=`tail -n1 out_n1_1_4_6_8_3_1_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 32 --ppn 32  ./speed_test_diracoperator -i loc_speed_1_4_6_8_3.in -o out_n1_1_4_6_8_3_1
+    ./parse_out.sh -n out_n1_1_4_6_8_3_1_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 32 )) ; then
+export OMP_NUM_THREADS=1
+EXECONTROL=`tail -n1 out_n1_1_4_7_8_3_1_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 32 --ppn 32  ./speed_test_diracoperator -i loc_speed_1_4_7_8_3.in -o out_n1_1_4_7_8_3_1
+    ./parse_out.sh -n out_n1_1_4_7_8_3_1_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+elif (( SLURM_ARRAY_TASK_ID == 33 )) ; then
+export OMP_NUM_THREADS=1
+EXECONTROL=`tail -n1 out_n1_1_4_8_8_3_1_0 | grep -e "Process finalized" | wc -l`
+if (( EXECONTROL == 0 )) ; then
+    mpirun -n 32 --ppn 32  ./speed_test_diracoperator -i loc_speed_1_4_8_8_3.in -o out_n1_1_4_8_8_3_1
+    ./parse_out.sh -n out_n1_1_4_8_8_3_1_0 -j job.${SLURM_JOB_ID}.out >>report_nodes1_1.csv
+fi
+fi

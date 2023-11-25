@@ -40,6 +40,7 @@ chi2[2] = 66.0im
 
 ```
 
+
 vectors/cols = um[0]um[1]um[2]  ||  um[3]um[4]um[5] || um[6]um[7]um[8]     
 
 ## Single  MVM inverse Computation 
@@ -139,26 +140,49 @@ chi2[2]  = psi2[0]  *  um[2]
 
  **Vector initialized: 6 doubles**  
  ```c
- psi.c[0] = (1.0 + 4.0 * I);
- psi.c[1] = (2.0 + 5.0 * I);
- psi.c[2] = (3.0 + 6.0 * I);
+ psi->c[0] = (1.0 + 4.0 * I);
+ psi->c[1] = (2.0 + 5.0 * I);
+ psi->c[2] = (3.0 + 6.0 * I);
 
- psi2.c[0] = (1.0 + 2.0 * I);
- psi2.c[1] = (3.0 + 4.0 * I);
- psi2.c[2] = (2.0 + 1.0 * I);
+ psi2->c[0] = (1.0 + 2.0 * I);
+ psi2->c[1] = (3.0 + 4.0 * I);
+ psi2->c[2] = (2.0 + 1.0 * I);
 
  /* Matrix (3x3) initialized: 18 doubles */
- up.c[0] = (1.0 + 2.0 * I);
- up.c[1] = (3.0 + 4.0 * I);
- up.c[2] = (5.0 + 6.0 * I);
+ up->c[0] = (1.0 + 2.0 * I);
+ up->c[1] = (3.0 + 4.0 * I);
+ up->c[2] = (5.0 + 6.0 * I);
 
- up.c[3] = (2.0 + 1.0 * I);
- up.c[4] = (3.0 + 2.0 * I);
- up.c[5] = (1.0 + 3.0 * I);
+ up->c[3] = (2.0 + 1.0 * I);
+ up->c[4] = (3.0 + 2.0 * I);
+ up->c[5] = (1.0 + 3.0 * I);
 
- up.c[6] = (4.0 + 5.0 * I);
- up.c[7] = (6.0 + 4.0 * I);
- up.c[8] = (5.0 + 6.0 * I);
+ up->c[6] = (4.0 + 5.0 * I);
+ up->c[7] = (6.0 + 4.0 * I);
+ up->c[8] = (5.0 + 6.0 * I);
+
+
+ // /* Vector initialized: 6 doubles */
+ // psi->c[0] = (1.0 + 4.0 * I);
+ // psi->c[1] = (2.0 + 5.0 * I);
+ // psi->c[2] = (3.0 + 6.0 * I);
+
+ // psi2->c[0] = (1.0 + 2.0 * I);
+ // psi2->c[1] = (3.0 + 4.0 * I);
+ // psi2->c[2] = (2.0 + 1.0 * I);
+
+ // /* Matrix (3x3) initialized: 18 doubles */
+ // up->c[0] = (1.0 + 2.0 * I);
+ // up->c[1] = (3.0 + 4.0 * I);
+ // up->c[2] = (5.0 + 6.0 * I);
+
+ // up->c[3] = (2.0 + 1.0 * I);
+ // up->c[4] = (3.0 + 2.0 * I);
+ // up->c[5] = (1.0 + 3.0 * I);
+
+ // up->c[6] = (4.0 + 5.0 * I);
+ // up->c[7] = (6.0 + 4.0 * I);
+ // up->c[8] = (5.0 + 6.0 * I);
 ```
 
 ## Manually calculating MVM in the case of inverse multiply:   
@@ -212,10 +236,10 @@ addsub2 = (32 -1i) + (16 - 7i)
 
 
 /* Operations Counting */
-= (real*real + imag*imag) + (real*imag + imag*real) //4 mul, 3 adds
+= (real*real + imag*imag) + (real*imag + imag*real) //4 mul, 2 adds
 or
 = (a + bi) * (c + di)/* Interleaved data layout */ 
-= (ac - bd) + (ad + bc) //4 mul, 2 add, 1 sub
+= (ac - bd), (ad + bc) //4 mul, 1 add, 1 sub in another words 4 muls 2 adds
 
 chi[0] = (1 + 4i)*(1 + 2i)                          + (2 + 5i)*(2 + 1i) + (3 + 6i)*(4 + 5i) 
        = (1*1)+(4i*2i) + (1*2i) + (4i*1)
@@ -695,7 +719,7 @@ void double_MVM_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const s
  /*===>Start of loading variables: up, psi, psi2<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
  up0 = _mm256_load_pd((double *)up);
- up1 = _mm256_load_pd((double *)up + 6);
+ up1 = _mm256_loadu_pd((double *)up + 6);
 
  /* Loading 3 complexes of psi vector and shuffling */
  psi0 = _mm256_load_pd((double *)psi);
@@ -819,7 +843,7 @@ void double_MVM_inverse_2x2(suNf_vector *chi, suNf_vector *chi2, const suNf *um,
  /*===>Start of loading variables: um, psi<===*/
  /* Loading first set of 3 complexes of 3x3 matrix */
  up0 = _mm256_load_pd((double *)um);/* um[0]um[1] */
- up1 = _mm256_load_pd((double *)um + 6); /*um[3]um[4]*/
+ up1 = _mm256_loadu_pd((double *)um + 6); /*um[3]um[4]*/
 
  /****************************************************************
   * col1: working vector um0um3 of lower lane of up0 [L1] and up1 [L2]
@@ -907,15 +931,43 @@ chi2[1] = 1.0re
 chi2[1] = 23.0im
 
 //Double MVM-inverse 2x2 Computation output
-chi[0] = -8.0re
-chi[0] = 18.0im
-chi[1] = -17.0re
-chi[1] = 35.0im
+chi[0] = 18.0re
+chi[0] = 10.0im
+chi[1] = 35.0re
+chi[1] = 19.0im
 
-chi2[0] = -1.0re
-chi2[0] = 15.0im
-chi2[1] = -4.0re
-chi2[1] = 28.0im
+chi2[0] = 15.0re
+chi2[0] = 5.0im
+chi2[1] = 28.0re
+chi2[1] = 8.0im
+
+
+/* Inverse mul 2x2 calculation */
+// _suNf_theta_T_inverse_multiply(chi, (*um), psi);
+ //_suNf_inverse_multiply((chi), ((*um)), (psi));
+
+#define _complex_mul_star(a,b,c) (a)=(b)*conj(c)
+
+  _complex_mul_star(((chi)).c[0],((psi)).c[0],(((*um))).c[0]); 
+  _complex_mul_star_assign(((chi)).c[0],((psi)).c[1],(((*um))).c[3]); 
+
+  _complex_mul_star_assign(((chi)).c[0],((psi)).c[2],(((*um))).c[6]); 
+
+
+  _complex_mul_star(((chi)).c[1],((psi)).c[0],(((*um))).c[1]); 
+  _complex_mul_star_assign(((chi)).c[1],((psi)).c[1],(((*um))).c[4]); 
+
+  _complex_mul_star_assign(((chi)).c[1],((psi)).c[2],(((*um))).c[7]);
+
+  _complex_mul_star(((chi)).c[2],((psi)).c[0],(((*um))).c[2]); 
+  _complex_mul_star_assign(((chi)).c[2],((psi)).c[1],(((*um))).c[5]); 
+  
+  _complex_mul_star_assign(((chi)).c[2],((psi)).c[2],(((*um))).c[8]);
+
+
+
+
+
 
 
 
@@ -1031,10 +1083,10 @@ chi2[1] = 28.0im
   // single_MVM_inverse(&chi, &up, &psi);
   // double_MVM_inverse(&chi, &chi2, &up, &psi, &psi2);
 
-  // single_MVM_2x2(&chi, &up, &psi);
-  // double_MVM_2x2(&chi, &chi2, &up, &psi, &psi2);
-  // single_MVM_inverse_2x2(&chi, &up, &psi);
-  // double_MVM_inverse_2x2(&chi, &chi2, &up, &psi, &psi2);
+   //single_MVM_2x2(chi, up, psi);
+  // double_MVM_2x2(chi, chi2, up, psi, psi2);
+   //single_MVM_inverse_2x2(chi, up, psi);
+   //double_MVM_inverse_2x2(chi, chi2, up, psi, psi2);
 
   // double_MVM(&chi, &chi2, &up, &psi, &psi2);
   // _suNf_theta_T_multiply(chi3, (up), psi);
@@ -1290,159 +1342,6 @@ void double_MVM(suNf_vector *chi, suNf_vector *chi2, const suNf *up, const suNf_
 COMMAND:
 valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes --collect-atstart=no ./avx_complex_vec_align_load
 
-non-macro double_MVM:
-Double_MVM_AVX Macro Aligned_load Time: [0 sec 41802 usec]
-==31455== 
-==31455== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==31455== Collected : 770 190 60 64 63 36 64 63 36
-==31455== 
-==31455== I   refs:      770
-==31455== I1  misses:     64
-==31455== LLi misses:     64
-==31455== I1  miss rate: 8.31%
-==31455== LLi miss rate: 8.31%
-==31455== 
-==31455== D   refs:      250  (190 rd + 60 wr)
-==31455== D1  misses:     99  ( 63 rd + 36 wr)
-==31455== LLd misses:     99  ( 63 rd + 36 wr)
-==31455== D1  miss rate: 39.6% (33.2%   + 60.0%  )
-==31455== LLd miss rate: 39.6% (33.2%   + 60.0%  )
-==31455== 
-==31455== LL refs:       163  (127 rd + 36 wr)
-==31455== LL misses:     163  (127 rd + 36 wr)
-==31455== LL miss rate:  16.0% (13.2%   + 60.0%  )
-
-theta_T_multiply Aligned_load Time: [0 sec 46058 usec]
-==31973== 
-==31973== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==31973== Collected : 900 300 50 70 54 27 70 54 27
-==31973== 
-==31973== I   refs:      900
-==31973== I1  misses:     70
-==31973== LLi misses:     70
-==31973== I1  miss rate: 7.78%
-==31973== LLi miss rate: 7.78%
-==31973== 
-==31973== D   refs:      350  (300 rd + 50 wr)
-==31973== D1  misses:     81  ( 54 rd + 27 wr)
-==31973== LLd misses:     81  ( 54 rd + 27 wr)
-==31973== D1  miss rate: 23.1% (18.0%   + 54.0%  )
-==31973== LLd miss rate: 23.1% (18.0%   + 54.0%  )
-==31973== 
-==31973== LL refs:       151  (124 rd + 27 wr)
-==31973== LL misses:     151  (124 rd + 27 wr)
-==31973== LL miss rate:  12.1% (10.3%   + 54.0%  )
-
-
-Macro version:
-Double_MVM_AVX Macro Aligned_load Time: [0 sec 41049 usec]
-==33113== 
-==33113== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==33113== Collected : 600 160 0 50 54 0 50 54
-==33113== 
-==33113== I   refs:      600
-==33113== I1  misses:     50
-==33113== LLi misses:     50
-==33113== I1  miss rate: 8.33%
-==33113== LLi miss rate: 8.33%
-==33113== 
-==33113== D   refs:      160  (160 rd + 0 wr)
-==33113== D1  misses:     54  ( 54 rd + 0 wr)
-==33113== LLd misses:     54  ( 54 rd + 0 wr)
-==33113== D1  miss rate: 33.7% (33.7%   + 0.0%  )
-==33113== LLd miss rate: 33.7% (33.7%   + 0.0%  )
-==33113== 
-==33113== LL refs:       104  (104 rd + 0 wr)
-==33113== LL misses:     104  (104 rd + 0 wr)
-==33113== LL miss rate:  13.7% (13.7%   + 0.0%  )
-
-macro version:
-theta_T_multiply Aligned_load Time: [0 sec 45147 usec]
-==34540== 
-==34540== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==34540== Collected : 1200 310 120 90 54 27 90 54 27
-==34540== 
-==34540== I   refs:      1,200
-==34540== I1  misses:       90
-==34540== LLi misses:       90
-==34540== I1  miss rate:  7.50%
-==34540== LLi miss rate:  7.50%
-==34540== 
-==34540== D   refs:        430  (310 rd + 120 wr)
-==34540== D1  misses:       81  ( 54 rd +  27 wr)
-==34540== LLd misses:       81  ( 54 rd +  27 wr)
-==34540== D1  miss rate:  18.8% (17.4%   + 22.5%  )
-==34540== LLd miss rate:  18.8% (17.4%   + 22.5%  )
-==34540== 
-==34540== LL refs:         171  (144 rd +  27 wr)
-==34540== LL misses:       171  (144 rd +  27 wr)
-==34540== LL miss rate:   10.5% (9.5%   + 22.5%  )
-
-
-non_macro: loadu
-Double_MVM_AVX Aligned_loadu Time: [0 sec 93567 usec]
-==36278== 
-==36278== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==36278== Collected : 770 190 60 63 45 36 63 45 36
-==36278== 
-==36278== I   refs:      770
-==36278== I1  misses:     63
-==36278== LLi misses:     63
-==36278== I1  miss rate: 8.18%
-==36278== LLi miss rate: 8.18%
-==36278== 
-==36278== D   refs:      250  (190 rd + 60 wr)
-==36278== D1  misses:     81  ( 45 rd + 36 wr)
-==36278== LLd misses:     81  ( 45 rd + 36 wr)
-==36278== D1  miss rate: 32.4% (23.7%   + 60.0%  )
-==36278== LLd miss rate: 32.4% (23.7%   + 60.0%  )
-==36278== 
-==36278== LL refs:       144  (108 rd + 36 wr)
-==36278== LL misses:     144  (108 rd + 36 wr)
-==36278== LL miss rate:  14.1% (11.2%   + 60.0%  )
-
-theta_T_multiply Aligned_loadu Time: [0 sec 101585 usec]
-==36961== 
-==36961== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==36961== Collected : 1200 310 130 90 45 27 90 45 27
-==36961== 
-==36961== I   refs:      1,200
-==36961== I1  misses:       90
-==36961== LLi misses:       90
-==36961== I1  miss rate:  7.50%
-==36961== LLi miss rate:  7.50%
-==36961== 
-==36961== D   refs:        440  (310 rd + 130 wr)
-==36961== D1  misses:       72  ( 45 rd +  27 wr)
-==36961== LLd misses:       72  ( 45 rd +  27 wr)
-==36961== D1  miss rate:  16.4% (14.5%   + 20.8%  )
-==36961== LLd miss rate:  16.4% (14.5%   + 20.8%  )
-==36961== 
-==36961== LL refs:         162  (135 rd +  27 wr)
-==36961== LL misses:       162  (135 rd +  27 wr)
-==36961== LL miss rate:    9.9% (8.9%   + 20.8%  )
-
-macro-version: loadu
-Double_MVM_AVX Aligned_loadu Time: [0 sec 90802 usec]
-==37631== 
-==37631== Events    : Ir Dr Dw I1mr D1mr D1mw ILmr DLmr DLmw
-==37631== Collected : 600 160 0 50 45 0 50 45
-==37631== 
-==37631== I   refs:      600
-==37631== I1  misses:     50
-==37631== LLi misses:     50
-==37631== I1  miss rate: 8.33%
-==37631== LLi miss rate: 8.33%
-==37631== 
-==37631== D   refs:      160  (160 rd + 0 wr)
-==37631== D1  misses:     45  ( 45 rd + 0 wr)
-==37631== LLd misses:     45  ( 45 rd + 0 wr)
-==37631== D1  miss rate: 28.1% (28.1%   + 0.0%  )
-==37631== LLd miss rate: 28.1% (28.1%   + 0.0%  )
-==37631== 
-==37631== LL refs:        95  ( 95 rd + 0 wr)
-==37631== LL misses:      95  ( 95 rd + 0 wr)
-==37631== LL miss rate:  12.5% (12.5%   + 0.0%  )
 
 icc  -O2 -g -march=core-avx2 -mtune=core-avx2 -qopt-report=5 -qopt-report-phase=vec -inline-level=0 -I /home/mrahman/HiRep/Include  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load 
 
@@ -1457,3 +1356,852 @@ gcc  -O3 -g -march=core-avx2 -mtune=core-avx2  -I /Users/msrahman/Documents/HiRe
   cpp-12  -O2 -g -march=core-avx2 -mtune=core-avx2  timer.o avx_complex_vec_align_load.c -lm   -o avx_complex_vec_align_load
 
   /opt/intel/oneapi/compiler/2022.1.0
+
+
+  ```c
+  // print memory address
+    check_reusages(out, sm);
+    if (_fuse_master_for_ip_ix < 32)
+    {
+    lprintf("REUSAGE TEST", 0, "SM[-0] TID %d at step %d = %u\n", omp_get_thread_num(), _fuse_master_for_ip_ix, sm);
+     }
+
+        // check_reusages(out, sp);
+    // if (_fuse_master_for_ip_ix < (out->type)->fuse_inner_counter)
+    // {
+    // lprintf("STEP TEST", 0, "Step %d\n", _fuse_master_for_ip_ix);
+    // lprintf("REUSAGE TEST", 0, "SP[+0] TID %d at step %d = %u\n", omp_get_thread_num(), _fuse_master_for_ip_ix, sp);
+    //  }
+    
+
+//aligned memory address
+  suNf_vector psi VEC_ALIGN;
+  suNf_vector chi VEC_ALIGN;
+  suNf_vector psi2 VEC_ALIGN;
+  suNf_vector chi2 VEC_ALIGN;
+
+  // test memory aligned or not
+  if (__alignof(psi2) == 32)
+  {
+    lprintf("ALIGN TEST", 0, "PASSED\n");
+  }
+  else
+  {
+    lprintf("ALIGN TEST", 0, "FAILED\n");
+  }
+
+
+printf("chi[0] = %.2fre\n", _complex_re(chi->c[3]));
+printf("chi3[0] = %.2fre\n", _complex_re(chi3->c[3]));
+printf("chi5[0] = %.2fre\n\n", _complex_re(chi5->c[3]));
+
+printf("chi2[0] = %.2fre\n", _complex_re(chi2->c[3]));
+printf("chi4[0] = %.2fre\n", _complex_re(chi4->c[3]));
+printf("chi6[0] = %.2fre\n\n", _complex_re(chi6->c[3]));
+
+printf("chi[0] = %.2fim\n", _complex_im(chi->c[3]));
+printf("chi3[0] = %.2fim\n", _complex_im(chi3->c[3]));
+printf("chi5[0] = %.2fim\n\n", _complex_im(chi5->c[3]));
+
+printf("chi2[0] = %.2fim\n", _complex_im(chi2->c[3]));
+printf("chi4[0] = %.2fim\n", _complex_im(chi4->c[3]));
+printf("chi6[0] = %.2fim\n", _complex_im(chi6->c[3]));
+
+
+
+// memory allocation and aligned
+//  up = _mm_malloc(sizeof(suNf), MEM_ALIGN);
+//  psi = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  psi2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi5 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  chi6 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+//  v1 = _mm_malloc(sizeof(suNf_vector), 16);
+//  v2 = _mm_malloc(sizeof(suNf_vector), 16);
+
+  ```
+
+
+
+
+## ****************************************Commands for Compilation************************************  
+
+
+## How to use spack compiler   
+
+**Compiling Programs Using Spack:** 
+
+**Step 1: Go to your project foder:**   
+```bash
+ $ /home/mrahman/AVX_MVM_Complex/example_AVX_Vec 
+```
+
+**Step 2: Source the spack environment**  
+```bash
+   $ . ~/spack/share/spack/setup-env.sh 
+```
+
+**Step 3: load the required compilers**    
+```bash
+  $ spack load gcc@12.1.0 arch=linux-centos7-haswell 
+  $ spack load llvm@14.0.2 arch=linux-centos7-broadwell
+  $ spack load openmpi@4.1.3 
+```
+
+When you do not want to use a package in the environment, you can unload such as: $ spack unload mpich %gcc@4.4.7    
+
+**Step 4: Now you are ready to compile the code**    
+
+ 
+## How to use icc compiler   
+
+- Go to the directory    
+
+- Source Intel OneApi: source /opt/ohpc/pub/oneAPI/setvars.sh     
+
+- Then you are ready to use the compiler 
+
+
+
+
+## Steps to llvm-mca:  
+
+STEP 1: Load clang in the user environment
+  $ . ~/spack/share/spack/setup-env.sh 
+  $ spack load gcc@12.1.0 arch=linux-centos7-haswell
+
+  $ spack load llvm@14.0.2 arch=linux-centos7-broadwell
+  $ spack load mpich@4.0.2 
+
+STEP 2: Generate Assembly Code
+ icc avx_complex_vec_align_load.c -O2  -S -o out_llvm.s -march=core-avx2 -mtune=core-avx2 
+ gcc avx_complex_vec_align_load.c -O2  -S -o out_llvm.s -march=core-avx2 -mtune=core-avx2 
+ clang avx_complex_vec_align_load.c -O2  -S -o out_llvm.s -march=core-avx2 -mtune=core-avx2 
+
+ clang foo.c -O2 -target x86_64-unknown-unknown -mllvm -x86-asm-syntax=intel -S -o - | llvm-mca -mcpu=btver2
+
+ icc avx_complex_vec_align_load.c -O1 -qopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o icc_O1.s
+ icc avx_complex_vec_align_load.c -O2 -qopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o icc_O2.s
+
+ gcc avx_complex_vec_align_load.c -O1 -fopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o gcc_O1.s
+ gcc avx_complex_vec_align_load.c -O3 -fopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o gcc_AVX2_O3.s
+ gcc avx_complex_vec_align_load.c -O3 -fopenmp -march=core-avx2 -mtune=core-avx2 -gno-as-locview-support -g  -I . -S  -lm -o gcc_O3.s
+
+
+ clang avx_complex_vec_align_load.c -O1 -fopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o clang_O1.s
+ clang avx_complex_vec_align_load.c -O3 -fopenmp -march=core-avx2 -mtune=core-avx2  -g  -I . -S  -lm -o clang_O3.s
+
+
+STEP 3: Generate llvm-mca Report with Appropriate Flags
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding icc_O1.s > icc_O1.txt
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding icc_O2.s > icc_O2.txt
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding icc_O2_dowhile.s > icc_O2_dowhile.txt
+
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding gcc_O1.s > gcc_O1.txt
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding gcc_AVX2_O3.s > gcc_AVX2_O3.txt
+llvm-mca -mtriple=x86_64  -mcpu=broadwell -iterations=300 -show-encoding gcc_O3.s > gcc_O3.txt
+
+
+
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding clang_O1.s > clang_O1.txt
+llvm-mca -mtriple=x86_64 -mcpu=broadwell -iterations=300 -show-encoding clang_O3.s > clang_O3.txt
+## ****************************************Commands for Compilation************************************  
+
+
+
+```c
+//_suNf_theta_T_multiply(chi, (*up), psi);
+//_suNf_multiply((chi), ((*up)), (psi));
+
+_complex_mul(((chi)).c[0], (((*up))).c[0], ((psi)).c[0]);
+_complex_mul_assign(((chi)).c[0], (((*up))).c[1], ((psi)).c[1]); 
+_complex_mul_assign(((chi)).c[0], (((*up))).c[2], ((psi)).c[2]); 
+
+_complex_mul(((chi)).c[1], (((*up))).c[3], ((psi)).c[0]);
+_complex_mul_assign(((chi)).c[1], (((*up))).c[4], ((psi)).c[1]);
+_complex_mul_assign(((chi)).c[1], (((*up))).c[5], ((psi)).c[2]);
+
+_complex_mul(((chi)).c[2], (((*up))).c[6], ((psi)).c[0]);
+_complex_mul_assign(((chi)).c[2], (((*up))).c[7], ((psi)).c[1]);
+_complex_mul_assign(((chi)).c[2], (((*up))).c[8], ((psi)).c[2]);
+
+
+
+/* Operations Counting */
+= (real*real + imag*imag) + (real*imag + imag*real) //4 mul, 3 adds
+or
+= (a + bi) * (c + di)/* Interleaved data layout */ 
+= (ac - bd) + (ad + bc) //4 mul, 2 add, 1 sub
+
+
+
+/* Memory Address Printing */
+ printf("v1 mem addess = %u\n", (v1+0));
+ printf("v1 mem addess = %u\n", (v1+1));
+ printf("v1 mem addess = %u\n", (v1+2));
+
+/* initialization */
+ //  for(i=0; i<in; i++)
+//  {
+//     for(j=0; j<3; j++)
+//     {
+//       (v1+i)->c[j] = my_rand(n);
+//       (v2+i)->c[j] = my_rand(n);
+//       //printf("v1 = %.2fre\n", _complex_re((v1+i)->c[j]));
+//     }
+
+//     for(j=0; j<9; j++)
+//     {
+//      (v3+i)->c[j] = my_rand(n);
+//      //printf("v3 = %.2fre\n", _complex_re((v3+i)->c[j]));
+//     }
+//  }
+
+
+/* double AVX MACRO Warmup code */
+// for(i=0; i<n_warmup; i++)
+// {
+//     double_MVM_macro(chi+i, chi2+i, up, psi, psi2);
+// }
+
+
+
+  /******************************************************* 
+      Case 2: AVX double MVM non-Macro perf measurement 
+  *******************************************************/
+
+ /* ************ timing block C start ************* */
+//   gettimeofday(&start, 0);
+// # ifdef _OPENMP
+//     wt1=omp_get_wtime();
+// # endif
+//   t1=clock();
+
+//  for(i=0; i<in; i++)
+//  {
+    // for(j=0; j<3; j++)
+    // {
+    //   (psi+i)->c[j] = (v1+i)->c[j];
+    //   (psi2+i)->c[j] = (v2+i)->c[j];
+    // }
+
+    // for(j=0; j<9; j++)
+    // {
+    //   (up+i)->c[j] = (v3+i)->c[j];
+    // }
+
+  // double_MVM_non_macro((chi3+i), (chi4+i), up, psi, psi2);
+
+//  }
+
+//   t2=clock();
+// # ifdef _OPENMP
+//     wt2=omp_get_wtime();
+// # endif
+//   gettimeofday(&end, 0);
+//   timeval_subtract(&etime, &end, &start);
+
+//     lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// # ifdef _OPENMP
+//     lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// # endif
+//     lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+
+/* ************ timing block C end ************* */
+
+/* HiRep MACRO Warmup code */
+//  for(i=0; i<n_warmup; i++)
+//  {
+//   _suNf_theta_T_multiply((*(chi3+i)), (*up), (*psi));
+//   _suNf_theta_T_multiply((*(chi4+i)), (*up), (*psi2));
+
+//  }
+
+ // res5 = _complex_re((chi3+i)->c[i]);
+  // res6 = _complex_im((chi3+i)->c[i]); 
+  // res7 = _complex_re((chi4+i)->c[i]); 
+  // res8 = _complex_im((chi4+i)->c[i]); 
+
+  // error((fabs((res5 - res9) / res5) > 1.e-15) || (fabs((res6 - res10) / res6) > 1.e-15), 1, "First Vector in double_MVM_nonMacro and theta_T_multiply", " are not equal ==> Test Failed!");
+  // error((fabs((res7 - res11) / res7) > 1.e-15) || (fabs((res8 - res12) / res8) > 1.e-15), 1, "Second Vector in double_MVM_nonMacro and theta_T_multiply", " are not equal ==>Test Failed!");
+
+  // res5 = .0;
+  // res6 = .0;
+  // res7 = .0;
+  // res8 = .0;
+
+
+
+ /*****************************************************************
+  * Testing Performance: double_MVM() vs _suNf_theta_T_multiply()
+  *****************************************************************/
+
+ /* Macro version of new routine */
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+
+//  for (i = 0; i < n_warmup; ++i)
+//  {
+//   double_MVM_macro(chi, chi2, up, psi, psi2);
+//   double_MVM_macro(psi, psi2, up, chi, chi2);
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+
+//   gettimeofday(&start, 0);
+// # ifdef _OPENMP
+//     wt1=omp_get_wtime();
+// # endif
+//   t1=clock();
+
+//  for (i = 0; i < n_times; ++i)
+//  {
+//   // CALLGRIND_START_INSTRUMENTATION;
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   double_MVM_macro(chi, chi2, up, psi, psi2);
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   // CALLGRIND_STOP_INSTRUMENTATION;
+//   double_MVM_macro(psi, psi2, up, chi, chi2);
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//   t2=clock();
+// # ifdef _OPENMP
+//     wt2=omp_get_wtime();
+// # endif
+//   gettimeofday(&end, 0);
+//   timeval_subtract(&etime, &end, &start);
+
+// //     lprintf("MVM_MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// // # ifdef _OPENMP
+// //     lprintf("MVM_MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// // # endif
+// //     lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+
+
+// /* Non-Macro version of new routine */
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+//  for (i = 0; i < n_warmup; ++i)
+//  {
+//   double_MVM_non_macro(chi, chi2, up, psi, psi2);
+//   double_MVM_non_macro(psi, psi2, up, chi, chi2);
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+
+//   gettimeofday(&start, 0);
+// # ifdef _OPENMP
+//     wt1=omp_get_wtime();
+// # endif
+//   t1=clock();
+
+//  for (i = 0; i < n_times; ++i)
+//  {
+//   // CALLGRIND_START_INSTRUMENTATION;
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   double_MVM_non_macro(chi, chi2, up, psi, psi2);
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   // CALLGRIND_STOP_INSTRUMENTATION;
+//   double_MVM_non_macro(psi, psi2, up, chi, chi2);
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//   t2=clock();
+// # ifdef _OPENMP
+//     wt2=omp_get_wtime();
+// # endif
+//   gettimeofday(&end, 0);
+//   timeval_subtract(&etime, &end, &start);
+
+// //     lprintf("MVM_NON-MACRO",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// // # ifdef _OPENMP
+// //     lprintf("MVM_NON-MACRO",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// // # endif
+// //     lprintf("MVM_NON_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+
+
+// /* HiRep Macro function */
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+//  for (i = 0; i < n_warmup; ++i)
+//  {
+//   _suNf_theta_T_multiply((*chi), (*up), (*psi));
+//   _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+
+//   _suNf_theta_T_multiply((*psi), (*up), (*chi));
+//   _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//  psi_copy = psi;
+//  psi2_copy = psi2;
+
+//   gettimeofday(&start, 0);
+// # ifdef _OPENMP
+//     wt1=omp_get_wtime();
+// # endif
+//   t1=clock();
+
+//  for (i = 0; i < n_times; ++i)
+//  {
+//   // CALLGRIND_START_INSTRUMENTATION;
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   _suNf_theta_T_multiply((*chi), (*up), (*psi));
+//   _suNf_theta_T_multiply((*chi2), (*up), (*psi2));
+//   // CALLGRIND_TOGGLE_COLLECT;
+//   // CALLGRIND_STOP_INSTRUMENTATION;
+
+//   _suNf_theta_T_multiply((*psi), (*up), (*chi));
+//   _suNf_theta_T_multiply((*psi2), (*up), (*chi2));
+
+//   psi->c[0] *= 0.001;
+//   psi->c[1] *= 0.001;
+//   psi->c[2] *= 0.001;
+
+//   psi2->c[0] *= 0.001;
+//   psi2->c[1] *= 0.001;
+//   psi2->c[2] *= 0.001;
+//  }
+
+//   t2=clock();
+// # ifdef _OPENMP
+//     wt2=omp_get_wtime();
+// # endif
+//   gettimeofday(&end, 0);
+//   timeval_subtract(&etime, &end, &start);
+
+//     lprintf("THETA_T_MULTIPLY",0,"CPU time (clock)                = %12.4g sec\n", (t2-t1)/1000000.0 );
+// # ifdef _OPENMP
+//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (omp_get_wtime) = %12.4g sec\n", wt2-wt1 );
+// # endif
+//     lprintf("THETA_T_MULTIPLY",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
+ 
+
+
+ //  afree(v1);
+//  afree(v2);
+//  afree(v3);
+
+//  free(chi);
+//  free(chi2);
+//  free(chi3);
+//  free(chi4);
+//  free(chi5);
+//  free(chi6);
+
+//  _mm_free(up);
+//  _mm_free(psi);
+//  _mm_free(psi2);
+//  _mm_free(chi);
+//  _mm_free(chi2);
+//  _mm_free(chi3);
+//  _mm_free(chi4);
+//  _mm_free(chi5);
+//  _mm_free(chi6);
+//  free(v1);
+//  free(v2);
+//  free(v3);
+
+
+
+  // v1 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+  // v2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+  // v3 =_mm_malloc(sizeof(suNf), MEM_ALIGN);
+  // up = _mm_malloc(sizeof(suNf), MEM_ALIGN);
+  // psi = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+  // psi2 = _mm_malloc(sizeof(suNf_vector), MEM_ALIGN);
+  // chi = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi2 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi3 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi4 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi5 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi6 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+
+
+/* Benchmark code */
+  //   t1=clock();
+  //   for(j=0; j<in; j++)
+  //     { 
+  //       double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+  //     }
+  //   t2=clock();
+  //   elapsed = ((t2-t1)/1000000.0);
+
+  //   printf("elapsed1  %f\n", elapsed);
+
+  // if(elapsed<2.)
+  //   {
+  //     reps = (int)(2.0/elapsed) + 1;
+
+  //     t1=clock();
+  //     for(j=0; j<in; j++)
+  //       { 
+  //         double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+  //       }
+  //     t2=clock();
+
+  //     elapsed = ((t2-t1)/1000000.0);
+  //   }
+  // printf("elapsed2  %f\n",elapsed);
+
+
+/* Compiler Explorer */
+clang 14.00
+-O3 std=c99 -ffast-math -mtune=broadwell -march=broadwell -ffp-contract=on
+
+66, 2.120000, 1000000, -133.342209, -0.767585, -0.062897, 12.203792
+66, 2.13000011444092, 1000000, -133.342208862305, -0.763981461524963, -0.0626019760966301, 12.2037916183472
+90, 090, 000, 000
+
+subsequent threads
+10, 8.448278, 0.8448278, 20000000, 6720, 0.994285462670618, 7.95428370136494, 0.125
+
+
+
+non-subsequent threads
+10, 8.376527, 0.8376527, 20000000, 6720, 1.00280223534169, 8.0224178827335, 0.125
+
+
+res1 0 = -0.16
+res2 0 = 0.76
+res3 0 = 0.04
+res4 0 = 0.68
+res9 0 = -0.16
+res10 0 = 0.76
+res11 0 = 0.04
+res12 0 = 0.68
+
+res1 0 = -0.48
+res2 0 = 1.28
+res3 0 = 0.20
+res4 0 = 0.76
+res9 0 = -0.48
+res10 0 = 1.28
+res11 0 = 0.20
+res12 0 = 0.76
+
+res1 0 = -0.80
+res2 0 = 0.52
+res3 0 = -0.16
+res4 0 = 0.44
+res9 0 = -0.80
+res10 0 = 0.52
+res11 0 = -0.16
+res12 0 = 0.44
+
+res1 1 = -0.12
+res2 1 = 1.76
+res3 1 = 0.00
+res4 1 = 1.84
+res9 1 = -0.12
+res10 1 = 1.76
+res11 1 = 0.00
+res12 1 = 1.84
+
+res1 1 = -0.44
+res2 1 = 0.48
+res3 1 = -0.48
+res4 1 = 0.36
+res9 1 = -0.44
+res10 1 = 0.48
+res11 1 = -0.48
+res12 1 = 0.36
+
+res1 1 = -0.20
+res2 1 = 0.84
+res3 1 = -0.00
+res4 1 = 0.72
+res9 1 = -0.20
+res10 1 = 0.84
+res11 1 = -0.00
+res12 1 = 0.72
+
+ 0.0000000000000000266453525910038
+ 0.000000000000000000000000000001
+ 0.000000000000000000000000000005
+
+```
+file path:
+/Users/msrahman/Downloads/soc1Presentation.xlsx
+/Users/msrahman/Downloads/soc1_2_Presentation.xlsx
+/Users/msrahman/Downloads/soc1_Thrd1_Presentation.xlsx
+
+## Jupyter Note book code: soc 1 FLOPS Comparison
+
+```py
+ In []:
+import pandas as pd
+import numpy as np
+import chart_studio.plotly as py
+import cufflinks as cf
+import seaborn as sns
+import plotly.express as px
+%matplotlib inline
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+init_notebook_mode(connected=True)
+cf.go_offline()
+
+In[]:
+df = pd.read_excel("/Users/msrahman/Downloads/soc1Presentation.xlsx",0)
+df.head()
+df.iplot()
+
+In[]:
+import plotly.graph_objects as go
+import pandas as pd
+import plotly.express as px
+df = pd.read_excel("/Users/msrahman/Downloads/soc1Presentation.xlsx",0)
+#px.line(df, x='MB', y='AVX_GF_PT2', labels={'x': 'MB', 'y': 'FLOPS'})
+
+#px.line(df, x='MB', y=['AVX_GF_PT2','AVX_GF_NPT2','theta_T_GF_PT2', 'theta_T_GF_NPT2','AVX_GF_PT4','AVX_GF_NPT4',
+#                      'theta_T_GF_PT4', 'theta_T_GF_NPT4', 'AVX_GF_PT8', 'AVX_GF_NPT8', 'theta_T_GF_PT8', 'theta_T_GF_NPT8',
+#                      'AVX_GF_PT16', 'AVX_GF_NPT16', 'theta_T_GF_PT16', 'theta_T_GF_NPT16'], 
+#        labels={'x': 'MB', 'y': 'FLOPS'}, title='FLOPS Comparison: Socket1 double_MVM vs theta_T_mul')
+
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_PT2, mode='lines', name='AVX_PT2'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_NPT2, mode='lines+markers', name='AVX_NPT2'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_PT2, mode='lines', name='thetaT_PT2'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_NPT2, mode='lines+markers', name='thetaT_NPT2'))
+
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_PT4, mode='lines', name='AVX_PT4'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_NPT4, mode='lines+markers', name='AVX_NPT4'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_PT4, mode='lines', name='thetaT_PT4'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_NPT4, mode='lines+markers', name='thetaT_NPT4'))
+
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_PT8, mode='lines', name='AVX_PT8'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_NPT8, mode='lines+markers', name='AVX_NPT8'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_PT8, mode='lines', name='thetaT_PT8'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_NPT8, mode='lines+markers', name='thetaT_NPT8'))
+
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_PT16, mode='lines', name='AVX_PT16'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.AVX_GF_NPT16, mode='lines+markers', name='AVX_NPT16'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_PT16, mode='lines', name='thetaT_PT16'))
+fig.add_trace(go.Scatter(x=df.MB, y=df.theta_T_GF_NPT16, mode='lines+markers', name='thetaT_NPT16'))
+
+fig.update_layout(title='FLOPS Comparison: double_MVM vs theta_T_multiply',
+                 xaxis_title='MB', yaxis_title='FLOPS')
+
+
+#first group by omp 1
+grouped = df.groupby(df.omp)
+df_new = grouped.get_group(1)
+df_new
+
+# sort data
+df = df.sort_values(by="Dirc_Data_Mov")
+df.sort_values(by=['Fused_KB'], inplace=True)
+
+```
+
+
+
+```bash
+mpirun -n 12 –N nprocs_per_node –d $OMP_NUM_THREADS ./speed_test_diracoperator 
+mpirun -ppn 2 -np 4 –env I_MPI_PIN_DOMAIN socket env KMP_AFFINITY scatter ./speed_test_diracoperator 
+
+ git config --global user.email "shidureh@yahoo.co.uk"
+  git config --global user.name "Shidur Rahman"
+  export PATH="${PATH}:/opt/anaconda3/lib/python3.9/site-packages/graphviz"
+  Requirement already satisfied: graphviZ in /opt/anaconda3/lib/python3.9/site-packages (0.20.1)
+  export PATH=$HOME/bin:/usr/local/bin:/opt/anaconda3/lib/python3.9/site-packages/graphviz:$PATH
+  source ./.bash_profile
+```
+
+#SBATCH --ntasks=4
+#SBATCH --ntasks-per-node=2
+
+omp_thrd,Gauge_group,MPI_size,GLB_T,GLB_X,GLB_Y,GLB_Z,LOC_T,LOC_X,LOC_Y,LOC_Z,algb_kernel,geom_type,RLXD,SITE_FLOP,SITE_BYTE,Dirc_Data_Mov,Dphi-Reps,Dphi_KB,Dphi_msec,Dphi_GFLOPS,Dphi_BAND,Fused_Reps,Fused_KB,Fused_msec,Fused_GFLOPS,Fused_BAND,Job_Output
+
+
+
+avx header:
+
+
+
+
+
+```bash
+source /opt/ohpc/pub/oneAPI/setvars.sh
+
+export I_MPI_DEBUG=5 
+export OMP_DISPLAY_AFFINITY=TRUE 
+unset MPI_DSM_OFF 
+export MPI_DSM_VERBOSE=1 
+export MPI_SHARED_VERBOSE=1 
+export MPI_MEMMAP_VERBOSE=1 
+
+
+export  OMP_PROC_BIND=close # How I am going to bind omp threads on to those places 
+export  OMP_PLACES=cores    # Where I am going to place omp threads on the hardware, here is to cores
+
+
+ sbatch –-array=1-2171 job_2.mpi  
+ sbatch –-array=1-2302 job_4.mpi 
+
+
+ scp mrahman@foseres.fost.plymouth.ac.uk:/home/mrahman/HiRep/TestProgram/DiracOperator/run_speedtest.sh /Users/msrahman/Documents
+
+# Submitting Array Jobs 
+sbatch --array=1-1000 job_2_1.mpi
+sbatch --array=1-1000 job_2_2.mpi
+sbatch --array=1-943 job_2_3.mpi
+
+
+sbatch --array=1-1000 job_4_1.mpi
+sbatch --array=1-1000 job_4_2.mpi
+sbatch --array=1-1000 job_4_3.mpi
+sbatch --array=1-30 job_4_4.mpi
+
+
+HiRep Cuda Branch:
+TestProgram > Benchmark
+
+Compile: ../../make/nj
+Mkflags.init
+Include > Core > TestProgram
+.run_test.sh
+
+./run_tests.sh "Utils" -cflags "-Wall -Wshadow -O1  -march=core-avx2 -mtune=core-avx2" -n 2 -r FUND -mpi -mpicc mpicc -cc gcc -avx
+./run_tests.sh "Utils" -cflags "-Wall -Wshadow -O1  -march=core-avx2 -mtune=core-avx2" -n 3 -r FUND -mpi -mpicc /opt/local/bin/mpicc-mpich-gcc12 -cc /opt/local/bin/gcc-mp-12 -avx
+
+
+```
+
+git clone -b HiRep-CUDA --single-branch https://github.com/claudiopica/HiRep.git
+
+```py
+# Creating columns
+df_n2_drp["N_Nodes"] = 2
+df_n4_drp["N_Nodes"] = 4
+df_n2_drp['NPX'] = (df_n2_drp.GLB_X/df_n2_drp.LOC_X)
+df_n2_drp['NPY'] = (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y)
+df_n2_drp['NPZ'] = (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z)
+df_n2_drp['NPT'] = (df_n2_drp.GLB_T/df_n2_drp.LOC_T)
+df_n2_drp["Total_proc"] = df_n2_drp["omp_thrd"]* df_n2_drp.MPI_size
+df_n2_drp.columns
+
+
+df2_summary = df_n2_drp.groupby(['omp_thrd','NPT','NPX', 'NPY', 'NPZ', 'MPI_size',"Total_proc"]).size().reset_index(name = 'size')
+
+df2_summary[(df2_summary.NPX==2.0)&(df2_summary.NPY==1.0)&(df2_summary.NPZ==1.0) & (df2_summary.Total_proc==64)]
+df2_summary[(df2_summary.NPX==2.0)&(df2_summary.NPY==2.0)&(df2_summary.NPZ==1.0) & (df2_summary.Total_proc==64)]
+
+df2_summary[(df2_summary.NPX==2.0)&(df2_summary.NPY==2.0)&(df2_summary.NPZ==2.0) & (df2_summary.Total_proc==64)]
+
+
+
+# Creating differnt data frames
+df_32mpi_2omp = df_n2_drp[(df_n2_drp.omp_thrd == 2) & (df_n2_drp.GLB_T/df_n2_drp.LOC_T == 32) & (df_n2_drp.GLB_X/df_n2_drp.LOC_X == 1) & (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y ==1)& (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z == 1)]
+df_16mpi_4omp = df_n2_drp[(df_n2_drp.omp_thrd == 4) & (df_n2_drp.GLB_T/df_n2_drp.LOC_T == 16) & (df_n2_drp.GLB_X/df_n2_drp.LOC_X == 1) & (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y ==1)& (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z == 1)]
+df_8mp_8omp = df_n2_drp[(df_n2_drp.omp_thrd == 8) & (df_n2_drp.GLB_T/df_n2_drp.LOC_T == 8) & (df_n2_drp.GLB_X/df_n2_drp.LOC_X == 1) & (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y ==1)& (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z ==1)]
+df_4mpi_16omp = df_n2_drp[(df_n2_drp.omp_thrd == 16) & (df_n2_drp.GLB_T/df_n2_drp.LOC_T == 4) & (df_n2_drp.GLB_X/df_n2_drp.LOC_X == 1) & (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y ==1)& (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z == 1)]
+df_2mpi_32omp = df_n2_drp[(df_n2_drp.omp_thrd == 32) & (df_n2_drp.GLB_T/df_n2_drp.LOC_T == 2) & (df_n2_drp.GLB_X/df_n2_drp.LOC_X == 1) & (df_n2_drp.GLB_Y/df_n2_drp.LOC_Y ==1)& (df_n2_drp.GLB_Z/df_n2_drp.LOC_Z == 1)]
+
+fig = go.Figure() 
+
+fig.add_trace(go.Scatter(x=(df_32mpi_2omp.Dirc_Data_Mov*(df_32mpi_2omp.MPI_size/2)), 
+                         y=(df_32mpi_2omp.Fused_GFLOPS*(df_32mpi_2omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Fused_32mpi_2omp',
+                         line=dict(color='chartreuse',dash='dot',width=3)))
+fig.add_trace(go.Scatter(x=(df_32mpi_2omp.Dirc_Data_Mov*(df_32mpi_2omp.MPI_size/2)), 
+                         y=(df_32mpi_2omp.Dphi_GFLOPS*(df_32mpi_2omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Dphi_32mpi_2omp',
+                         line=dict(color='black',dash='dot',width=3)))
+
+fig.add_trace(go.Scatter(x=(df_16mpi_4omp.Dirc_Data_Mov*(df_16mpi_4omp.MPI_size/2)), 
+                         y=(df_16mpi_4omp.Fused_GFLOPS*(df_16mpi_4omp.MPI_size/2)), 
+                         mode='lines+markers', 
+                         name='Fused_16mpi_4omp',
+                         line=dict(color='coral',width=3)))
+fig.add_trace(go.Scatter(x=(df_16mpi_4omp.Dirc_Data_Mov*(df_16mpi_4omp.MPI_size/2)), 
+                         y=(df_16mpi_4omp.Dphi_GFLOPS*(df_16mpi_4omp.MPI_size/2)), 
+                         mode='lines+markers', 
+                         name='Dphi_16mpi_4omp',
+                         line=dict(color='cornflowerblue',width=3)))
+
+fig.add_trace(go.Scatter(x=(df_8mp_8omp.Dirc_Data_Mov*(df_8mp_8omp.MPI_size/2)), 
+                         y=(df_8mp_8omp.Fused_GFLOPS*(df_8mp_8omp.MPI_size/2)),
+                         mode='lines', 
+                         name='Fused_8mpi_8omp',
+                         line=dict(color='green', dash='longdashdot',width=3)))
+fig.add_trace(go.Scatter(x=(df_8mp_8omp.Dirc_Data_Mov*(df_8mp_8omp.MPI_size/2)), 
+                         y=(df_8mp_8omp.Dphi_GFLOPS*(df_8mp_8omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Dphi_8mpi_8omp',
+                         line=dict(color='crimson', dash='longdashdot',width=3)))
+
+fig.add_trace(go.Scatter(x=(df_4mpi_16omp.Dirc_Data_Mov*(df_4mpi_16omp.MPI_size/2)), 
+                         y=(df_4mpi_16omp.Fused_GFLOPS*(df_4mpi_16omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Fused_4mpi_16omp',
+                         line=dict(color='cyan', dash='longdash',width=3)))
+fig.add_trace(go.Scatter(x=(df_4mpi_16omp.Dirc_Data_Mov*(df_4mpi_16omp.MPI_size/2)), 
+                         y=(df_4mpi_16omp.Dphi_GFLOPS*(df_4mpi_16omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Dphi_4mpi_16omp',
+                         line=dict(color='darkblue', dash='longdash',width=3)))
+
+fig.add_trace(go.Scatter(x=(df_2mpi_32omp.Dirc_Data_Mov*(df_2mpi_32omp.MPI_size/2)), 
+                         y=(df_2mpi_32omp.Fused_GFLOPS*(df_2mpi_32omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Fused_2mpi_32omp',
+                         line=dict(color='darkcyan',width=3)))
+fig.add_trace(go.Scatter(x=(df_2mpi_32omp.Dirc_Data_Mov*(df_2mpi_32omp.MPI_size/2)), 
+                         y=(df_2mpi_32omp.Dphi_GFLOPS*(df_2mpi_32omp.MPI_size/2)), 
+                         mode='lines', 
+                         name='Dphi_2mpi_32omp',
+                         line=dict(color='fuchsia',width=3)))
+
+
+fig.update_layout(title='"Dphi_fused vs Dphi" GFlops Measurement (1 Node out of 2): on Different Computational Resources',
+                  xaxis_title='Dirc_Data_Mov', yaxis_title='GFLOPs/Node')  
+
+
+
+
+```

@@ -144,7 +144,7 @@ printf("MEM_ALIGN = %d\n", MEM_ALIGN);
 
 
  /*Initialising the variables*/
- my_init(psi, psi2, up, n);
+ //my_init(psi, psi2, up, n);
 
  // /* Vector initialized: 6 doubles */
  // psi->c[0] = (1.0 + 4.0 * I);
@@ -506,76 +506,4 @@ void double_MVM_non_macro(suNf_vector *chi, suNf_vector *chi2, const suNf *up, c
  _mm_store_pd((double *)chi2 + 4, chi2_3rd);
 }
 
-/* Memory allocation and aligned */
-struct addr_t
-{
- char *addr;
- char *true_addr;
- struct addr_t *next;
-};
 
-static struct addr_t *first = NULL;
-
-void *amalloc(size_t size, int p)
-{
- int shift;
- char *true_addr, *addr;
- unsigned long mask;
- struct addr_t *new;
-
- if ((size <= 0) || (p < 0))
-  return (NULL);
-
- shift = 1 << p;
- mask = (unsigned long)(shift - 1);
-
- true_addr = (char *)malloc(size + shift);
- new = (struct addr_t *)malloc(sizeof(*first));
-
- if ((true_addr == NULL) || (new == NULL))
- {
-  free(true_addr);
-  free(new);
-  return (NULL);
- }
-
- addr = (char *)(((unsigned long)(true_addr + shift)) & (~mask));
- (*new).addr = addr;
- (*new).true_addr = true_addr;
- (*new).next = first;
- first = new;
-
-#ifdef AMALLOC_MEASURE
- insert((void *)addr, size);
-#endif
-
- return ((void *)(addr));
-}
-
-void afree(void *addr)
-{
- struct addr_t *p, *q;
-
-#ifdef AMALLOC_MEASURE
- remove(addr);
-#endif
-
- q = NULL;
-
- for (p = first; p != NULL; p = (*p).next)
- {
-  if ((*p).addr == addr)
-  {
-   if (q != NULL)
-    (*q).next = (*p).next;
-   else
-    first = (*p).next;
-
-   free((*p).true_addr);
-   free(p);
-   return;
-  }
-
-  q = p;
- }
-}

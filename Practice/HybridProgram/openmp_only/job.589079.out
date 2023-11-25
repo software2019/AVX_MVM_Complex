@@ -1,0 +1,34 @@
+Lmod has detected the following error: You can only have one MPI module loaded
+at a time.
+You already have impi loaded.
+To correct the situation, please execute the following command:
+
+  $ module swap impi mpich/3.3.1
+
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    mpich/3.3.1      /opt/ohpc/pub/moduledeps/intel/mpich/3.3.1
+
+SLURM_CPUS_PER_TASK=4  NODES=1 SLURM_TASKS_PER_NODE=2
+Hello world! - main
+OMP: pid 58182 tid 58182 thread 0 bound to OS proc set {0,32}
+OMP: pid 58182 tid 58183 thread 1 bound to OS proc set {1,33}
+...worker reporting for duty.
+OMP: pid 58182 tid 58185 thread 3 bound to OS proc set {3,35}
+OMP: pid 58182 tid 58184 thread 2 bound to OS proc set {2,34}
+...worker reporting for duty.
+...worker reporting for duty.
+...worker reporting for duty.
+Over and out! - main
+Hello world! - main
+OMP: pid 58181 tid 58181 thread 0 bound to OS proc set {0,32}
+...worker reporting for duty.
+OMP: pid 58181 tid 58186 thread 1 bound to OS proc set {1,33}
+...worker reporting for duty.
+OMP: pid 58181 tid 58188 thread 3 bound to OS proc set {3,35}
+...worker reporting for duty.
+OMP: pid 58181 tid 58187 thread 2 bound to OS proc set {2,34}
+...worker reporting for duty.
+Over and out! - main

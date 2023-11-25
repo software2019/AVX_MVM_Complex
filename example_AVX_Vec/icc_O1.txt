@@ -1,0 +1,546 @@
+
+[0] Code Region - double_MVM_macro
+
+Iterations:        300
+Instructions:      22800
+Total Cycles:      6924
+Total uOps:        24300
+
+Dispatch Width:    4
+uOps Per Cycle:    3.51
+IPC:               3.29
+Block RThroughput: 22.0
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+[7]: Encoding Size
+
+[1]    [2]    [3]    [4]    [5]    [6]    [7]    Encodings:                    Instructions:
+ 1      1     0.25                         2     ff c1                         incl	%ecx
+ 1      1     0.50                         4     49 8d 34 24                   leaq	(%r12), %rsi
+ 1      6     0.50    *                    4     c5 7d 10 1e                   vmovupd	(%rsi), %ymm11
+ 1      1     0.25                         6     48 05 90 00 00 00             addq	$144, %rax
+ 1      6     0.50    *                    4     c5 fd 10 13                   vmovupd	(%rbx), %ymm2
+ 1      6     0.50    *                    5     c5 fd 10 7e 30                vmovupd	48(%rsi), %ymm7
+ 1      6     0.50    *                    5     c5 fd 10 66 60                vmovupd	96(%rsi), %ymm4
+ 1      1     1.00                         5     c4 41 25 15 fb                vunpckhpd	%ymm11, %ymm11, %ymm15
+ 1      1     1.00                         5     c5 6d c6 c2 05                vshufpd	$5, %ymm2, %ymm2, %ymm8
+ 1      1     1.00                         4     c5 45 15 f7                   vunpckhpd	%ymm7, %ymm7, %ymm14
+ 1      3     0.50                         5     c4 c1 05 59 c0                vmulpd	%ymm8, %ymm15, %ymm0
+ 1      3     0.50                         5     c4 41 0d 59 e8                vmulpd	%ymm8, %ymm14, %ymm13
+ 1      6     0.50    *                    5     c5 fd 10 7e 10                vmovupd	16(%rsi), %ymm7
+ 1      6     0.50    *                    4     c5 7f 12 16                   vmovddup	(%rsi), %ymm10
+ 1      6     0.50    *                    5     c5 7f 12 4e 30                vmovddup	48(%rsi), %ymm9
+ 1      5     0.50                         5     c4 c2 ed b6 c2                vfmaddsub231pd	%ymm10, %ymm2, %ymm0
+ 1      5     0.50                         5     c4 42 ed b6 e9                vfmaddsub231pd	%ymm9, %ymm2, %ymm13
+ 1      5     0.50    *                    4     48 8b 34 24                   movq	(%rsp), %rsi
+ 1      1     1.00                         4     c5 dd 15 f4                   vunpckhpd	%ymm4, %ymm4, %ymm6
+ 1      3     1.00                         6     c4 e3 7d 06 c8 01             vperm2f128	$1, %ymm0, %ymm0, %ymm1
+ 1      6     0.50    *                    4     c5 fd 10 26                   vmovupd	(%rsi), %ymm4
+ 1      3     0.50                         5     c4 41 4d 59 c0                vmulpd	%ymm8, %ymm6, %ymm8
+ 1      1     0.33                         6     c4 43 75 0d dd 0c             vblendpd	$12, %ymm13, %ymm1, %ymm11
+ 1      6     0.50    *                    5     c5 fd 10 4b 10                vmovupd	16(%rbx), %ymm1
+ 1      1     1.00                         5     c5 dd c6 dc 05                vshufpd	$5, %ymm4, %ymm4, %ymm3
+ 1      3     0.50                         4     c5 05 59 fb                   vmulpd	%ymm3, %ymm15, %ymm15
+ 1      3     0.50                         4     c5 0d 59 f3                   vmulpd	%ymm3, %ymm14, %ymm14
+ 1      5     0.50                         5     c4 42 dd a6 d7                vfmaddsub213pd	%ymm15, %ymm4, %ymm10
+ 1      5     0.50                         5     c4 42 dd a6 ce                vfmaddsub213pd	%ymm14, %ymm4, %ymm9
+ 1      3     1.00                         6     c4 63 15 06 e0 02             vperm2f128	$2, %ymm0, %ymm13, %ymm12
+ 1      3     1.00                         6     c4 e3 45 06 c7 01             vperm2f128	$1, %ymm7, %ymm7, %ymm0
+ 1      3     1.00                         6     c4 e3 75 06 f9 01             vperm2f128	$1, %ymm1, %ymm1, %ymm7
+ 1      3     1.00                         5     c4 41 1d 58 eb                vaddpd	%ymm11, %ymm12, %ymm13
+ 2      7     0.50    *                    8     c4 43 7d 0d 5c 24 40 0c       vblendpd	$12, 64(%r12), %ymm0, %ymm11
+ 1      1     0.33                         6     c4 63 45 0d e1 0c             vblendpd	$12, %ymm1, %ymm7, %ymm12
+ 1      1     1.00                         5     c4 c1 7f 12 c3                vmovddup	%ymm11, %ymm0
+ 1      1     1.00                         5     c4 c1 25 15 cb                vunpckhpd	%ymm11, %ymm11, %ymm1
+ 1      1     1.00                         6     c4 41 1d c6 dc 05             vshufpd	$5, %ymm12, %ymm12, %ymm11
+ 1      3     0.50                         5     c4 41 75 59 db                vmulpd	%ymm11, %ymm1, %ymm11
+ 1      5     0.50                         5     c4 62 9d b6 d8                vfmaddsub231pd	%ymm0, %ymm12, %ymm11
+ 1      3     1.00                         6     c4 43 35 06 e2 02             vperm2f128	$2, %ymm10, %ymm9, %ymm12
+ 1      3     1.00                         6     c4 43 2d 06 d2 01             vperm2f128	$1, %ymm10, %ymm10, %ymm10
+ 1      1     0.33                         6     c4 43 2d 0d c9 0c             vblendpd	$12, %ymm9, %ymm10, %ymm9
+ 1      6     0.50    *                    5     c5 7d 10 56 10                vmovupd	16(%rsi), %ymm10
+ 1      3     1.00                         5     c4 41 25 58 dd                vaddpd	%ymm13, %ymm11, %ymm11
+ 1      3     1.00                         5     c4 41 1d 58 c9                vaddpd	%ymm9, %ymm12, %ymm9
+ 1      3     1.00                         6     c4 43 2d 06 ea 01             vperm2f128	$1, %ymm10, %ymm10, %ymm13
+ 1      1     0.33                         6     c4 43 15 0d fa 0c             vblendpd	$12, %ymm10, %ymm13, %ymm15
+ 1      1     1.00                         6     c4 41 05 c6 f7 05             vshufpd	$5, %ymm15, %ymm15, %ymm14
+ 1      3     0.50                         5     c4 c1 75 59 ce                vmulpd	%ymm14, %ymm1, %ymm1
+ 1      6     0.50    *                    7     c4 c1 7f 12 6c 24 60          vmovddup	96(%r12), %ymm5
+ 1      5     0.50                         5     c4 62 ed b6 c5                vfmaddsub231pd	%ymm5, %ymm2, %ymm8
+ 1      3     0.50                         4     c5 cd 59 d3                   vmulpd	%ymm3, %ymm6, %ymm2
+ 1      5     0.50                         5     c4 e2 85 a6 c1                vfmaddsub213pd	%ymm1, %ymm15, %ymm0
+ 1      6     0.50    *                    7     c4 c1 7d 10 4c 24 70          vmovupd	112(%r12), %ymm1
+ 1      5     0.50                         5     c4 e2 dd a6 ea                vfmaddsub213pd	%ymm2, %ymm4, %ymm5
+ 1      3     1.00                         5     c4 41 7d 58 c9                vaddpd	%ymm9, %ymm0, %ymm9
+ 1      3     1.00                         6     c4 e3 75 06 c1 01             vperm2f128	$1, %ymm1, %ymm1, %ymm0
+ 1      3     1.00                         6     c4 c3 3d 06 d8 01             vperm2f128	$1, %ymm8, %ymm8, %ymm3
+ 1      1     0.33                         6     c4 e3 7d 0d d1 0c             vblendpd	$12, %ymm1, %ymm0, %ymm2
+ 1      1     0.33                         6     c4 43 45 0d d2 0c             vblendpd	$12, %ymm10, %ymm7, %ymm10
+ 1      3     1.00                         6     c4 c3 55 06 f0 02             vperm2f128	$2, %ymm8, %ymm5, %ymm6
+ 1      1     0.33                         6     c4 e3 65 0d ed 0c             vblendpd	$12, %ymm5, %ymm3, %ymm5
+ 1      1     1.00                         4     c5 ed 15 da                   vunpckhpd	%ymm2, %ymm2, %ymm3
+ 1      1     1.00                         6     c4 c1 2d c6 fa 05             vshufpd	$5, %ymm10, %ymm10, %ymm7
+ 1      3     0.50                         4     c5 e5 59 e7                   vmulpd	%ymm7, %ymm3, %ymm4
+ 1      3     1.00                         4     c5 cd 58 ed                   vaddpd	%ymm5, %ymm6, %ymm5
+ 1      1     1.00                         4     c5 ff 12 f2                   vmovddup	%ymm2, %ymm6
+ 1      5     0.50                         5     c4 e2 ad a6 f4                vfmaddsub213pd	%ymm4, %ymm10, %ymm6
+ 1      3     1.00                         4     c5 4d 58 c5                   vaddpd	%ymm5, %ymm6, %ymm8
+ 1      5     0.50    *                    5     4c 8b 44 24 38                movq	56(%rsp), %r8
+ 1      5     0.50    *                    5     4c 8b 4c 24 30                movq	48(%rsp), %r9
+ 2      1     1.00           *             6     c4 21 7d 11 1c 02             vmovupd	%ymm11, (%rdx,%r8)
+ 2      1     1.00           *             7     c4 21 79 11 44 02 20          vmovupd	%xmm8, 32(%rdx,%r8)
+ 2      1     1.00           *             6     c4 21 7d 11 0c 0a             vmovupd	%ymm9, (%rdx,%r9)
+ 2      1     1.00           *             8     c4 23 7d 19 44 0a 20 01       vextractf128	$1, %ymm8, 32(%rdx,%r9)
+
+
+Resources:
+[0]   - BWDivider
+[1]   - BWFPDivider
+[2]   - BWPort0
+[3]   - BWPort1
+[4]   - BWPort2
+[5]   - BWPort3
+[6]   - BWPort4
+[7]   - BWPort5
+[8]   - BWPort6
+[9]   - BWPort7
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
+ -      -     15.00  17.01  8.50   8.51   4.00   23.00  2.00   2.99   
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
+ -      -      -      -      -      -      -      -     1.00    -     incl	%ecx
+ -      -      -     1.00    -      -      -      -      -      -     leaq	(%r12), %rsi
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rsi), %ymm11
+ -      -      -      -      -      -      -      -     1.00    -     addq	$144, %rax
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rbx), %ymm2
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	48(%rsi), %ymm7
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	96(%rsi), %ymm4
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%ymm11, %ymm11, %ymm15
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$5, %ymm2, %ymm2, %ymm8
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%ymm7, %ymm7, %ymm14
+ -      -     0.01   0.99    -      -      -      -      -      -     vmulpd	%ymm8, %ymm15, %ymm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm8, %ymm14, %ymm13
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rsi), %ymm7
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%rsi), %ymm10
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	48(%rsi), %ymm9
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub231pd	%ymm10, %ymm2, %ymm0
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub231pd	%ymm9, %ymm2, %ymm13
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	(%rsp), %rsi
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%ymm4, %ymm4, %ymm6
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm0, %ymm0, %ymm1
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rsi), %ymm4
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm8, %ymm6, %ymm8
+ -      -     1.00    -      -      -      -      -      -      -     vblendpd	$12, %ymm13, %ymm1, %ymm11
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rbx), %ymm1
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$5, %ymm4, %ymm4, %ymm3
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm3, %ymm15, %ymm15
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm3, %ymm14, %ymm14
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub213pd	%ymm15, %ymm4, %ymm10
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub213pd	%ymm14, %ymm4, %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm0, %ymm13, %ymm12
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm7, %ymm7, %ymm0
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm1, %ymm1, %ymm7
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm11, %ymm12, %ymm13
+ -      -     1.00    -     0.50   0.50    -      -      -      -     vblendpd	$12, 64(%r12), %ymm0, %ymm11
+ -      -     1.00    -      -      -      -      -      -      -     vblendpd	$12, %ymm1, %ymm7, %ymm12
+ -      -      -      -      -      -      -     1.00    -      -     vmovddup	%ymm11, %ymm0
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%ymm11, %ymm11, %ymm1
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$5, %ymm12, %ymm12, %ymm11
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm11, %ymm1, %ymm11
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub231pd	%ymm0, %ymm12, %ymm11
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm10, %ymm9, %ymm12
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm10, %ymm10, %ymm10
+ -      -      -     1.00    -      -      -      -      -      -     vblendpd	$12, %ymm9, %ymm10, %ymm9
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rsi), %ymm10
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm13, %ymm11, %ymm11
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm9, %ymm12, %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm10, %ymm10, %ymm13
+ -      -      -     1.00    -      -      -      -      -      -     vblendpd	$12, %ymm10, %ymm13, %ymm15
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$5, %ymm15, %ymm15, %ymm14
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm14, %ymm1, %ymm1
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	96(%r12), %ymm5
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub231pd	%ymm5, %ymm2, %ymm8
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%ymm3, %ymm6, %ymm2
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%ymm1, %ymm15, %ymm0
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	112(%r12), %ymm1
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub213pd	%ymm2, %ymm4, %ymm5
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm9, %ymm0, %ymm9
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm1, %ymm1, %ymm0
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$1, %ymm8, %ymm8, %ymm3
+ -      -     0.01   0.99    -      -      -      -      -      -     vblendpd	$12, %ymm1, %ymm0, %ymm2
+ -      -      -      -      -      -      -     1.00    -      -     vblendpd	$12, %ymm10, %ymm7, %ymm10
+ -      -      -      -      -      -      -     1.00    -      -     vperm2f128	$2, %ymm8, %ymm5, %ymm6
+ -      -      -     1.00    -      -      -      -      -      -     vblendpd	$12, %ymm5, %ymm3, %ymm5
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%ymm2, %ymm2, %ymm3
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$5, %ymm10, %ymm10, %ymm7
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%ymm7, %ymm3, %ymm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm5, %ymm6, %ymm5
+ -      -      -      -      -      -      -     1.00    -      -     vmovddup	%ymm2, %ymm6
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%ymm4, %ymm10, %ymm6
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%ymm5, %ymm6, %ymm8
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	56(%rsp), %r8
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	48(%rsp), %r9
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%ymm11, (%rdx,%r8)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm8, 32(%rdx,%r8)
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%ymm9, (%rdx,%r9)
+ -      -      -      -     0.50   0.50   1.00    -      -      -     vextractf128	$1, %ymm8, 32(%rdx,%r9)
+
+[1] Code Region - _suNf_theta_T_multiply
+
+Iterations:        300
+Instructions:      45600
+Total Cycles:      13823
+Total uOps:        53400
+
+Dispatch Width:    4
+uOps Per Cycle:    3.86
+IPC:               3.30
+Block RThroughput: 44.5
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+[7]: Encoding Size
+
+[1]    [2]    [3]    [4]    [5]    [6]    [7]    Encodings:                    Instructions:
+ 1      1     0.25                         2     ff c1                         incl	%ecx
+ 1      1     0.50                         4     4d 8d 14 24                   leaq	(%r12), %r10
+ 1      5     0.50    *                    5     c4 41 79 10 1a                vmovupd	(%r10), %xmm11
+ 1      5     0.50    *                    4     c5 79 10 0b                   vmovupd	(%rbx), %xmm9
+ 1      5     0.50    *                    6     c4 c1 79 10 52 10             vmovupd	16(%r10), %xmm2
+ 1      1     1.00                         5     c4 41 31 15 c1                vunpckhpd	%xmm9, %xmm9, %xmm8
+ 1      1     0.25                         6     48 05 90 00 00 00             addq	$144, %rax
+ 1      1     1.00                         6     c4 c1 21 c6 c3 01             vshufpd	$1, %xmm11, %xmm11, %xmm0
+ 1      3     0.50                         4     c5 b9 59 f8                   vmulpd	%xmm0, %xmm8, %xmm7
+ 1      5     0.50    *                    4     c5 fb 12 1b                   vmovddup	(%rbx), %xmm3
+ 1      5     0.50                         5     c4 e2 a1 a6 df                vfmaddsub213pd	%xmm7, %xmm11, %xmm3
+ 1      1     1.00                         5     c5 e9 c6 ca 01                vshufpd	$1, %xmm2, %xmm2, %xmm1
+ 1      5     0.50    *                    5     48 8b 74 24 48                movq	72(%rsp), %rsi
+ 1      5     0.50    *                    4     4c 8b 04 24                   movq	(%rsp), %r8
+ 1      5     0.50    *                    5     4c 8b 4c 24 40                movq	64(%rsp), %r9
+ 1      1     0.50                         4     48 8d 3c 32                   leaq	(%rdx,%rsi), %rdi
+ 2      1     1.00           *             4     c5 f9 11 1f                   vmovupd	%xmm3, (%rdi)
+ 1      5     0.50    *                    5     c5 f9 10 6b 10                vmovupd	16(%rbx), %xmm5
+ 1      1     1.00                         4     c5 d1 15 f5                   vunpckhpd	%xmm5, %xmm5, %xmm6
+ 1      3     0.50                         4     c5 c9 59 e1                   vmulpd	%xmm1, %xmm6, %xmm4
+ 1      5     0.50    *                    5     c5 7b 12 73 10                vmovddup	16(%rbx), %xmm14
+ 1      5     0.50                         5     c4 62 e9 a6 f4                vfmaddsub213pd	%xmm4, %xmm2, %xmm14
+ 1      5     0.50    *                    6     c4 c1 79 10 62 20             vmovupd	32(%r10), %xmm4
+ 1      3     1.00                         5     c4 c1 61 58 fe                vaddpd	%xmm14, %xmm3, %xmm7
+ 2      1     1.00           *             4     c5 f9 11 3f                   vmovupd	%xmm7, (%rdi)
+ 1      1     1.00                         5     c5 d9 c6 dc 01                vshufpd	$1, %xmm4, %xmm4, %xmm3
+ 1      5     0.50    *                    5     c5 79 10 53 20                vmovupd	32(%rbx), %xmm10
+ 1      1     1.00                         5     c4 41 29 15 ca                vunpckhpd	%xmm10, %xmm10, %xmm9
+ 1      3     0.50                         4     c5 31 59 c3                   vmulpd	%xmm3, %xmm9, %xmm8
+ 1      5     0.50    *                    5     c5 fb 12 6b 20                vmovddup	32(%rbx), %xmm5
+ 1      5     0.50                         5     c4 c2 d9 a6 e8                vfmaddsub213pd	%xmm8, %xmm4, %xmm5
+ 1      5     0.50    *                    6     c4 41 79 10 42 40             vmovupd	64(%r10), %xmm8
+ 1      3     1.00                         4     c5 c1 58 f5                   vaddpd	%xmm5, %xmm7, %xmm6
+ 1      5     0.50    *                    6     c4 c1 79 10 6a 30             vmovupd	48(%r10), %xmm5
+ 2      1     1.00           *             4     c5 f9 11 37                   vmovupd	%xmm6, (%rdi)
+ 1      1     1.00                         5     c5 d1 c6 f5 01                vshufpd	$1, %xmm5, %xmm5, %xmm6
+ 1      5     0.50    *                    4     c5 79 10 23                   vmovupd	(%rbx), %xmm12
+ 1      1     1.00                         5     c4 41 19 15 ec                vunpckhpd	%xmm12, %xmm12, %xmm13
+ 1      3     0.50                         4     c5 11 59 fe                   vmulpd	%xmm6, %xmm13, %xmm15
+ 1      5     0.50    *                    4     c5 7b 12 13                   vmovddup	(%rbx), %xmm10
+ 1      5     0.50                         5     c4 42 d1 a6 d7                vfmaddsub213pd	%xmm15, %xmm5, %xmm10
+ 1      1     1.00                         6     c4 c1 39 c6 f8 01             vshufpd	$1, %xmm8, %xmm8, %xmm7
+ 2      1     1.00           *             5     c5 79 11 57 10                vmovupd	%xmm10, 16(%rdi)
+ 1      5     0.50    *                    5     c5 79 10 73 10                vmovupd	16(%rbx), %xmm14
+ 1      1     1.00                         5     c4 41 09 15 ce                vunpckhpd	%xmm14, %xmm14, %xmm9
+ 1      3     0.50                         4     c5 31 59 e7                   vmulpd	%xmm7, %xmm9, %xmm12
+ 1      5     0.50    *                    5     c5 7b 12 6b 10                vmovddup	16(%rbx), %xmm13
+ 1      5     0.50                         5     c4 42 b9 a6 ec                vfmaddsub213pd	%xmm12, %xmm8, %xmm13
+ 1      3     1.00                         5     c4 41 29 58 fd                vaddpd	%xmm13, %xmm10, %xmm15
+ 1      5     0.50    *                    6     c4 41 79 10 52 50             vmovupd	80(%r10), %xmm10
+ 2      1     1.00           *             5     c5 79 11 7f 10                vmovupd	%xmm15, 16(%rdi)
+ 1      1     1.00                         6     c4 41 29 c6 ca 01             vshufpd	$1, %xmm10, %xmm10, %xmm9
+ 1      5     0.50    *                    5     c5 79 10 73 20                vmovupd	32(%rbx), %xmm14
+ 1      1     1.00                         5     c4 41 09 15 e6                vunpckhpd	%xmm14, %xmm14, %xmm12
+ 1      3     0.50                         5     c4 41 19 59 f1                vmulpd	%xmm9, %xmm12, %xmm14
+ 1      5     0.50    *                    5     c5 7b 12 6b 20                vmovddup	32(%rbx), %xmm13
+ 1      5     0.50                         5     c4 42 a9 a6 ee                vfmaddsub213pd	%xmm14, %xmm10, %xmm13
+ 1      5     0.50    *                    6     c4 41 79 10 72 60             vmovupd	96(%r10), %xmm14
+ 1      3     1.00                         5     c4 41 01 58 fd                vaddpd	%xmm13, %xmm15, %xmm15
+ 2      1     1.00           *             5     c5 79 11 7f 10                vmovupd	%xmm15, 16(%rdi)
+ 1      5     0.50    *                    4     c5 79 10 2b                   vmovupd	(%rbx), %xmm13
+ 1      1     1.00                         5     c4 41 11 15 fd                vunpckhpd	%xmm13, %xmm13, %xmm15
+ 1      1     1.00                         6     c4 41 09 c6 ee 01             vshufpd	$1, %xmm14, %xmm14, %xmm13
+ 1      3     0.50                         5     c4 41 01 59 fd                vmulpd	%xmm13, %xmm15, %xmm15
+ 1      5     0.50    *                    4     c5 7b 12 23                   vmovddup	(%rbx), %xmm12
+ 1      5     0.50                         5     c4 42 89 a6 e7                vfmaddsub213pd	%xmm15, %xmm14, %xmm12
+ 1      5     0.50    *                    6     c4 41 79 10 7a 70             vmovupd	112(%r10), %xmm15
+ 2      1     1.00           *             6     c5 79 11 6c 24 70             vmovupd	%xmm13, 112(%rsp)
+ 2      1     1.00           *             5     c5 79 11 67 20                vmovupd	%xmm12, 32(%rdi)
+ 1      1     1.00                         6     c4 41 01 c6 ef 01             vshufpd	$1, %xmm15, %xmm15, %xmm13
+ 1      5     0.50    *                    5     c5 79 10 73 10                vmovupd	16(%rbx), %xmm14
+ 1      1     1.00                         5     c4 41 09 15 f6                vunpckhpd	%xmm14, %xmm14, %xmm14
+ 1      3     0.50                         5     c4 41 09 59 f5                vmulpd	%xmm13, %xmm14, %xmm14
+ 1      1     0.50                         8     4c 8d 9c 24 80 00 00 00       leaq	128(%rsp), %r11
+ 2      1     1.00           *             5     c4 41 79 11 2b                vmovupd	%xmm13, (%r11)
+ 1      5     0.50    *                    5     c5 7b 12 6b 10                vmovddup	16(%rbx), %xmm13
+ 1      5     0.50                         5     c4 42 81 a6 ee                vfmaddsub213pd	%xmm14, %xmm15, %xmm13
+ 1      5     0.50    *                    9     c4 41 79 10 b2 80 00 00 00    vmovupd	128(%r10), %xmm14
+ 1      1     1.00                         6     c4 41 09 c6 fe 01             vshufpd	$1, %xmm14, %xmm14, %xmm15
+ 1      3     1.00                         5     c4 41 19 58 ed                vaddpd	%xmm13, %xmm12, %xmm13
+ 2      1     1.00           *             5     c5 79 11 6f 20                vmovupd	%xmm13, 32(%rdi)
+ 1      1     0.50                         8     4c 8d b4 24 20 01 00 00       leaq	288(%rsp), %r14
+ 2      1     1.00           *             5     c4 41 79 11 3e                vmovupd	%xmm15, (%r14)
+ 1      5     0.50    *                    5     c5 79 10 63 20                vmovupd	32(%rbx), %xmm12
+ 1      1     1.00                         5     c4 41 19 15 e4                vunpckhpd	%xmm12, %xmm12, %xmm12
+ 1      3     0.50                         5     c4 41 19 59 e7                vmulpd	%xmm15, %xmm12, %xmm12
+ 1      5     0.50    *                    5     c5 7b 12 7b 20                vmovddup	32(%rbx), %xmm15
+ 1      5     0.50                         5     c4 42 89 a6 fc                vfmaddsub213pd	%xmm12, %xmm14, %xmm15
+ 1      3     1.00                         5     c4 41 11 58 ef                vaddpd	%xmm15, %xmm13, %xmm13
+ 2      1     1.00           *             5     c5 79 11 6f 20                vmovupd	%xmm13, 32(%rdi)
+ 1      5     0.50    *                    5     c4 41 79 10 28                vmovupd	(%r8), %xmm13
+ 1      1     1.00                         5     c4 41 11 15 fd                vunpckhpd	%xmm13, %xmm13, %xmm15
+ 1      3     0.50                         4     c5 81 59 c0                   vmulpd	%xmm0, %xmm15, %xmm0
+ 1      5     0.50    *                    5     c4 41 7b 12 20                vmovddup	(%r8), %xmm12
+ 1      5     0.50                         5     c4 62 a1 a6 e0                vfmaddsub213pd	%xmm0, %xmm11, %xmm12
+ 1      1     0.50                         4     4a 8d 34 0a                   leaq	(%rdx,%r9), %rsi
+ 2      1     1.00           *             4     c5 79 11 26                   vmovupd	%xmm12, (%rsi)
+ 1      5     0.50    *                    6     c4 41 79 10 58 10             vmovupd	16(%r8), %xmm11
+ 1      1     1.00                         5     c4 41 21 15 db                vunpckhpd	%xmm11, %xmm11, %xmm11
+ 1      3     0.50                         4     c5 a1 59 c9                   vmulpd	%xmm1, %xmm11, %xmm1
+ 1      5     0.50    *                    6     c4 c1 7b 12 40 10             vmovddup	16(%r8), %xmm0
+ 1      5     0.50                         5     c4 e2 e9 a6 c1                vfmaddsub213pd	%xmm1, %xmm2, %xmm0
+ 1      3     1.00                         4     c5 99 58 c0                   vaddpd	%xmm0, %xmm12, %xmm0
+ 2      1     1.00           *             4     c5 f9 11 06                   vmovupd	%xmm0, (%rsi)
+ 1      5     0.50    *                    6     c4 c1 79 10 50 20             vmovupd	32(%r8), %xmm2
+ 1      1     1.00                         4     c5 e9 15 d2                   vunpckhpd	%xmm2, %xmm2, %xmm2
+ 1      3     0.50                         4     c5 e9 59 db                   vmulpd	%xmm3, %xmm2, %xmm3
+ 1      5     0.50    *                    6     c4 c1 7b 12 48 20             vmovddup	32(%r8), %xmm1
+ 1      5     0.50                         5     c4 e2 d9 a6 cb                vfmaddsub213pd	%xmm3, %xmm4, %xmm1
+ 1      3     1.00                         4     c5 f9 58 e1                   vaddpd	%xmm1, %xmm0, %xmm4
+ 2      1     1.00           *             4     c5 f9 11 26                   vmovupd	%xmm4, (%rsi)
+ 1      5     0.50    *                    5     c4 41 79 10 18                vmovupd	(%r8), %xmm11
+ 1      1     1.00                         5     c4 41 21 15 e3                vunpckhpd	%xmm11, %xmm11, %xmm12
+ 1      3     0.50                         4     c5 99 59 f6                   vmulpd	%xmm6, %xmm12, %xmm6
+ 1      5     0.50    *                    5     c4 41 7b 12 38                vmovddup	(%r8), %xmm15
+ 1      5     0.50                         5     c4 62 d1 a6 fe                vfmaddsub213pd	%xmm6, %xmm5, %xmm15
+ 2      1     1.00           *             5     c5 79 11 7e 10                vmovupd	%xmm15, 16(%rsi)
+ 1      5     0.50    *                    6     c4 c1 79 10 68 10             vmovupd	16(%r8), %xmm5
+ 1      1     1.00                         4     c5 51 15 ed                   vunpckhpd	%xmm5, %xmm5, %xmm13
+ 1      3     0.50                         4     c5 91 59 ff                   vmulpd	%xmm7, %xmm13, %xmm7
+ 1      5     0.50    *                    6     c4 c1 7b 12 40 10             vmovddup	16(%r8), %xmm0
+ 1      5     0.50                         5     c4 e2 b9 a6 c7                vfmaddsub213pd	%xmm7, %xmm8, %xmm0
+ 1      3     1.00                         4     c5 81 58 c0                   vaddpd	%xmm0, %xmm15, %xmm0
+ 2      1     1.00           *             5     c5 f9 11 46 10                vmovupd	%xmm0, 16(%rsi)
+ 1      5     0.50    *                    6     c4 41 79 10 40 20             vmovupd	32(%r8), %xmm8
+ 1      1     1.00                         5     c4 41 39 15 c0                vunpckhpd	%xmm8, %xmm8, %xmm8
+ 1      3     0.50                         5     c4 41 39 59 c9                vmulpd	%xmm9, %xmm8, %xmm9
+ 1      5     0.50    *                    6     c4 c1 7b 12 48 20             vmovddup	32(%r8), %xmm1
+ 1      5     0.50                         5     c4 c2 a9 a6 c9                vfmaddsub213pd	%xmm9, %xmm10, %xmm1
+ 1      3     1.00                         4     c5 79 58 d1                   vaddpd	%xmm1, %xmm0, %xmm10
+ 2      1     1.00           *             5     c5 79 11 56 10                vmovupd	%xmm10, 16(%rsi)
+ 1      5     0.50    *                    5     c4 c1 79 10 00                vmovupd	(%r8), %xmm0
+ 1      1     1.00                         4     c5 f9 15 c8                   vunpckhpd	%xmm0, %xmm0, %xmm1
+ 2      8     0.50    *                    6     c5 f1 59 54 24 70             vmulpd	112(%rsp), %xmm1, %xmm2
+ 1      5     0.50    *                    5     c4 c1 7b 12 30                vmovddup	(%r8), %xmm6
+ 2      10    0.50    *                    6     c4 c2 e9 96 72 60             vfmaddsub132pd	96(%r10), %xmm2, %xmm6
+ 2      1     1.00           *             5     c5 f9 11 76 20                vmovupd	%xmm6, 32(%rsi)
+ 1      5     0.50    *                    6     c4 c1 79 10 58 10             vmovupd	16(%r8), %xmm3
+ 1      1     1.00                         4     c5 e1 15 e3                   vunpckhpd	%xmm3, %xmm3, %xmm4
+ 2      8     0.50    *                    5     c4 c1 59 59 2b                vmulpd	(%r11), %xmm4, %xmm5
+ 1      5     0.50    *                    6     c4 c1 7b 12 78 10             vmovddup	16(%r8), %xmm7
+ 2      10    0.50    *                    6     c4 c2 d1 96 7a 70             vfmaddsub132pd	112(%r10), %xmm5, %xmm7
+ 1      3     1.00                         4     c5 49 58 df                   vaddpd	%xmm7, %xmm6, %xmm11
+ 2      1     1.00           *             5     c5 79 11 5e 20                vmovupd	%xmm11, 32(%rsi)
+ 1      5     0.50    *                    6     c4 41 79 10 40 20             vmovupd	32(%r8), %xmm8
+ 1      1     1.00                         5     c4 41 39 15 c8                vunpckhpd	%xmm8, %xmm8, %xmm9
+ 2      8     0.50    *                    5     c4 41 31 59 16                vmulpd	(%r14), %xmm9, %xmm10
+ 1      5     0.50    *                    6     c4 41 7b 12 60 20             vmovddup	32(%r8), %xmm12
+ 1      5     0.50                         5     c4 42 89 a6 e2                vfmaddsub213pd	%xmm10, %xmm14, %xmm12
+ 1      3     1.00                         5     c4 41 21 58 f4                vaddpd	%xmm12, %xmm11, %xmm14
+ 2      1     1.00           *             5     c5 79 11 76 20                vmovupd	%xmm14, 32(%rsi)
+ 1      1     0.25                         4     48 83 c2 30                   addq	$48, %rdx
+
+
+Resources:
+[0]   - BWDivider
+[1]   - BWFPDivider
+[2]   - BWPort0
+[3]   - BWPort1
+[4]   - BWPort2
+[5]   - BWPort3
+[6]   - BWPort4
+[7]   - BWPort5
+[8]   - BWPort6
+[9]   - BWPort7
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
+ -      -     25.00  27.00  27.50  27.51  21.00  28.00  3.00   18.99  
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
+ -      -      -      -      -      -      -      -     1.00    -     incl	%ecx
+ -      -      -      -      -      -      -     1.00    -      -     leaq	(%r12), %r10
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%r10), %xmm11
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rbx), %xmm9
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%r10), %xmm2
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm9, %xmm9, %xmm8
+ -      -      -      -      -      -      -      -     1.00    -     addq	$144, %rax
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm11, %xmm11, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm0, %xmm8, %xmm7
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%rbx), %xmm3
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub213pd	%xmm7, %xmm11, %xmm3
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm2, %xmm2, %xmm1
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	72(%rsp), %rsi
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	(%rsp), %r8
+ -      -      -      -     0.50   0.50    -      -      -      -     movq	64(%rsp), %r9
+ -      -      -     1.00    -      -      -      -      -      -     leaq	(%rdx,%rsi), %rdi
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm3, (%rdi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rbx), %xmm5
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm5, %xmm5, %xmm6
+ -      -     0.99   0.01    -      -      -      -      -      -     vmulpd	%xmm1, %xmm6, %xmm4
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%rbx), %xmm14
+ -      -     0.01   0.99    -      -      -      -      -      -     vfmaddsub213pd	%xmm4, %xmm2, %xmm14
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%r10), %xmm4
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm14, %xmm3, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm7, (%rdi)
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm4, %xmm4, %xmm3
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%rbx), %xmm10
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm10, %xmm10, %xmm9
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm3, %xmm9, %xmm8
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%rbx), %xmm5
+ -      -     0.99   0.01    -      -      -      -      -      -     vfmaddsub213pd	%xmm8, %xmm4, %xmm5
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	64(%r10), %xmm8
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm5, %xmm7, %xmm6
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	48(%r10), %xmm5
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm6, (%rdi)
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm5, %xmm5, %xmm6
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rbx), %xmm12
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm12, %xmm12, %xmm13
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm6, %xmm13, %xmm15
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%rbx), %xmm10
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm15, %xmm5, %xmm10
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm8, %xmm8, %xmm7
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm10, 16(%rdi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rbx), %xmm14
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm14, %xmm14, %xmm9
+ -      -     0.01   0.99    -      -      -      -      -      -     vmulpd	%xmm7, %xmm9, %xmm12
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%rbx), %xmm13
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub213pd	%xmm12, %xmm8, %xmm13
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm13, %xmm10, %xmm15
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	80(%r10), %xmm10
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm15, 16(%rdi)
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm10, %xmm10, %xmm9
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%rbx), %xmm14
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm14, %xmm14, %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm9, %xmm12, %xmm14
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%rbx), %xmm13
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm14, %xmm10, %xmm13
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	96(%r10), %xmm14
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm13, %xmm15, %xmm15
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm15, 16(%rdi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%rbx), %xmm13
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm13, %xmm13, %xmm15
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm14, %xmm14, %xmm13
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm13, %xmm15, %xmm15
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%rbx), %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm15, %xmm14, %xmm12
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	112(%r10), %xmm15
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm13, 112(%rsp)
+ -      -      -      -     0.50   0.50   1.00    -      -      -     vmovupd	%xmm12, 32(%rdi)
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm15, %xmm15, %xmm13
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%rbx), %xmm14
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm14, %xmm14, %xmm14
+ -      -      -     1.00    -      -      -      -      -      -     vmulpd	%xmm13, %xmm14, %xmm14
+ -      -      -     1.00    -      -      -      -      -      -     leaq	128(%rsp), %r11
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm13, (%r11)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%rbx), %xmm13
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm14, %xmm15, %xmm13
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	128(%r10), %xmm14
+ -      -      -      -      -      -      -     1.00    -      -     vshufpd	$1, %xmm14, %xmm14, %xmm15
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm13, %xmm12, %xmm13
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm13, 32(%rdi)
+ -      -      -     1.00    -      -      -      -      -      -     leaq	288(%rsp), %r14
+ -      -      -      -     0.50   0.50   1.00    -      -      -     vmovupd	%xmm15, (%r14)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%rbx), %xmm12
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm12, %xmm12, %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm15, %xmm12, %xmm12
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%rbx), %xmm15
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm12, %xmm14, %xmm15
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm15, %xmm13, %xmm13
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm13, 32(%rdi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%r8), %xmm13
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm13, %xmm13, %xmm15
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm0, %xmm15, %xmm0
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%r8), %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm0, %xmm11, %xmm12
+ -      -      -     1.00    -      -      -      -      -      -     leaq	(%rdx,%r9), %rsi
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm12, (%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%r8), %xmm11
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm11, %xmm11, %xmm11
+ -      -      -     1.00    -      -      -      -      -      -     vmulpd	%xmm1, %xmm11, %xmm1
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%r8), %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm1, %xmm2, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm0, %xmm12, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm0, (%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%r8), %xmm2
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm2, %xmm2, %xmm2
+ -      -      -     1.00    -      -      -      -      -      -     vmulpd	%xmm3, %xmm2, %xmm3
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%r8), %xmm1
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub213pd	%xmm3, %xmm4, %xmm1
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm1, %xmm0, %xmm4
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm4, (%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%r8), %xmm11
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm11, %xmm11, %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm6, %xmm12, %xmm6
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%r8), %xmm15
+ -      -      -     1.00    -      -      -      -      -      -     vfmaddsub213pd	%xmm6, %xmm5, %xmm15
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm15, 16(%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%r8), %xmm5
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm5, %xmm5, %xmm13
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm7, %xmm13, %xmm7
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%r8), %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm7, %xmm8, %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm0, %xmm15, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm0, 16(%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%r8), %xmm8
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm8, %xmm8, %xmm8
+ -      -     1.00    -      -      -      -      -      -      -     vmulpd	%xmm9, %xmm8, %xmm9
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%r8), %xmm1
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm9, %xmm10, %xmm1
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm1, %xmm0, %xmm10
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm10, 16(%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	(%r8), %xmm0
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm0, %xmm0, %xmm1
+ -      -      -     1.00   0.50   0.50    -      -      -      -     vmulpd	112(%rsp), %xmm1, %xmm2
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	(%r8), %xmm6
+ -      -     1.00    -     0.50   0.50    -      -      -      -     vfmaddsub132pd	96(%r10), %xmm2, %xmm6
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm6, 32(%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	16(%r8), %xmm3
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm3, %xmm3, %xmm4
+ -      -      -     1.00   0.50   0.50    -      -      -      -     vmulpd	(%r11), %xmm4, %xmm5
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	16(%r8), %xmm7
+ -      -     1.00    -     0.50   0.50    -      -      -      -     vfmaddsub132pd	112(%r10), %xmm5, %xmm7
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm7, %xmm6, %xmm11
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm11, 32(%rsi)
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovupd	32(%r8), %xmm8
+ -      -      -      -      -      -      -     1.00    -      -     vunpckhpd	%xmm8, %xmm8, %xmm9
+ -      -     1.00    -     0.50   0.50    -      -      -      -     vmulpd	(%r14), %xmm9, %xmm10
+ -      -      -      -     0.50   0.50    -      -      -      -     vmovddup	32(%r8), %xmm12
+ -      -     1.00    -      -      -      -      -      -      -     vfmaddsub213pd	%xmm10, %xmm14, %xmm12
+ -      -      -     1.00    -      -      -      -      -      -     vaddpd	%xmm12, %xmm11, %xmm14
+ -      -      -      -      -      -     1.00    -      -     1.00   vmovupd	%xmm14, 32(%rsi)
+ -      -      -      -      -      -      -      -     1.00    -     addq	$48, %rdx

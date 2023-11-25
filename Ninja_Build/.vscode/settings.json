@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "*.h": "c",
+        "*.c": "c",
+        "*.[hc].tmpl": "c",
+        "*.hpp": "cpp",
+        "*.cu": "cpp",
+        "*.cu.tmpl": "cpp",
+    },
+    "disasexpl.associations": {
+        "**/*.c": "${workspaceFolder}/build/${relativeFileDirname}/${fileBasenameNoExtension}.s",
+        "**/*.cu": "${workspaceFolder}/build/${relativeFileDirname}/${fileBasenameNoExtension}.s",
+    },
+    "disasexpl.dimUnusedSourceLines": false
+}

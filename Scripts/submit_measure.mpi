@@ -19,6 +19,9 @@ export MPI_DSM_VERBOSE=1
 export MPI_SHARED_VERBOSE=1 
 export MPI_MEMMAP_VERBOSE=1 
 
+export  OMP_PROC_BIND=close # How I am going to bind omp threads on to those places 
+export  OMP_PLACES=cores    # Where I am going to place omp threads on the hardware, here is to cores
+
 # Launch MPI-based executable
 #NOTE: For Dphi_ timing run 64 MPI + 1 OMP Thrds; For Fused_dphi_ timing run 4 MPI + 16 OMP Thrds
 

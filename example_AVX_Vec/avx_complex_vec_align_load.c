@@ -157,12 +157,14 @@
 int main()
 {
  int i, j;
- int n = 5;
  double res1=0., res2=0., res3=0., res4=0., res5=0., res6=0., res7=0., res8=0., res9=0., res10=0., res11=0., res12=0.;
- float elapsed, gflops;
- int in = 100000000;
+ float elapsed = 0.0, gflops, mb, gbs, AI;
+ int flop, byte;
+ int reps = 0;
+ int in = 20;
  int n_times = 0;
  int n_warmup = 0;
+
  
 /* ************ timing block A start ************* */
 clock_t t1,t2;
@@ -194,36 +196,51 @@ if(sched_setaffinity(0,sizeof(mask),&mask) == -1)
   chi6 = amalloc(in*sizeof(suNf_vector), ALIGN);
 
 
+
+  // up = _mm_malloc(in*sizeof(suNf), MEM_ALIGN);
+  // psi = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // psi2 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi2 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi3 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi4 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi5 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+  // chi6 = _mm_malloc(in*sizeof(suNf_vector), MEM_ALIGN);
+
+
 /*=========================================================================
       Test:  Performance Test based on loading a long array of structures  
 ===========================================================================*/
 
 /* Vector Initilisation */
-
-  for(i=0; i<in; i++)
+#pragma omp parallel default(shared) private(i,j) 
 {
-    for(j=0; j<3; j++)
+  int n = 5;
+  #pragma omp for schedule(static) 
+  for(i=0; i<in; i++)
     {
-      (psi+i)->c[j] = my_rand(n);
-      (psi2+i)->c[j] = my_rand(n);
-    }
+      for(j=0; j<3; j++)
+        {
+          (psi+i)->c[j] = my_rand(n);
+          (psi2+i)->c[j] = my_rand(n);
+        }
 
-    for(j=0; j<9; j++)
-    {
-      (up+i)->c[j] = my_rand(n);
-    }
+      for(j=0; j<9; j++)
+        {
+          (up+i)->c[j] = my_rand(n);
+        }
+  }
 }
-
   /******************************************************* 
         Case 1: AVX double MVM Macro perf measurement 
   *******************************************************/
 
 /* Double_MVM Warmup code */
-for(i=0; i<in; i++)
-{ 
-  double_MVM_macro((chi+i), (chi2+i), ((up+i)), ((psi+i)), ((psi2+i)));
-  //single_MVM_macro((chi+i),((up+i)), ((psi+i)));
-}
+// for(i=0; i<in; i++)
+// { 
+//   double_MVM_macro((chi+i), (chi2+i), ((up+i)), ((psi+i)), ((psi2+i)));
+//   //single_MVM_macro((chi+i),((up+i)), ((psi+i)));
+// }
 
  /* ************************** timing block B start ***************************** */
   gettimeofday(&start, 0);
@@ -254,7 +271,21 @@ t2=clock();
     lprintf("MVM_MACRO",0,"wall clock time (gettimeofday)  = %12.4g sec\n\n", (etime.tv_sec) + (etime.tv_usec)*1e-6);
 
 /* **************************** timing block B end ********************************* */
-
+/* Benchmarking the double_MVM_macro routine */
+// while(elapsed < 2.3)
+// {
+//     for(i=0; i<=reps; i++)
+//     {
+//         t1=clock();
+//         for(j=0; j<in; j++)
+//         { 
+//           double_MVM_macro((chi+j), (chi2+j), ((up+j)), ((psi+j)), ((psi2+j)));
+//         }
+//         t2=clock();
+//         elapsed += ((t2-t1)/1000000.0);
+//     }
+//     reps++;
+// }
 
   /******************************************************* 
           Case 2: HiRep Macro Perf Measurement 
@@ -308,7 +339,7 @@ for (i = 0; i < in; i++)
   res1 = _complex_re((chi+i)->c[j]);
   res2 = _complex_im((chi+i)->c[j]); 
   res3 = _complex_re((chi2+i)->c[j]); 
-  res4 = _complex_im((chi2+i)->c[j]); 
+  res4 = _complex_im((chi2+i)->c[j]);
 
   res9 =  _complex_re((chi5+i)->c[j]); 
   res10 = _complex_im((chi5+i)->c[j]); 
@@ -340,6 +371,17 @@ for (i = 0; i < in; i++)
   afree(chi4);
   afree(chi5);
   afree(chi6);
+
+
+  // _mm_free(up);
+  // _mm_free(psi);
+  // _mm_free(psi2);
+  // _mm_free(chi);
+  // _mm_free(chi2);
+  // _mm_free(chi3);
+  // _mm_free(chi4);
+  // _mm_free(chi5);
+  // _mm_free(chi6);
   
   return 0;
 }

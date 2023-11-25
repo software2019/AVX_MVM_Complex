@@ -1,0 +1,52 @@
+:: WARNING: setvars.sh has already been run. Skipping re-execution.
+   To force a re-execution of setvars.sh, use the '--force' option.
+   Using '--force' can result in excessive use of your environment variables.
+SLURM_CPUS_PER_TASK=4  NODES=1 SLURM_TASKS_PER_NODE=2
+MPI startup(): Could not import some environment variables. Intel MPI process pinning will not be used.
+               Possible reason: Using the Slurm srun command. In this case, Slurm pinning will be used.
+MPI startup(): Could not import some environment variables. Intel MPI process pinning will not be used.
+               Possible reason: Using the Slurm srun command. In this case, Slurm pinning will be used.
+MPI startup(): PMI server not found. Please set I_MPI_PMI_LIBRARY variable if it is not a singleton case.
+[0] MPI startup(): Intel(R) MPI Library, Version 2021.2  Build 20210302 (id: f4f7c92cd)
+[0] MPI startup(): Copyright (C) 2003-2021 Intel Corporation.  All rights reserved.
+[0] MPI startup(): library kind: release
+MPI startup(): PMI server not found. Please set I_MPI_PMI_LIBRARY variable if it is not a singleton case.
+[0] MPI startup(): Intel(R) MPI Library, Version 2021.2  Build 20210302 (id: f4f7c92cd)
+[0] MPI startup(): Copyright (C) 2003-2021 Intel Corporation.  All rights reserved.
+[0] MPI startup(): library kind: release
+[0] MPI startup(): libfabric version: 1.11.0-impi
+[0] MPI startup(): libfabric version: 1.11.0-impi
+[0] MPI startup(): libfabric provider: psm2
+[0] MPI startup(): libfabric provider: psm2
+[0] MPI startup(): File "/opt/ohpc/pub/oneAPI/mpi/2021.2.0/etc/tuning_skx_shm-ofi_psm2.dat" not found
+[0] MPI startup(): Load tuning file: "/opt/ohpc/pub/oneAPI/mpi/2021.2.0/etc/tuning_skx_shm-ofi.dat"
+[0] MPI startup(): File "/opt/ohpc/pub/oneAPI/mpi/2021.2.0/etc/tuning_skx_shm-ofi_psm2.dat" not found
+[0] MPI startup(): Load tuning file: "/opt/ohpc/pub/oneAPI/mpi/2021.2.0/etc/tuning_skx_shm-ofi.dat"
+[0] MPI startup(): Rank    Pid      Node name  Pin cpu
+[0] MPI startup(): 0       58323    node2      0,32
+[0] MPI startup(): I_MPI_ROOT=/opt/ohpc/pub/oneAPI/mpi/2021.2.0
+[0] MPI startup(): I_MPI_DEBUG=5
+[0] MPI startup(): Rank    Pid      Node name  Pin cpu
+[0] MPI startup(): 0       58322    node2      0,32
+[0] MPI startup(): I_MPI_ROOT=/opt/ohpc/pub/oneAPI/mpi/2021.2.0
+[0] MPI startup(): I_MPI_DEBUG=5
+I'm thread 0 in process 0
+I'm thread 3 in process 0
+I'm thread 0 in process 0
+I'm thread 2 in process 0
+I'm thread 1 in process 0
+I'm thread 3 in process 0
+
+Provided thread support level: 1
+  0 - MPI_THREAD_SINGLE
+  1 - MPI_THREAD_FUNNELED
+I'm thread 1 in process 0
+I'm thread 2 in process 0
+
+Provided thread support level: 1
+  0 - MPI_THREAD_SINGLE
+  1 - MPI_THREAD_FUNNELED
+  2 - MPI_THREAD_SERIALIZED
+  3 - MPI_THREAD_MULTIPLE
+  2 - MPI_THREAD_SERIALIZED
+  3 - MPI_THREAD_MULTIPLE
